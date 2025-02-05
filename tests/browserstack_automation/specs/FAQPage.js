@@ -2,7 +2,7 @@ import { driver, expect } from '@wdio/globals';
 import ReadyPage from '../page_objects/ready.page';
 import FAQPage from '../page_objects/faq.page';
 
-const { describe, it } = require('mocha');
+
 
 const waitTime = 10000;
 
@@ -124,7 +124,7 @@ describe('FAQ Page', () => {
   });
 
   // FAQ_015
-  it.only('verifyGooglePlayRedirected', async () => {
+  it('verifyGooglePlayRedirected', async () => {
     await (await FAQPage.getWeVoteAndroidLinkElement).waitForClickable();
     await FAQPage.getWeVoteAndroidLinkElement.click();
     await FAQPage.waitForURL('https://play.google.com/store/apps/details?id=org.wevote.cordova&hl=en_US');
