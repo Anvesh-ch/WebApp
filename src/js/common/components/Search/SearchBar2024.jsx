@@ -71,11 +71,13 @@ class SearchBar2024 extends Component {
     this.props.searchFunction(searchString);
     if(this.props.trackSearch){
     const dataLayerObject = {
-      event: 'KeyWord Search',
-      search_keyword: searchString,
-      voterWeVoteId: VoterStore.getVoterWeVoteId(),
+      event: 'searchKeyword',
+      searchKeyword: searchString,
+      user:{
+        voterWeVoteId: VoterStore.getVoterWeVoteId()
+      }
     };
-    console.log(dataLayerObject)
+    //console.log(dataLayerObject)
     TagManager.dataLayer({dataLayer: dataLayerObject});
   }
   }, 3000);
