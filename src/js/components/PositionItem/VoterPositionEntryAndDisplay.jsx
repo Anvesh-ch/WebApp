@@ -4,7 +4,7 @@ import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Edit as EditIcon } from '@mui/icons-material';
 import ActivityActions from '../../actions/ActivityActions';
-import { prepareForCordovaKeyboard, restoreStylesAfterCordovaKeyboard } from '../../common/utils/cordovaUtils';
+import { prepareForCordovaKeyboard } from '../../common/utils/cordovaUtils';
 import { isAndroid } from '../../common/utils/isCordovaOrWebApp';
 import { renderLog } from '../../common/utils/logging';
 import ActivityStore from '../../stores/ActivityStore';
@@ -13,14 +13,14 @@ import { avatarGeneric } from '../../utils/applicationUtils';
 import ModalDisplayTemplateB, {
   templateBStyles, TextFieldDiv,
   TextFieldForm, TextFieldWrapper, VoterAvatarImg,
-  UserInfoWrapper, UserInfoText, UserName,
+  UserInfoWrapper, UserInfoText, UserName, OptionBlockWrapper, CommentContainer, InputBox,
 } from '../Widgets/ModalDisplayTemplateB';
 // import ActivityPostPublicToggle from '../Activity/ActivityPostPublicToggle';
 import ActivityPostPublicDropdown from '../Activity/ActivityPostPublicDropdown';
 import VoterPositionEditNameAndPhotoModal from './VoterPositionEditNameAndPhotoModal';
 
 const VoterPositionEntryAndDisplay = (props) => {
-  const { activityTidbitWeVoteId, classes, externalUniqueId, show, toggleModal } = props;
+  const { activityTidbitWeVoteId, classes, externalUniqueId, toggleModal } = props;
 
   // useState used for state variables
   const [visibilityIsPublic, setVisibilityIsPublic] = useState(false);
@@ -107,7 +107,38 @@ const VoterPositionEntryAndDisplay = (props) => {
   const dialogTitleText = activityTidbitIdCheck ? 'Create post' : 'Edit post';
   const statementPlaceholderText = 'What\'s on your mind?';
   const rowsToShow = isAndroid() ? 4 : 6;
+  const [showModal, setShowModal] = useState(false);
 
+  const toggleLocalModal = () => {
+    setShowModal((prev) => !prev); // Toggle the modal
+  };
+  const OpinionBlock = ({ onClick }) => (
+    <OptionBlockWrapper>
+      <CommentContainer>
+        <UserInfoWrapper>
+          <VoterAvatarImg
+            alt=""
+            src={voterPhotoUrlMedium || avatarGeneric()}
+          />
+          <EditIcon
+            onClick={handleEditModalOpen}
+            className={classes.styledEditIcon}
+          />
+        </UserInfoWrapper>
+        {/* Open modal when input is clicked */}
+        <InputBox
+          type="text"
+          placeholder="What's your opinion?"
+          onClick={onClick}
+          readOnly
+        />
+      </CommentContainer>
+    </OptionBlockWrapper>
+  );
+
+  OpinionBlock.propTypes = {
+    onClick: PropTypes.func.isRequired,
+  };
   const textFieldJSX = (
     <TextFieldWrapper>
       <TextFieldForm
@@ -182,7 +213,7 @@ const VoterPositionEntryAndDisplay = (props) => {
           classes={{ root: classes.saveButtonRoot }}
           type="submit"
           // disabled={!statementText} // Commented out to allow saving without statement
-          disabled={!selectedOpinion}
+          disabled={selectedOpinion === 'Neutral' && (!statementText || statementText.trim() === '')} // Disable if Neutral and no text
         >
           {activityTidbitIdCheck ? 'Add opinion' : 'Save Changes'}
         </Button>
@@ -194,9 +225,9 @@ const VoterPositionEntryAndDisplay = (props) => {
     <>
       <ModalDisplayTemplateB
         dialogTitleJSX={<>{dialogTitleText}</>}
-        show={show}
+        show={showModal}
         textFieldJSX={textFieldJSX}
-        toggleModal={toggleModal}
+        toggleModal={toggleLocalModal}
       />
       {isEditModalOpen && (
         <VoterPositionEditNameAndPhotoModal
@@ -204,6 +235,11 @@ const VoterPositionEntryAndDisplay = (props) => {
           toggleModal={handleEditModalClose}
         />
       )}
+      <OpinionBlock
+        onClick={toggleLocalModal}
+        voterPhotoUrlMedium={voterPhotoUrlMedium}
+        voterName={voterName}
+      />
     </>
   );
 };
@@ -212,7 +248,6 @@ VoterPositionEntryAndDisplay.propTypes = {
   activityTidbitWeVoteId: PropTypes.string,
   classes: PropTypes.object,
   externalUniqueId: PropTypes.string,
-  show: PropTypes.bool,
   toggleModal: PropTypes.func.isRequired,
 };
 

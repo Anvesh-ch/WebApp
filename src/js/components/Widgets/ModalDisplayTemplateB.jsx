@@ -1,5 +1,5 @@
 import { Close } from '@mui/icons-material';
-import { Dialog, DialogContent, DialogTitle, Divider, IconButton, Button, RadioGroup } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, Divider, IconButton, Button } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import withTheme from '@mui/styles/withTheme';
 import PropTypes from 'prop-types';
@@ -89,7 +89,7 @@ export const templateBStyles = (theme) => ({
     cursor: 'pointer',
     display: 'flex',
     fontSize: '24px',
-    margin: '25px 0 0 -20px',
+    margin: '19px 0 0 -20px',
     padding: '5px',
     position: 'relative',
   },
@@ -227,6 +227,7 @@ const DialogContentInnerWrapper = styled('div')`
   flex-direction: column;
   height: 100%;
   justify-content: space-between;
+  margin-top:25px;
    
   @media (max-width: 600px) {
     min-height: 48px;
@@ -293,11 +294,10 @@ const Title = styled('div')`
   }
 `;
 export const VoterAvatarImg = styled('img')`
-  border-radius: 6px;
+  border-radius: 50%;
   width: 43px;
   height: 43px;
   display: block;
-  margin-left: 14px;
   @media (max-width: 600px) {
   margin-left: 0px;
   }
@@ -305,7 +305,6 @@ export const VoterAvatarImg = styled('img')`
 
 export const UserInfoWrapper = styled('div')`
   display: flex;
-  margin-top: 25px;
 `;
 
 export const UserInfoText = styled('div')`
@@ -352,6 +351,26 @@ export const OpinionButton = styled(Button)`
   background-color: ${(props) => (props.selected ? DesignTokenColors.primary600 : 'transparent')};
     background-color: ${(props) => (props.selected ? DesignTokenColors.primary600 : DesignTokenColors.primary50)};
   }
+`;
+export const OptionBlockWrapper = styled.div`
+margin-bottom: 10px;
+padding: 10px 0;
+`;
+export const CommentContainer = styled.div`
+  align-items: center;
+  background-color: ${DesignTokenColors.whiteUI};
+  border: 1px solid ${DesignTokenColors.neutralUI300};
+  border-radius: 16px;
+  display: flex;
+  padding: 8px 12px;
+`;
+export const InputBox = styled.input`
+border: none;
+color: ${DesignTokenColors.neutral900};
+flex-grow: 1;
+font-size: 14px;
+outline: none;
+padding: 5px;
 `;
 
 export default withTheme(withStyles(templateBStyles)(ModalDisplayTemplateB));

@@ -10,13 +10,13 @@ import VoterStore from '../../stores/VoterStore';
 import { avatarGeneric } from '../../utils/applicationUtils';
 import { cordovaNewsPaddingTop } from '../../utils/cordovaOffsets';
 
-const VoterPositionEntryAndDisplay = React.lazy(() => import(/* webpackChunkName: 'VoterPositionEntryAndDisplay' */ '../PositionItem/VoterPositionEntryAndDisplay'));
+const ActivityPostModal = React.lazy(() => import(/* webpackChunkName: 'ActivityPostModal' */ './ActivityPostModal'));
 
 class ActivityPostAdd extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      showVoterPositionEntryAndDisplay: false,
+      showActivityPostModal: false,
       statementText: '',
     };
     this.updateStatementTextToBeSaved = this.updateStatementTextToBeSaved.bind(this);
@@ -62,11 +62,11 @@ class ActivityPostAdd extends Component {
     });
   }
 
-  toggleVoterPositionEntryAndDisplay = () => {
-    const { showVoterPositionEntryAndDisplay } = this.state;
-    // console.log('toggleVoterPositionEntryAndDisplay showVoterPositionEntryAndDisplay:', showVoterPositionEntryAndDisplay);
+  toggleActivityPostModal = () => {
+    const { showActivityPostModal } = this.state;
+    // console.log('toggleActivityPostModal showActivityPostModal:', showActivityPostModal);
     this.setState({
-      showVoterPositionEntryAndDisplay: !showVoterPositionEntryAndDisplay,
+      showActivityPostModal: !showActivityPostModal,
     });
   }
 
@@ -80,7 +80,7 @@ class ActivityPostAdd extends Component {
     renderLog('ActivityPostAdd');  // Set LOG_RENDER_EVENTS to log all renders
     const { classes, externalUniqueId, activityTidbitWeVoteId } = this.props;
     const {
-      showVoterPositionEntryAndDisplay,
+      showActivityPostModal,
       voterPhotoUrlMedium, statementText,
     } = this.state;
 
@@ -137,19 +137,19 @@ class ActivityPostAdd extends Component {
               inputRef={(tag) => { this.textarea = tag; }}
               multiline
               name="statementText"
-              onClick={this.toggleVoterPositionEntryAndDisplay}
+              onClick={this.toggleActivityPostModal}
               onFocus={this.handleFocus}
               placeholder={statementPlaceholderText}
               rows="1"
             />
           </InnerFlexWrapper>
-          {showVoterPositionEntryAndDisplay && (
+          {showActivityPostModal && (
             <Suspense fallback={<></>}>
-              <VoterPositionEntryAndDisplay
+              <ActivityPostModal
                 activityTidbitWeVoteId={activityTidbitWeVoteId}
                 externalUniqueId={externalUniqueId}
-                show={showVoterPositionEntryAndDisplay}
-                toggleModal={this.toggleVoterPositionEntryAndDisplay}
+                show={showActivityPostModal}
+                toggleModal={this.toggleActivityPostModal}
               />
             </Suspense>
           )}
