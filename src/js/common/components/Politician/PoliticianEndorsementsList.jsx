@@ -11,7 +11,7 @@ import {
   orderByWrittenComment,
   limitToOnePositionPerSpeaker,
 } from '../../utils/orderByPositionFunctions';
-import VoterPositionEntryAndDisplay from '../PositionItem/VoterPositionEntryAndDisplay';
+// import VoterPositionEntryAndDisplayJohnMook from '../PositionItem/VoterPositionEntryAndDisplay';
 import LoadMoreItemsManually from '../Widgets/LoadMoreItemsManually';
 import PoliticianEndorsementForList from './PoliticianEndorsementForList';
 import {
@@ -150,7 +150,8 @@ class PoliticianEndorsementsList extends Component {
     return (
       <PoliticianEndorsementsListWrapper>
         {listTitleHtml}
-        <VoterPositionEntryAndDisplay />
+        {/* WV-532 This component forces open the width of the entire product, so commenting out for now. */}
+        {/* <VoterPositionEntryAndDisplayJohnMook /> */}
         <div>
           {filteredPositionList.map((position) => {
             // console.log('PoliticianEndorsementList position:', position);
