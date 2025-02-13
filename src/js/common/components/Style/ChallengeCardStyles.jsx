@@ -65,8 +65,8 @@ export const ChallengeImageMobileSharedStyles = css`
 `;
 
 export const ChallengeImageMobilePlaceholder = styled('div', {
-  shouldForwardProp: (prop) => !['profileImageBackgroundColor', 'useVerticalCard'].includes(prop),
-})(({ profileImageBackgroundColor, useVerticalCard }) => (`
+  shouldForwardProp: (prop) => !['profileImageBackgroundColor', 'useVerticalCard', 'inChallengeList'].includes(prop),
+})(({ profileImageBackgroundColor, useVerticalCard, inChallengeList }) => (`
   // align-items: center;
   background-color: ${profileImageBackgroundColor || DesignTokenColors.neutralUI50};
   ${useVerticalCard ? `border: 1px solid ${DesignTokenColors.neutralUI100};` : ''}
@@ -77,7 +77,7 @@ export const ChallengeImageMobilePlaceholder = styled('div', {
   max-height: 157px;
   min-height: 157px;
   ${ChallengeImageMobileSharedStyles}
-  width: 90%;
+  width: ${inChallengeList ? '90%' : '100%'};
   overflow: hidden;
 `));
 

@@ -168,8 +168,8 @@ class ChallengeCardList extends Component {
       return null;
     }
     let numberDisplayed = 0;
-    const pigsCanFly = true;
-    const inChallengeList = true;
+    const pigsCanFly = false;
+    const inChallengeList = true; // checks if item is in the challenge list
     return (
       <Wrapper>
         <ListWrapper useVerticalCard={useVerticalCard}>
@@ -187,6 +187,7 @@ class ChallengeCardList extends Component {
                     limitCardWidth={useVerticalCard}
                     titleLengthRestricted
                     useVerticalCard={useVerticalCard}
+                    inChallengeList={inChallengeList}
                   />
                   {/* JoinedAndDaysLeft component positioned absolutely */}
                   <JoinedAndDaysForChallengePage>

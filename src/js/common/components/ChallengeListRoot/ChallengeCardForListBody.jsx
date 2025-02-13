@@ -34,7 +34,7 @@ function ChallengeCardForListBody (props) {
     hideCardMargins, inDraftMode, joinedAndDaysLeftOff,
     limitCardWidth, onChallengeClick, onChallengeClickLink,
     photoLargeUrl, profileImageBackgroundColor,
-    tagIdBaseName, titleLengthRestricted, titleLinkOff, useVerticalCard,
+    tagIdBaseName, titleLengthRestricted, titleLinkOff, useVerticalCard, inChallengeList,
   } = props;
   const politicalPartySvgNameWithPath = '../../img/global/svg-icons/political-party-unspecified.svg';
   // console.log('ChallengeCardForListBody functional component photoLargeUrl:', photoLargeUrl);
@@ -114,6 +114,7 @@ function ChallengeCardForListBody (props) {
                   id="cimp4"
                   profileImageBackgroundColor={profileImageBackgroundColor}
                   useVerticalCard={useVerticalCard}
+                  inChallengeList={inChallengeList}
                 >
                   <ChallengeImageMobile
                     alt=""
@@ -121,6 +122,7 @@ function ChallengeCardForListBody (props) {
                     style={useVerticalCard ? {
                       borderBottom: `1px solid ${DesignTokenColors.neutralUI100}`,
                       borderTop: `1px solid ${DesignTokenColors.neutralUI100}`,
+                      width: '110%',
                     } : {}}
                   />
                 </ChallengeImageMobilePlaceholder>
@@ -223,6 +225,7 @@ function ChallengeCardForListBody (props) {
 ChallengeCardForListBody.propTypes = {
   challengeTitle: PropTypes.string,
   challengeWeVoteId: PropTypes.string,
+  inChallengeList: PropTypes.bool,
   inDraftMode: PropTypes.bool,
   hideCardMargins: PropTypes.bool,
   joinedAndDaysLeftOff: PropTypes.bool,
