@@ -168,7 +168,6 @@ class ChallengeCardList extends Component {
       return null;
     }
     let numberDisplayed = 0;
-    const pigsCanFly = false;
     const inChallengeList = true; // checks if item is in the challenge list
     return (
       <Wrapper>
@@ -200,15 +199,13 @@ class ChallengeCardList extends Component {
                 >
                   <ChallengeAbout challengeWeVoteId={oneChallenge.challenge_we_vote_id} />
                 </Link>
-                {pigsCanFly && (
-                  <JoinedButtonsOuterWrapper>
-                    <JoinedButtonsInnerWrapper>
-                      <JoinChallengeAndLearnMoreButtons
-                        inChallengeList={inChallengeList}
-                      />
-                    </JoinedButtonsInnerWrapper>
-                  </JoinedButtonsOuterWrapper>
-                )}
+                <JoinedButtonsOuterWrapper>
+                  <JoinedButtonsInnerWrapper>
+                    <JoinChallengeAndLearnMoreButtons
+                      inChallengeList={inChallengeList}
+                    />
+                  </JoinedButtonsInnerWrapper>
+                </JoinedButtonsOuterWrapper>
               </ChallengeCardForListVerticalWrapper>
             );
           })}

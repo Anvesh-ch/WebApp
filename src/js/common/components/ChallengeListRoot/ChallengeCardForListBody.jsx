@@ -120,9 +120,9 @@ function ChallengeCardForListBody (props) {
                     alt=""
                     src={photoLargeUrl}
                     style={useVerticalCard ? {
-                      borderBottom: `1px solid ${DesignTokenColors.neutralUI100}`,
-                      borderTop: `1px solid ${DesignTokenColors.neutralUI100}`,
-                      width: '110%',
+                      // borderBottom: `1px solid ${DesignTokenColors.neutralUI100}`,
+                      // borderTop: `1px solid ${DesignTokenColors.neutralUI100}`,
+                      objectFit: 'cover',
                     } : {}}
                   />
                 </ChallengeImageMobilePlaceholder>
@@ -137,6 +137,7 @@ function ChallengeCardForListBody (props) {
                 id="cimp2"
                 profileImageBackgroundColor={profileImageBackgroundColor}
                 useVerticalCard={useVerticalCard}
+                inChallengeList={inChallengeList}
               >
                 <SvgWatermarkWrapper>
                   <SvgImage
@@ -180,9 +181,10 @@ function ChallengeCardForListBody (props) {
                           borderBottom: `1px solid ${DesignTokenColors.neutralUI100}`,
                           borderTop: `1px solid ${DesignTokenColors.neutralUI100}`,
                           borderRadius: '12px',
+                          objectFit: 'cover',
                         } : {}}
                         width={limitCardWidth ? '250px' : '320px'}
-                        height={limitCardWidth ? '157px' : '168px'}
+                        height={limitCardWidth ? '157px' : '188px'}
                       />
                     </ChallengeImageDesktopPlaceholder>
                   ) : (
@@ -263,11 +265,12 @@ const JoinedDaysLeftOverlayMobile = styled('div')`
 
 const JoinedDaysLeftOverlayDesktop = styled('div')`
   position: absolute;
-  top: 135px;
+  top: 160px;
   left: 10px;
 `;
 
 export const SvgWatermarkWrapper = styled('div')`
+  margin-top: 15px;
 `;
 
 export default withStyles(styles)(ChallengeCardForListBody);

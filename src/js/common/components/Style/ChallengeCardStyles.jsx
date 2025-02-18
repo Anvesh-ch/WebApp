@@ -42,7 +42,8 @@ export const ChallengeImageDesktopPlaceholder = styled('div', {
   ${useVerticalCard ? 'border-radius: 12px;' : ''}
   display: flex;
   justify-content: flex-start;
-  ${limitCardWidth ? 'height: 157px;' : `${useVerticalCard ? 'height: 157px;' : 'height: 117px;'}`}
+  align-items: center;
+  ${limitCardWidth ? 'height: 157px;' : `${useVerticalCard ? 'height: 187px;' : 'height: 117px;'}`}
   ${limitCardWidth ? 'min-height: 157px;' : `${useVerticalCard ? 'min-height: 157px;' : 'min-height: 117px;'}`}
   justify-content: center;
   ${limitCardWidth ? 'width: 250px;' : `${useVerticalCard ? 'width: 320px;' : 'width: 250px;'}`}
@@ -72,7 +73,7 @@ export const ChallengeImageMobilePlaceholder = styled('div', {
   ${useVerticalCard ? `border: 1px solid ${DesignTokenColors.neutralUI100};` : ''}
   ${useVerticalCard ? 'border-radius: 12px;' : ''}
   display: flex;
-  height: 157px;
+  // height: 157px;
   justify-content: center;
   max-height: 157px;
   min-height: 157px;
@@ -150,9 +151,9 @@ export const OneChallengePhotoWrapperMobile = styled('div')(({ theme }) => (`
   cursor: pointer;
   margin-bottom: 8px;
   margin-top: 8px;
-  height: 157px;
-  min-height: 157px;
-  max-height: 157px;
+  // height: 157px;
+  // min-height: 157px;
+  // max-height: 157px;
   ${theme.breakpoints.down('xs')} {
     margin-top: 0;
     min-height: auto;
