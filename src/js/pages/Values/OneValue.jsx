@@ -264,6 +264,7 @@ class OneValue extends Component {
             <FilterChoices>
               <Chip
                 key="forThisElectionKey"
+                id = "forThisElection"
                 label={<span style={showEndorsersForThisElection ? { fontWeight: 600 } : {}}>For This Election</span>}
                 className={showEndorsersForThisElection ? classes.selectedChip : classes.notSelectedChip}
                 component="div"
@@ -272,6 +273,7 @@ class OneValue extends Component {
               />
               <Chip
                 key="allOrganizationsKey"
+                id = "allEndorsers"
                 label={<span style={showAllEndorsers ? { fontWeight: 600 } : {}}>All Endorsers</span>}
                 className={showAllEndorsers ? classes.selectedChip : classes.notSelectedChip}
                 component="div"

@@ -631,8 +631,8 @@ class PoliticianDetailsPage extends Component {
   render () {
     renderLog('PoliticianDetailsPage');  // Set LOG_RENDER_EVENTS to log all renders
 
-    const { politicianStateParsedFromURLBeforeLoad } = this.state; // reaname variable state calculated from URL to be used when page is still loading. 
-    const { politicianNameParsedFromURLBeforeLoad } = this.state; // reaname variable name calculated from URL to be used when page is still loading.
+    const { politicianStateParsedFromURLBeforeLoad } = this.state; // State calculated from URL to be used when page is still loading.
+    const { politicianNameParsedFromURLBeforeLoad } = this.state; // Politician name calculated from URL to be used when page is still loading.
     const { classes } = this.props;
     const { match: { params } } = this.props;
     const { politicianSEOFriendlyPath: politicianSEOFriendlyPathFromUrl } = params;
@@ -943,7 +943,7 @@ class PoliticianDetailsPage extends Component {
         </Helmet>
         <PageWrapper>
           <DetailsSectionMobile className="u-show-mobile">
-            <MobileHeaderOuterContainer id="politicianHeaderContainer" scrolledDown={scrolledDown}>
+            <MobileHeaderOuterContainer id="politicianDetailsHeaderContainer" scrolledDown={scrolledDown}>
               <MobileHeaderInnerContainer>
                 <MobileHeaderContentContainer>
                   <CandidateTopRow>

@@ -11,7 +11,7 @@ import {
   orderByWrittenComment,
   limitToOnePositionPerSpeaker,
 } from '../../utils/orderByPositionFunctions';
-import VoterPositionEntryAndDisplay from '../PositionItem/VoterPositionEntryAndDisplay';
+// import VoterPositionEntryAndDisplayJohnMook from '../PositionItem/VoterPositionEntryAndDisplay';
 import LoadMoreItemsManually from '../Widgets/LoadMoreItemsManually';
 import PoliticianEndorsementForList from './PoliticianEndorsementForList';
 import {
@@ -19,6 +19,7 @@ import {
   CampaignSubSectionTitleWrapper,
 } from '../Style/CampaignDetailsStyles';
 import PoliticianStore from '../../stores/PoliticianStore';
+import VoterPositionEntryAndDisplay2 from '../../../components/PositionItem/VoterPositionEntryAndDisplay';
 
 const STARTING_NUMBER_OF_POSITIONS_TO_DISPLAY = 2;
 const NUMBER_OF_POSITIONS_TO_ADD_WHEN_MORE_CLICKED = 10;
@@ -112,7 +113,7 @@ class PoliticianEndorsementsList extends Component {
   render () {
     renderLog('PoliticianEndorsementsList');  // Set LOG_RENDER_EVENTS to log all renders
     const { politicianWeVoteId, hideEncouragementToEndorse, showTitle } = this.props;
-    const { filteredPositionList, numberOfPositionsToDisplay, politicianName } = this.state;
+    const { filteredPositionList, numberOfPositionsToDisplay, politicianName, showOpinionModal } = this.state;
     // console.log('PoliticianEndorsementsList render numberOfPositionsToDisplay:', numberOfPositionsToDisplay);
     const showTitleAndPositionsToShow = showTitle && (filteredPositionList && filteredPositionList.length > 0);
     const listTitleHtml = showTitleAndPositionsToShow && (
@@ -149,7 +150,8 @@ class PoliticianEndorsementsList extends Component {
     return (
       <PoliticianEndorsementsListWrapper>
         {listTitleHtml}
-        <VoterPositionEntryAndDisplay />
+        {/* WV-532 This component forces open the width of the entire product, so commenting out for now. */}
+        {/* <VoterPositionEntryAndDisplayJohnMook /> */}
         <div>
           {filteredPositionList.map((position) => {
             // console.log('PoliticianEndorsementList position:', position);
@@ -178,6 +180,11 @@ class PoliticianEndorsementsList extends Component {
             />
           )}
         </LoadMoreItemsManuallyWrapper>
+        {/* Render the modal */}
+        <VoterPositionEntryAndDisplay2
+          show={showOpinionModal}
+          toggleModal={this.toggleOpinionModal}
+        />
       </PoliticianEndorsementsListWrapper>
     );
   }

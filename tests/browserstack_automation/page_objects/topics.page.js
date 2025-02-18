@@ -33,7 +33,7 @@ class TopicsPage extends Page {
   }
   get getDemocraticClubsDropdownButtonElement() {
     return $('#toggleFollowMenuButton-wv02issue25')
-  } 
+  }
   get getDemocraticClubsUnfollowElement() {
     return $('#issueUnfollowButton-wv02issue25-democratic-clubs')
   }
@@ -60,7 +60,7 @@ class TopicsPage extends Page {
   }
   get getProLifeUnfollowElement() {
     return $('#issueUnfollowButton-wv02issue64-pro-life')
-  }  
+  }
   get getRepublicanClubsFollowElement() {
     return $('#issueFollowButton-wv02issue68-republican-clubs')
   }
@@ -96,7 +96,7 @@ class TopicsPage extends Page {
   }
   get getDemocraticPartyPoliticiansUnfollowElement() {
     return $('#issueUnfollowButton-wv02issue94-democratic-party-politicians')
-  }  
+  }
   get getRepublicanPartyPoliticiansFollowElement() {
     return $('#issueFollowButton-wv02issue95-republican-party-politicians')
   }
@@ -144,7 +144,7 @@ class TopicsPage extends Page {
   }
   get getCommonSenseGunReformUnfollowElement() {
     return $('#issueUnfollowButton-wv02issue37-common-sense-gun-reform')
-  }  
+  }
   get getGun2ndAmendmentRightsFollowElement() {
     return $('#issueFollowButton-wv02issue36-gun-\\/-2nd-amendment-rights')
   }
@@ -444,6 +444,12 @@ class TopicsPage extends Page {
   }
   get getMakeAmericaGreatAgainUnfollowElement() {
     return $('#issueUnfollowButton-wv87issue100-make-america-great-again-\\(maga\\)')
+  }
+  get forThisElectionFilter(){
+    return $('#forThisElection')
+  }
+  get forAllEndorsersFilter(){
+    return $('#allEndorsers')
   }
 
 }
