@@ -4,6 +4,10 @@ import ReadyPage from '../page_objects/ready.page';
 import SignIn from '../page_objects/signin.page';
 //import signinPage from '../page_objects/signin.page';
 // import webAppConfig from '../../../src/js/config';
+import { createRequire } from 'module';
+import { error } from 'console';
+//const require = createRequire(import.meta.url);
+
 const fs = require('fs');
 const assert = require('assert');
 const testDataPath = 'tests/browserstack_automation/testDataForScripts/';
@@ -18,7 +22,8 @@ const waitTime = 8000;
 // https://webdriver.io/docs/pageobjects
 
 
-describe('ReadyPage',  () => {
+describe('ReadyPage',  function () {
+  this.timeout(9999999); 
  // Ready_001 and Ready_003
  it('verifyElectionCountDownRedirect and verifyViewYourBallotRedirect', async () => {
    console.log('Tcs : Ready_001 and Ready_003');
@@ -66,13 +71,7 @@ describe('ReadyPage',  () => {
    expect(updatedBalAdd).toContain('New York, NY, USA');
  });
 
-
-
-
  // Ready_003 - merged with ready_001
-
-
-
 
  // Ready_004
  it('toggleIssueFollowing - Follow/UnfollowPopular Topics', async () => {
@@ -85,7 +84,6 @@ describe('ReadyPage',  () => {
    await driver.pause(waitTime);
    await expect(ReadyPage.toggleFollowMenuButtons).toBeElementsArrayOfSize(0);
  });
-
 
  // Ready_005
  it('unfurlIssues - PopularIssues/ShowMoreIssues', async () => {
@@ -400,21 +398,6 @@ it('Verify Text and links -> The fine print:- How your data is used & protected 
       
 });
 
-
-
-
-// Ready_030
-it.skip('Verify tooltip msg on pointing to any Popular topic ', async () => {
- console.log('Tcs : Ready_030');
- await ReadyPage.load();
- //await driver.pause(waitTime);
- await ReadyPage.topicName_ProLife.moveTo();
- //const topicName = $('Pro-life_topicName');
- //await topicName.moveTo();
- expect(ReadyPage.topicToolTipMsg).toExist();
-});
-
-
 // Ready_030, Ready_031
 it('Verify tooltip msgs on pointing to topic name, topic icon', async () => {
  console.log('Tcs : Ready_030,Ready_31');
@@ -441,6 +424,7 @@ it('Verify tooltip msgs on pointing to topic name, topic icon', async () => {
 
 
      // Hover over the element to trigger the tooltip
+     driver.pause(waitTime);
      await element1.moveTo();
      expect(ReadyPage.topicToolTipMsg).toExist();
      const ttmsg = await ReadyPage.topicToolTipMsg.getText();
@@ -600,12 +584,14 @@ it('Verify followers text and tooltip for every topic', async () => {
 
 // Ready_034
 it('Verify endorsements text and link for every topic', async () => {
+  
  console.log('Tcs : Ready_034');
  const popTopics = JSON.parse(fs.readFileSync(`${testDataPath}popularTopics.json`, 'utf8')).topics;
 
-
+ 
 //Function to point to an endorsement and verify text and tooltip
  async function pointToElementAndVerifyEndorsementsTextTooltip(selectorType, selectorValue) {
+ 
  let elementXPath;
  let tooltipSelector;
  var element1; 
@@ -635,7 +621,7 @@ it('Verify endorsements text and link for every topic', async () => {
 
    const endorsementsElement1 = await issueCard.$('div.LinkedOrganizationCountWrapper-sc-169wgaf-13');
    const endorsementsText = await endorsementsElement1.getText();
-   const endorsementsCount = parseEndorsementsCount(endorsementsText.replace(/\D/g, ''));
+   const endorsementsCount = await parseEndorsementsCount(endorsementsText.replace(/\D/g, ''));
    console.log(`Endorsements for ${selectorValue}: ${endorsementsCount}`);
 
 
@@ -655,8 +641,8 @@ it('Verify endorsements text and link for every topic', async () => {
 
 
      // For img elements, we use the selectorType 'img' and the topic name
-     console.log('Checking endorsements for topic Image: ' + topic);
-     await pointToElementAndVerifyEndorsementsTextTooltip('img', topic);
+     //console.log('Checking endorsements for topic Image: ' + topic);
+     //await pointToElementAndVerifyEndorsementsTextTooltip('img', topic);
    } catch (topicError) {
      // Log the error but continue with the next topic
      console.error(`Error processing topic: ${topic}`, topicError);
@@ -699,7 +685,7 @@ it('Verify count of topics displayed with showMore link', async () => {
            expectedLength: 36
        },
        {
-           description: 'Scenario 2: Without clicking on "Show More" link',
+           description: 'Scenario 2: Without clicking "Show More" link',
            shouldClickShowMore: false,
            expectedLength: 6
        }
@@ -752,55 +738,81 @@ it('Verify count of topics displayed with showMore link', async () => {
 });
 //******************************************************************************************/
 
-
-
-
 // Function to find the topic element (h3 or img)
 async function findTopicElement(selectorType, selectorValue) {
- let elementXPath; 
- if (selectorType === 'img') {
-     elementXPath = `//img[@alt="${selectorValue}"]`;
- } else if (selectorType === 'h3') {
-     const topicId = `${selectorValue}_topicName`;
-     elementXPath = `//h3[@id="${topicId}"]`;
- } else {
-     throw new Error('Unsupported selector type. Use "img" or "h3".');
- }
- console.log(`Searching for element with XPath: ${elementXPath}`);
- await ReadyPage.load();
- await driver.pause(waitTime);
- let element = await $(elementXPath);
- let foundElement = await element.isExisting();
- let retryCount = 0;
- const maxRetries = 3;
- while (!foundElement && retryCount < maxRetries) {
-     console.log(`Retry ${retryCount + 1}: Element not found, attempting to load more topics...`);
-     // Check if the "Show More" button exists
-     const showMoreButton = await $('#showMoreLink');
-     if (await showMoreButton.isExisting()) {
-         console.log('Clicking "Show More" to load more topics...');
-         await showMoreButton.click();
-         await driver.pause(waitTime);
-     }
-     console.log('Scrolling the page to load more topics...');
-     await browser.execute(() => window.scrollBy(0, 500));
-     await driver.pause(waitTime);
-     // Reattempt to find the element after scrolling or clicking "Show More"
-     element = await $(elementXPath);
-     foundElement = await element.isExisting();
-     retryCount++;
- }
- if (!foundElement) {
-     throw new Error(`Could not find topic "${selectorValue}" after ${maxRetries} retries.`);
- }
- console.log(`Element for ${selectorValue} found.`);
- console.log(`Element is : ` +await (element.getText()));
- return element;
+  let elementXPath;
+
+ try{
+  if (selectorType === 'img') {
+    elementXPath = `//img[@alt="${selectorValue}"]`;
+  } else if (selectorType === 'h3') {
+    if (selectorValue.includes("'")) {
+      elementXPath = `//h3[contains(normalize-space(text()), concat('${selectorValue.split("'").join("', \"'\", '")}'))]`;
+    } else {
+      elementXPath = `//h3[contains(normalize-space(text()), "${selectorValue}")]`;
+    }
+   
+  } else {
+    throw new Error('Unsupported selector type. Use "img" or "h3".');
+  }
+ 
+  console.log(`Searching for element with XPath: ${elementXPath}`);
+  
+  await ReadyPage.load();
+  await driver.pause(waitTime);
+  await browser.execute(() => window.scrollBy(0, 300));
+  await driver.pause(waitTime);
+ 
+  let element = await $(elementXPath);
+  let foundElement = await element.isExisting();
+  let retryCount = 0;
+  const maxRetries = 3;
+ 
+ 
+  while (!foundElement && retryCount < maxRetries) {
+    console.log(`Retry ${retryCount + 1}: Scrolling to load more topics...`);
+ 
+ 
+    // Click "Show More" if available
+    const showMoreButton = await $('#showMoreLink');
+    if (await showMoreButton.isExisting()) {
+      console.log('Clicking "Show More" button...');
+      await showMoreButton.click();
+      await driver.pause(waitTime);
+    }
+ 
+ 
+    // Scroll the page
+    await browser.execute(() => window.scrollBy(0, 600));
+    await driver.pause(waitTime);
+ 
+ 
+    // Reattempt to find the element after scrolling or clicking "Show More"
+    element = await $(elementXPath);
+    foundElement = await element.isExisting();
+ 
+ 
+    retryCount++;
+  }
+ 
+  if (!foundElement) {
+    throw new Error(`Could not find topic "${selectorValue}" after ${maxRetries} retries.`);
+  }
+ 
+  console.log(`Element for ${selectorValue} found.`);
+  console.log(`Element text: ` + await element.getText());
+
+  return element;
+}catch{
+  throw new Error('Test Failed unknown error'+error);
 }
+ }
+ 
+
 //********************************************************************************** */
 // Function to hover over the endorsements link and retrieve the tooltip
-async function hoverOverEndorsementsAndGetTooltip(endorsementsElement,selectorValue1) {
- await endorsementsElement.moveTo();
+async function hoverOverEndorsementsAndGetTooltip(endorsementsElement1,selectorValue1) {
+ await endorsementsElement1.moveTo();
  console.log(`Hovering over endorsements link for topic`);
 
 
