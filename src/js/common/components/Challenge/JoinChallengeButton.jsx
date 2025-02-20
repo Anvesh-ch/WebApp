@@ -243,22 +243,19 @@ JoinChallengeButton.propTypes = {
 
 const styles = () => ({
   buttonDesktop: {
-    // borderRadius: 45,
-    // minWidth: '110px',
     width: '100%',
     borderRadius: 45,
     minWidth: 110,
     //    background: 'var(--Primary-600, #0858A1)',
-    //     border: '1px solid var(--Primary-400, #4187C6)',
-    //     color: 'var(--WhiteUI, #FFFFFF)',
-    marginRight: '5px',
-    marginTop: '10px',
-    fontSize: '14px',
+    //    border: '1px solid var(--Primary-400, #4187C6)',
+    //    color: 'var(--WhiteUI, #FFFFFF)',
+    marginRight: 5,
+    marginTop: 0,
+    fontSize: 14,
   },
 });
 
 const JoinChallengeButtonWrapper = styled('div')`
-  align-items: center;
 `;
 
 export default withStyles(styles)(JoinChallengeButton);

@@ -37,9 +37,6 @@ const styles = () => ({
     //    background: 'var(--Primary-600, #0858A1)',
     //     border: '1px solid var(--Primary-400, #4187C6)',
     //     color: 'var(--WhiteUI, #FFFFFF)',
-    marginRight: '5px',
-    marginTop: '10px',
-    fontSize: '14px',
   },
   learnMoreButton: {
     borderRadius: 45,
@@ -48,7 +45,7 @@ const styles = () => ({
     //     background: 'white',
     //     border: '1px solid var(--Primary-400, #4187C6)',
     //     color: 'var(--Neutral-900, #2A2A2C)',
-    marginTop: '10px',
+    //     marginTop: '10px',
     fontSize: '14px',
     //     '&:hover': {
     //       backgroundColor: 'white',

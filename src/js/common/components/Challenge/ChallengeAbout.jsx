@@ -199,7 +199,7 @@ export const CardRowsWrapper = styled('div')`
   margin: 2px 0 0 2px;
   padding-bottom: 20px;
   overflow-y: auto;
-  height: 165px;
+  height: 250px;
 
   @media screen and (min-width: 786px) {
     height: auto;
