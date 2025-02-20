@@ -149,7 +149,7 @@ export default class SettingsPersonalSideBar extends Component {
                 <Link to="/settings/yourdata" className="SettingsItem__summary__item" id="yourData">
                   <PrivacyIcon isActive={String(editMode) === 'yourdata'} />
                   <LinkSpan isActive={String(editMode) === 'yourdata'}>
-                    Your Privacy &amp; Data
+                    Privacy &amp; Data
                   </LinkSpan>
                 </Link>
               </div>

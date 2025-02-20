@@ -48,7 +48,7 @@ export default class SettingsYourData extends Component {
               <HeaderContainer>
                 <ShieldIcon />
                 <h1 className="h2">
-                  Your Privacy &amp; Data
+                  Privacy &amp; Data
                 </h1>
               </HeaderContainer>
               <DataSettingSection>
