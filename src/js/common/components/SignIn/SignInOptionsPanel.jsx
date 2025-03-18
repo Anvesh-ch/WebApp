@@ -274,7 +274,9 @@ export default class SignInOptionsPanel extends Component {
       hideTwitterSignInButton: true,
       hideVoterPhoneEntry: true,
     });
-    this.focusedOnSingleInputToggle('email');
+    if (this.props.focusedOnSingleInputToggle) {
+      this.props.focusedOnSingleInputToggle('email');
+    }
     const delayBeforeScrolling = 250;
     if (this.scrollTimer) clearTimeout(this.scrollTimer);
     this.scrollTimer = setTimeout(() => {
