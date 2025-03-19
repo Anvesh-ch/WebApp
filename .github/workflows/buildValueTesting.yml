@@ -1,0 +1,14 @@
+name: Build Value Testing
+on: [push, pull_request]
+
+jobs:
+ windows_test:
+    name: Execute Tests on Ubuntu
+    runs-on: windows-latest
+    steps:
+      - name: 'Checkout the repository'
+        uses: actions/checkout@v2
+      - name: 'Building web application to be tested'
+        run: npm install
+      - run: npm run wdio:setup
+      - run: npm run wdio-BVT
