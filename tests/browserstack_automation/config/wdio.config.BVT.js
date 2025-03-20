@@ -24,8 +24,8 @@ const buildName = `${browserStackConfig.NAME}: ${dateForDisplay}`;
 // https://webdriver.io/docs/configurationfile
 
 module.exports.config = {
-  user: browserStackConfig.BROWSERSTACK_USER,
-  key: browserStackConfig.BROWSERSTACK_KEY,
+  user: 'charanyachinnasa_lMI0ej',
+  key:'o61DitpTnEtjhyodLeqZ',
   injectGlobals: false,
   updateJob: true,
   reporters: [
@@ -63,7 +63,7 @@ module.exports.config = {
   exclude: [],
   logLevel: 'error',
   coloredLogs: true,
-  baseUrl: https://quality.wevote.us/ready,
+  baseUrl: 'https://quality.wevote.us/ready',
   waitforTimeout: 10000,
   connectionRetryTimeout: 90000,
   connectionRetryCount: 1,
