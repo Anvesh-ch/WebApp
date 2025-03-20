@@ -1,5 +1,5 @@
 name: Build Value Testing
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
  windows_test:
@@ -10,5 +10,4 @@ jobs:
         uses: actions/checkout@v2
       - name: 'Building web application to be tested'
         run: npm install
-      - run: npm run wdio:setup
       - run: npm run wdio-BVT
