@@ -15,7 +15,7 @@ const waitTime = 8000;
 beforeEach(async () => {
   await CandidatesPage.load();
   await driver.pause(waitTime);
-  await CandidatesPage.stateSelect.selectByVisibleText('Hawaii');
+ // await CandidatesPage.stateSelect.selectByVisibleText('Hawaii');
 });
 
 afterEach(async () => {
