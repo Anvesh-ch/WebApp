@@ -21,11 +21,11 @@ class CandidatesPage extends Page {
     return $$('h2#whatIsHappeningTitle');
   }
 
-  get CandidateCardList () {
+  get candidateCardList () {
     return $$("//div[contains(@id,'cardForListBodyWrapper')]");
   }
 
-  get CandidateSupportButtonList () {
+  get candidateSupportButtonList () {
     return $$("button[id*='itemActionBarSupportButton'][id*='desktop']");
   }
 
