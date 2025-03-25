@@ -32,7 +32,7 @@ afterEach(async () => {
 
 describe('Candidates Page', () => {
   // Candidates_001
-  it('verifyAllStateNamesPresentforChooseState', async () => {
+  it('verifyAllStateNamesPresentforChooseState @BVT', async () => {
     await CandidatesPage.stateSelect.click();
     const options = await CandidatesPage.stateSelectOptions;
     const expectedStates = readTestDataStates('all');
@@ -118,7 +118,7 @@ describe('Candidates Page', () => {
       console.log(`Running verifyCandidateCardHasSectionsDisplayed -> Using sate: ${state}`);
       await CandidatesPage.stateSelect.selectByVisibleText(state);
       await driver.pause(waitTime);
-      const candidateCards = await CandidatesPage.CandidateCardList;
+      const candidateCards = await CandidatesPage.candidateCardList;
       for (let i = 0; i < candidateCards.length; i++) {
         const card = candidateCards[i];
         // Update 02/03/2025: wait for 4 seconds for the data to get loaded, suggested by Dale 01/14/2025.
@@ -306,7 +306,7 @@ describe('Candidates Page', () => {
   }
 
   async function getCandidateCardId () {
-    const candidateCards = await CandidatesPage.CandidateCardList;
+    const candidateCards = await CandidatesPage.candidateCardList;
     let selCard =  0;
     if (candidateCards.length >= 3) {
       selCard =  1;
