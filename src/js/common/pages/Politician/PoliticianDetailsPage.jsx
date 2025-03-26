@@ -1,3 +1,5 @@
+import TagManager from 'react-gtm-module';
+import lookupPageNameAndPageTypeDict from '../../../utils/lookupPageNameAndPageTypeDict';
 import { keyframes } from '@emotion/react';
 import { PersonSearch } from '@mui/icons-material';
 import { Button } from '@mui/material';
@@ -46,7 +48,6 @@ import normalizedImagePath from '../../utils/normalizedImagePath';
 import { getPoliticianValuesFromIdentifiers, retrievePoliticianFromIdentifiersIfNeeded } from '../../utils/politicianUtils';
 import returnFirstXWords from '../../utils/returnFirstXWords';
 import saveCampaignSupportAndGoToNextPage from '../../utils/saveCampaignSupportAndGoToNextPage';
-import TagManager from 'react-gtm-module';
 import VoterStore from '../../../stores/VoterStore';
 
 const CampaignRetrieveController = React.lazy(() => import(/* webpackChunkName: 'CampaignRetrieveController' */ '../../components/Campaign/CampaignRetrieveController'));
@@ -647,8 +648,27 @@ class PoliticianDetailsPage extends Component {
       console.log('PoliticianDetailsPage functionToUseWhenProfileComplete linkedCampaignXWeVoteId not found');
     }
   }
-
+ //TagManger from Candidate page on View your full Ballot button-AnujaLawankar
   goToBallot = () => {
+    const { pageName, pageType } = lookupPageNameAndPageTypeDict(window.location.pathname);
+   TagManager.dataLayer({
+    dataLayer: {
+      event: 'viewYourFullBallot',
+      userDetails: {
+        voterWeVoteId: VoterStore.getVoterWeVoteId(),
+      },
+      destinationDetails: {
+        destinationPageName: 'Ballot',  // Navigated Page
+        destinationPathName: '/ballot', // Path for Navigation
+        destinationPageType: 'ballot',  // Type of page
+      },
+      pageDetails: {
+        pageName,                       // Dynamically determined page name
+        pageType,                       // Dynamically determined page type
+        pathName: window.location.pathname, // Current page path
+      },
+    },
+  });
     historyPush('/ballot');
   }
 
