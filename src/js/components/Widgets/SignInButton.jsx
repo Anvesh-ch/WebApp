@@ -34,9 +34,10 @@ const { pageName, pageType } = lookupPageNameAndPageTypeDict(window.location.pat
         },
       },
     });
-
-    // Trigger the actual sign-in modal
-    props.toggleSignInModal();
+  // Trigger the actual sign-in modal
+    if (props.toggleSignInModal) {
+      props.toggleSignInModal();
+    }
   };
 
   return (
