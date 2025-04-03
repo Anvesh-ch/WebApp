@@ -270,6 +270,11 @@ class ItemActionBar extends PureComponent {
           pageName: page.pageName,
           pathName: currentPathname,
         },
+        destinatonDetails:{
+          destinationPageType: "PayToPromoteProcessModal",
+          destinationPageName: page.pageName,
+          destinationPathName: window.location.href,
+        }
     };
     TagManager.dataLayer({dataLayer: dataLayerObject})
     // const { ballotItemWeVoteId } = this.props;
