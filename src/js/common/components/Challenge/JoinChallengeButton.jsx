@@ -142,12 +142,12 @@ class JoinChallengeButton extends React.Component {
         pageDetails: {
           pageType: page.pageType,
           pageName: page.pageName,
-          pathName: currentPathname,
+          pathname: currentPathname,
         },
         destinationDetails: {
           destinationPageType: destinationPage.pageType,
           destinationPageName: destinationPage.pageName,
-          destinationPathName: inviteFriendsPath,
+          destinationPathname: inviteFriendsPath,
         },
       },
     });
@@ -191,12 +191,12 @@ class JoinChallengeButton extends React.Component {
           pageDetails: {
             pageType: page.pageType,
             pageName: page.pageName,
-            pathName: currentPathname,
+            pathname: currentPathname,
           },
           destinationDetails: {
             destinationPageType: destinationPage.pageType,
             destinationPageName: destinationPage.pageName,
-            destinationPathName: joinChallengeNextStepPath,
+            destinationPathname: joinChallengeNextStepPath,
           },
         },
       });

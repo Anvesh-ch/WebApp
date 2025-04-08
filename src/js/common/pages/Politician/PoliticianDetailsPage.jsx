@@ -1,5 +1,4 @@
 import TagManager from 'react-gtm-module';
-import lookupPageNameAndPageTypeDict from '../../../utils/lookupPageNameAndPageTypeDict';
 import { keyframes } from '@emotion/react';
 import { PersonSearch } from '@mui/icons-material';
 import { Button } from '@mui/material';
@@ -22,6 +21,7 @@ import RepresentativeStore from '../../../stores/RepresentativeStore';
 import { headroomWrapperOffset } from '../../../utils/cordovaCalculatedOffsets';
 import { cordovaBallotFilterTopMargin } from '../../../utils/cordovaOffsets';
 import { getPageKey } from '../../../utils/cordovaPageUtils';
+import lookupPageNameAndPageTypeDict from '../../../utils/lookupPageNameAndPageTypeDict';
 import CampaignChipInLink from '../../components/Campaign/CampaignChipInLink';
 import CampaignOwnersList from '../../components/CampaignSupport/CampaignOwnersList';
 import CompleteYourProfileModalController from '../../components/Settings/CompleteYourProfileModalController';
@@ -360,7 +360,7 @@ class PoliticianDetailsPage extends Component {
           pageDetails: {
             pageType: 'politician', // in which page we are currently
             pageName: this.constructor.name, // name of page from constructor itself
-            pathName: window.location.pathname, // location of the current window contains pathName
+            pathname: window.location.pathname, // location of the current window contains pathname
           },
         };
         TagManager.dataLayer({ dataLayer: dataLayerObj });
@@ -659,13 +659,13 @@ class PoliticianDetailsPage extends Component {
       },
       destinationDetails: {
         destinationPageName: 'Ballot',  // Navigated Page
-        destinationPathName: '/ballot', // Path for Navigation
+        destinationPathname: '/ballot', // Path for Navigation
         destinationPageType: 'ballot',  // Type of page
       },
       pageDetails: {
         pageName,                       // Dynamically determined page name
         pageType,                       // Dynamically determined page type
-        pathName: window.location.pathname, // Current page path
+        pathname: window.location.pathname, // Current page path
       },
     },
   });

@@ -10,7 +10,7 @@ import TagManager from 'react-gtm-module';
 import VoterStore from '../../stores/VoterStore';
 
 class ShowMoreButtons extends React.Component {
-  
+
   constructor(props) {
     super(props);
     this.handleShowMoreClick = this.handleShowMoreClick.bind(this);
@@ -30,25 +30,25 @@ class ShowMoreButtons extends React.Component {
     showMoreButtonsLink();
   };
 
-  pushDataLayer = (eventName, showMoreId, currentPathname) => { 
-    const currentPage = lookupPageNameAndPageTypeDict(currentPathname); 
+  pushDataLayer = (eventName, showMoreId, currentPathname) => {
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
     const dataLayerObject = {
       event: eventName,
       element_id: showMoreId,
       pageDetails: {
         pageName: currentPage.pageName,
         pageType: currentPage.pageType,
-        pathName: currentPathname, 
+        pathname: currentPathname,
       },
       userDetails: {
         weVoteVoterId: VoterStore.getVoterWeVoteId(),
       },
     };
-    //console.log(currentPathname);
+    // console.log(currentPathname);
     TagManager.dataLayer({ dataLayer: dataLayerObject });
   };
 
-  render() {
+  render () {
     renderLog('ShowMoreButtons');
     const { classes, showLessCustomText, showMoreButtonWasClicked, showMoreCustomText, showMoreId } = this.props;
     let showMoreText;

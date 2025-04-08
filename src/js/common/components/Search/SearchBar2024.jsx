@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import TagManager from 'react-gtm-module';
 import styled from 'styled-components';
 import { blurTextFieldAndroid, focusTextFieldAndroid } from '../../utils/cordovaUtils';
 import { renderLog } from '../../utils/logging';
 import SearchBase from './SearchBase';
 import VoterStore from '../../../stores/VoterStore';
-import TagManager from 'react-gtm-module';
 import lookupPageNameAndPageTypeDict from '../../../utils/lookupPageNameAndPageTypeDict';
 
 /* eslint-disable jsx-a11y/control-has-associated-label  */
@@ -59,39 +59,38 @@ class SearchBar2024 extends Component {
     }
   }
 
- handleSearchBarKeyPress = () => {
-  const { location: { pathname: currentPathname } } = window;
-  const page = lookupPageNameAndPageTypeDict(currentPathname);
+  handleSearchBarKeyPress = () => {
+    const { location: { pathname: currentPathname } } = window;
+    const page = lookupPageNameAndPageTypeDict(currentPathname);
 
-  if (this.timer) {
-    clearTimeout(this.timer);
-  }
-  this.timer = setTimeout(() => {
-    const { searchString } = this.state;
-    if (searchString.length === 0) {
-      return;
+    if (this.timer) {
+      clearTimeout(this.timer);
     }
-    this.props.searchFunction(searchString);
-    // if(this.props.trackSearch){
-    const dataLayerObject = {
-      event: 'searchKeyword',
+    this.timer = setTimeout(() => {
+      const { searchString } = this.state;
+      if (searchString.length === 0) {
+        return;
+      }
+      this.props.searchFunction(searchString);
+      // if(this.props.trackSearch){
+      const dataLayerObject = {
+        event: 'searchKeyword',
         userDetails: {
           voterWeVoteId: VoterStore.getVoterWeVoteId(),
         },
         pageDetails: {
           pageType: page.pageType,
           pageName: page.pageName,
-          pathName: currentPathname,
+          pathname: currentPathname,
         },
-        searchString:searchString,
-    };
-    //console.log(dataLayerObject)
-    TagManager.dataLayer({dataLayer: dataLayerObject});
-  
-  }, 3000);
-  const { searchString } = this.state;
-  this.props.searchFunction(searchString);
-};
+        searchString,
+      };
+      // console.log(dataLayerObject)
+      TagManager.dataLayer({ dataLayer: dataLayerObject });
+    }, this.props.searchUpdateDelayTime);
+    const { searchString } = this.state;
+    this.props.searchFunction(searchString);
+  };
 
   clearQuery () {
     this.props.clearFunction();
