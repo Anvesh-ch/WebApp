@@ -1,7 +1,6 @@
 import { isChallengeSEOFriendlyURL, isPoliticianSEOFriendlyURL } from '../common/utils/isSEOFriendlyURL';
 import { isWeVoteMarketingSite } from '../common/utils/hrefUtils';
 
-
 // If there is a static path for a page, enter it here. If the path includes dynamic elements,
 //  you'll need to generate the pageName and pageType dynamically in calculatePageNameAndPageTypeDict below.
 const pageNameAndTypeSimpleDict = {
