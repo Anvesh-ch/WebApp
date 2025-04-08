@@ -1,7 +1,7 @@
-import TagManager from 'react-gtm-module';
 import { Button } from '@mui/material';
 import PropTypes from 'prop-types';
 import React from 'react';
+import TagManager from 'react-gtm-module';
 import styled from 'styled-components';
 import { isCordova } from '../../common/utils/isCordovaOrWebApp';
 import { renderLog } from '../../common/utils/logging';
@@ -13,8 +13,8 @@ import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageType
 export default function SignInButton (props) {
   renderLog('SignInButton');  // Set LOG_RENDER_EVENTS to log all renders
 
-// GTM Data Layer push for SignIn button on HomePage by AnujaLawankar-March24th,2025
-const { pageName, pageType } = lookupPageNameAndPageTypeDict(window.location.pathname);
+  // GTM Data Layer push for SignIn button on HomePage by AnujaLawankar-March24th,2025
+  const { pageName, pageType } = lookupPageNameAndPageTypeDict(window.location.pathname);
   const handleClick = () => {
     TagManager.dataLayer({
       dataLayer: {
@@ -24,17 +24,17 @@ const { pageName, pageType } = lookupPageNameAndPageTypeDict(window.location.pat
         },
         destinationDetails: {
           destinationPageName: 'SignInModal',
-          destinationPathName: window.location.href,
           destinationPageType: 'auth',
+          destinationPathname: window.location.pathname,
         },
         pageDetails: {
           pageName,
           pageType,
-          pathName: window.location.href,
+          pathname: window.location.pathname,
         },
       },
     });
-  // Trigger the actual sign-in modal
+    // Trigger the actual sign-in modal
     if (props.toggleSignInModal) {
       props.toggleSignInModal();
     }
