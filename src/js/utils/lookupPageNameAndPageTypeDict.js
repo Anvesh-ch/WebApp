@@ -3,26 +3,34 @@ import { isChallengeSEOFriendlyURL, isPoliticianSEOFriendlyURL } from '../common
 // If there is a static path for a page, enter it here. If the path includes dynamic elements,
 //  you'll need to generate the pageName and pageType dynamically in calculatePageNameAndPageTypeDict below.
 const pageNameAndTypeSimpleDict = {
+  '/': {
+    pageName: 'Ready',
+    pageType: 'homepage',
+  },
+  '/about': {
+    pageName: 'About',
+    pageType: 'about',
+  },
+  '/challenges': {
+    pageName: 'ChallengesHomeLoader',
+    pageType: 'challenge',
+  },
+  '/more/about': {
+    pageName: 'About',
+    pageType: 'about',
+  },
   // All pageType 'settings'
   '/settings': {
     pageName: 'Settings',
-    pageType: 'settings',
-  },
-  '/settings/profile': {
-    pageName: 'Profile',
     pageType: 'settings',
   },
   '/settings/email': {
     pageName: 'Email',
     pageType: 'settings',
   },
-  '/challenges': {
-    pageName: 'ChallengesHomeLoader',
-    pageType: 'challenge',
-  },
-  '/': {
-    pageName: 'Ready',
-    pageType: 'homepage',
+  '/settings/profile': {
+    pageName: 'Profile',
+    pageType: 'settings',
   },
 };
 
@@ -30,7 +38,14 @@ function calculatePageNameAndPageTypeDict (path) {
   // console.log("gtmPageNameAndType, path:", path);
   let settingsPageName = 'notSet'; // Per our naming convention for pageName, this would normally be 'NotSet' but I think the value of having settingsPageName being identical to settingsPageType will save us grief in the future.
   let settingsPageType = 'notSet';
-  if (isChallengeSEOFriendlyURL(path)) {
+
+  if (path.startsWith('/ballot')) {
+    settingsPageName = 'Ballot';
+    settingsPageType = 'ballot';
+  } else if (path.endsWith('/cs/')) {
+    settingsPageName = 'CampaignsHomeLoader';
+    settingsPageType = 'candidate';
+  } else if (isChallengeSEOFriendlyURL(path)) {
     // We need to add more complex logic here because there are many paths in /src/App.jsx that use "/+/" in the path
     settingsPageType = 'challenge';
     if (path.endsWith('join-challenge')) {
@@ -49,6 +64,7 @@ function calculatePageNameAndPageTypeDict (path) {
     settingsPageType = 'politician';
     settingsPageName = 'PoliticianDetailsPage';
   }
+
   return {
     pageName: settingsPageName,
     pageType: settingsPageType,
@@ -58,21 +74,6 @@ function calculatePageNameAndPageTypeDict (path) {
 export default function lookupPageNameAndPageTypeDict (path) {
   if (pageNameAndTypeSimpleDict[path]) {
     return pageNameAndTypeSimpleDict[path];
-  } else if (path.includes('/ballot')) {
-    return {
-      pageName: 'Ballot',
-      pageType: 'ballot',
-    };
-  } else if (path.includes('/about')) {
-    return {
-      pageName: 'About',
-      pageType: 'about',
-    };
-  } else if (path.endsWith('/cs/')) {
-    return {
-      pageName: 'CampaignesHomeLoader',
-      pageType: 'candidate',
-    };
   } else {
     return calculatePageNameAndPageTypeDict(path);
   }
