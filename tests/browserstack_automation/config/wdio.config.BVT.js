@@ -16,8 +16,8 @@ const buildName = `BVT: ${dateForDisplay}`;
 // https://webdriver.io/docs/configurationfile
 
 module.exports.config = {
-  user: 'charanyachinnasa_lMI0ej',
-  key:'o61DitpTnEtjhyodLeqZ',
+  user: process.env.BROWSERSTACK_USERNAME, // Browserstack user name and password are configured in the github secrets (github repository-> settings-> secrets and variables -> actions)
+  key: process.env.BROWSERSTACK_ACCESS_KEY,
   injectGlobals: false,
   updateJob: true,
   reporters: [
