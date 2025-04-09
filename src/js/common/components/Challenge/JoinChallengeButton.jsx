@@ -140,13 +140,13 @@ class JoinChallengeButton extends React.Component {
           challengeWeVoteId,
         },
         pageDetails: {
-          pageType: page.pageType,
           pageName: page.pageName,
+          pageType: page.pageType,
           pathname: currentPathname,
         },
         destinationDetails: {
-          destinationPageType: destinationPage.pageType,
           destinationPageName: destinationPage.pageName,
+          destinationPageType: destinationPage.pageType,
           destinationPathname: inviteFriendsPath,
         },
       },
@@ -223,12 +223,17 @@ class JoinChallengeButton extends React.Component {
     renderLog('JoinChallengeButton');  // Set LOG_RENDER_EVENTS to log all renders
     const { classes } = this.props;
     const { voterIsChallengeParticipant } = this.state;
+    // console.log('JoinChallengeButton render voterIsChallengeParticipant: ', voterIsChallengeParticipant);
     // const { challengeSEOFriendlyPath, challengeWeVoteId } = this.state;
     // console.log('JoinChallengeButton render challengeSEOFriendlyPath: ', challengeSEOFriendlyPath, ', challengeWeVoteId: ', challengeWeVoteId);
     let buttonText;
     if (voterIsChallengeParticipant) {
-      buttonText = 'Invite more friends';
-    } if (this.props.inChallengeList) {
+      if (this.props.inChallengeList) {
+        buttonText = 'Invite';
+      } else {
+        buttonText = 'Invite more friends';
+      }
+    } else if (this.props.inChallengeList) {
       buttonText = 'Join';
     } else {
       buttonText = 'Join Challenge';
