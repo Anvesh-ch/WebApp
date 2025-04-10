@@ -13,4 +13,7 @@ jobs:
       - name: 'Copying browserstack config file'
         run: cp tests/browserstack_automation/config/browserstack.config.template.js tests/browserstack_automation/config/browserstack.config.js
       - name: 'Executing the tests on browserstack'
+        env:
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
         run: npm run wdio-BVT
