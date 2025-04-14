@@ -271,6 +271,9 @@ const ChallengeCardForListVerticalWrapper = styled('div')`
   max-width: 250px;
   margin-right: 5px;
   margin-bottom: 20px;
+  @media (max-width: 600px) {
+    margin-bottom: 80px;
+  }
 `;
 
 const JoinedButtonsInnerWrapper = styled('div')`
