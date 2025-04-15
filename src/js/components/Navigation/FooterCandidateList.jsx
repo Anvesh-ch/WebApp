@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { convertStateTextToStateCode, stateCodeMap } from '../../common/utils/addressFunctions';
 import TagManager from 'react-gtm-module';
+import { convertStateTextToStateCode, stateCodeMap } from '../../common/utils/addressFunctions';
 import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
 
 // React functional component example
