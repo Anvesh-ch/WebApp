@@ -339,7 +339,7 @@ class PoliticianDetailsPage extends Component {
       window.scrollTo(0, 0);
     }
     // --------Zubin - TAGMANAGER DATA LAYER LOGIC---------
-    if (!this.state.dataLayerSent) {
+    if (!this.state.Sent) {
       // console.log("TagManager code executing...");
       // console.log("Politician ID id exists? ", politician);
       if (politician && politician.politician_we_vote_id) {
@@ -662,13 +662,11 @@ class PoliticianDetailsPage extends Component {
           destinationPathname: '/ballot', // Path for Navigation
         },
         pageDetails: {
-          pageName: 'PoliticianDetailsPage',   // Dynamically determined page name
-          pageType: 'politician',             // Dynamically determined page type
+          pageName: 'PoliticianDetailsPage',
+          pageType: 'politician',
           pathname: window.location.pathname, // Current page path
-          // eslint-disable-next-line indent
+        },
       },
-        // eslint-disable-next-line indent
-    },
     });
     historyPush('/ballot');
   }
