@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { convertStateTextToStateCode, stateCodeMap } from '../../common/utils/addressFunctions';
+import TagManager from 'react-gtm-module';
+import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
 
 // React functional component example
 export default function FooterCandidateList () {
@@ -19,9 +21,33 @@ export default function FooterCandidateList () {
         stateNamePhrase = `${stateName}-candidates`;
         stateNamePhraseLowerCase = stateNamePhrase.replace(/\s+/g, '-').toLowerCase();
         // console.log('tempStateCode:', tempStateCode, ', stateAlreadySelected:', stateAlreadySelected);
+        const linkTo = `/${stateNamePhraseLowerCase}/cs/`;
+
+        function handleClick() {
+          const { location: { pathname: currentPathname } } = window;
+          const page = lookupPageNameAndPageTypeDict(currentPathname);
+          const destinationPage = lookupPageNameAndPageTypeDict(linkTo);
+
+          TagManager.dataLayer({
+            dataLayer: {
+              event: 'click',
+              pageDetails: {
+                pageType: page.pageType,
+                pageName: page.pageName,
+                pathname: currentPathname,
+              },
+              destinationDetails: {
+                destinationPageType: destinationPage.pageType,
+                destinationPageName: destinationPage.pageName,
+                destinationPathname: linkTo,
+              },
+            },
+          });
+        }
+
         return (
           <SimpleModeItemWrapper key={stateCode}>
-            <Link id={`${stateNamePhraseLowerCase}_Link`} className="u-link-color" to={`/${stateNamePhraseLowerCase}/cs/`}>
+            <Link id={`${stateNamePhraseLowerCase}_Link`} className="u-link-color" to={linkTo} onClick={handleClick}>
               {stateName}
               {' '}
               candidates
