@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, InputBase, Radio, FormControlLabel, RadioGroup } from '@mui/material';
+import { Button, InputBase, Radio, FormControlLabel, RadioGroup, Tooltip } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Edit as EditIcon } from '@mui/icons-material';
@@ -54,7 +54,7 @@ const VoterPositionEntryAndDisplay = (props) => {
     setVoterPhotoUrlMedium(voter.voter_photo_url_medium);
     setVoterName(voter.full_name || 'Anonymous');
   };
-  const [selectedOpinion, setSelectedOpinion] = useState('');
+  const [selectedOpinion, setSelectedOpinion] = useState('Neutral');
 
   const handleOpinionChange = (event) => {
     setSelectedOpinion(event.target.value);
@@ -74,7 +74,7 @@ const VoterPositionEntryAndDisplay = (props) => {
     };
   }, []);
 
-  // useEffect handles setting inital focus replacing componentDidUpdate
+  // useEffect handles setting initial focus replacing componentDidUpdate
   useEffect(() => {
     if (activityPostInputRef.current && !initialFocusSet) {
       const input = activityPostInputRef.current;
@@ -99,7 +99,7 @@ const VoterPositionEntryAndDisplay = (props) => {
   const updateStatementTextToBeSaved = (e) => {
     setStatementText(e.target.value);
   };
- 
+
   const activityTidbitIdCheck = activityTidbitWeVoteId === '' || activityTidbitWeVoteId === undefined;
 
   renderLog('VoterPositionEntryAndDisplay'); // Set LOG_RENDER_EVENTS to log all renders
@@ -112,6 +112,7 @@ const VoterPositionEntryAndDisplay = (props) => {
   const toggleLocalModal = () => {
     setShowModal((prev) => !prev); // Toggle the modal
   };
+
   const OpinionBlock = ({ onClick }) => (
     <OptionBlockWrapper>
       <UserInfoWrapper>
@@ -139,6 +140,21 @@ const VoterPositionEntryAndDisplay = (props) => {
   OpinionBlock.propTypes = {
     onClick: PropTypes.func.isRequired,
   };
+
+  const defaultOpinionVisibilityText = (
+    <p>
+      Change your default visibility
+      {' '}
+      <a
+        href="/settings/profile"
+        className={classes.tooltipLink}
+      >
+        in your profile
+      </a>
+      .
+    </p>
+  );
+
   const textFieldJSX = (
     <TextFieldWrapper>
       <TextFieldForm
@@ -162,10 +178,19 @@ const VoterPositionEntryAndDisplay = (props) => {
               {voterName}
               {/* Display the fetched name */}
             </UserName>
-            <ActivityPostPublicDropdown
-              visibilityIsPublic={visibilityIsPublic}
-              onVisibilityChange={(newVisibility) => setVisibilityIsPublic(newVisibility)}
-            />
+            <Tooltip
+              arrow
+              title={defaultOpinionVisibilityText}
+              placement="top"
+              classes={{ tooltip: classes.tooltipPaper, arrow: classes.tooltipArrow }}
+            >
+              <div>
+                <ActivityPostPublicDropdown
+                  visibilityIsPublic={visibilityIsPublic}
+                  onVisibilityChange={(newVisibility) => setVisibilityIsPublic(newVisibility)}
+                />
+              </div>
+            </Tooltip>
           </UserInfoText>
         </UserInfoWrapper>
         <RadioGroup
