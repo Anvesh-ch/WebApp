@@ -920,7 +920,7 @@ class PoliticianDetailsPage extends Component {
       }
     }
     let positionListTeaserHtml = <></>;
-    if (allCachedPositionsForThisPolitician) {
+    if (allCachedPositionsForThisPolitician && allCachedPositionsForThisPolitician.length > 0) {
       positionListTeaserHtml = (
         <CommentsListWrapper>
           <DelayedLoad waitBeforeShow={loadSlow ? 1000 : 0}>
