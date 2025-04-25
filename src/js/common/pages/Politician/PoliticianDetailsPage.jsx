@@ -950,7 +950,11 @@ class PoliticianDetailsPage extends Component {
           </Suspense>
         )}
         <Helmet>
-          <title>{htmlTitle}</title>
+          <title>
+            {htmlTitle}
+            {' - '}
+            {politicianNameParsedFromURLBeforeLoad}
+          </title>
           {politicianSEOFriendlyPathFromUrl ? (
             <link rel="canonical" href={`https://wevote.us/${politicianSEOFriendlyPathFromUrl}/-/`} />
           ) : (
