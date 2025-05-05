@@ -1,3 +1,4 @@
+import TagManager from 'react-gtm-module';
 import { keyframes } from '@emotion/react';
 import { PersonSearch } from '@mui/icons-material';
 import { Button } from '@mui/material';
@@ -46,7 +47,8 @@ import normalizedImagePath from '../../utils/normalizedImagePath';
 import { getPoliticianValuesFromIdentifiers, retrievePoliticianFromIdentifiersIfNeeded } from '../../utils/politicianUtils';
 import returnFirstXWords from '../../utils/returnFirstXWords';
 import saveCampaignSupportAndGoToNextPage from '../../utils/saveCampaignSupportAndGoToNextPage';
-import VoterPositionEntryAndDisplay from '../../../components/PositionItem/VoterPositionEntryAndDisplay';
+import extractPoliticianDetailsFromUrl from '../../utils/extractPoliticianDetailsFromUrl';
+import VoterStore from '../../../stores/VoterStore';
 
 const CampaignRetrieveController = React.lazy(() => import(/* webpackChunkName: 'CampaignRetrieveController' */ '../../components/Campaign/CampaignRetrieveController'));
 const CampaignSupportThermometer = React.lazy(() => import(/* webpackChunkName: 'CampaignSupportThermometer' */ '../../components/CampaignSupport/CampaignSupportThermometer'));
@@ -96,39 +98,6 @@ function marginTopOffset (scrolledDown) {
   return 0;
 }
 
-function extractPoliticianDetailsFromUrl(url) {
-  // Split the URL into parts using '/'
-  const parts = url.split('/');
-
-  // assume the second part of the path is the SEO-friendly string ("nancy-a-montgomery-politician-from-new-york")
-  const seoFriendlyPart = parts[1];
-  console.log('SEO Friendly Part:', seoFriendlyPart);
-
-  if (!seoFriendlyPart) {
-    return { state: null, name: null };  // If there's no seoFriendlyPart, return null for state and name
-  }
-
-  // Split the SEO-friendly part by dashes to get the name and state words
-  const words = seoFriendlyPart.split('-');
-  console.log('Words:', words);
-
-  const fromIndex = words.lastIndexOf('from');   // Look for the last occurrence of "from", as it typically separates the name and state, reduce chances of pulling "from" in the name
-  console.log('From last Index:', fromIndex);
-
-  if (fromIndex === -1) {
-    return { state: null, name: null }; // If 'from' is not found, return null for both
-  }
-
-  // Extract state and name based on the position of 'from'
-  const state = words.slice(fromIndex + 1).join(' ');  // Combine words after 'from' for the state
-  const name = words.slice(0, fromIndex).join(' ');   // Combine words before 'from' for the name
-  const nameWithoutPolitician = name ? name.replace(/\bpolitician\b/i, '').trim() : null;
-
-
-  return { state, name: nameWithoutPolitician };
-}
-
-
 class PoliticianDetailsPage extends Component {
   constructor (props) {
     super(props);
@@ -159,6 +128,7 @@ class PoliticianDetailsPage extends Component {
       wikipediaUrl: '',
       politicianStateParsedFromURLBeforeLoad: '',
       politicianNameParsedFromURLBeforeLoad: '',
+      dataLayerSent: false, // instance flag for GTM
       // youtubeUrl: '',
     };
     // this.onScroll = this.onScroll.bind(this);
@@ -335,6 +305,37 @@ class PoliticianDetailsPage extends Component {
     if (triggerFreshRetrieve || triggerSEOPathRedirect) {
       // Take the "calculated" identifiers and retrieve if missing
       window.scrollTo(0, 0);
+    }
+    // --------Zubin - TAGMANAGER DATA LAYER LOGIC---------
+    if (!this.state.dataLayerSent) {
+      // console.log("TagManager code executing...");
+      // console.log("Politician ID id exists? ", politician);
+      if (politician && politician.politician_we_vote_id) {
+        // console.log('Politician Details retrieved, Adding DataLayer...');
+        const voterWeVoteId = VoterStore.getVoterWeVoteId();
+        const politicianState = politician.state_code || 'na';
+        const dataLayerObj = {
+          event: 'politicianLoadingPage',
+          userDetails: {
+            voterWeVoteId,
+          },
+          politicianDetails: {
+            politicianWeVoteId: politician.politician_we_vote_id,
+            politicianName: politician.politician_name,
+            politicianState,
+          },
+          pageDetails: {
+            pageType: 'politician', // in which page we are currently
+            pageName: this.constructor.name, // name of page from constructor itself
+            pathname: window.location.pathname, // location of the current window contains pathname
+          },
+        };
+        TagManager.dataLayer({ dataLayer: dataLayerObj });
+        // Set the flag to true so that it runs just once
+        this.setState({
+          dataLayerSent: true,
+        });
+      }
     }
   }
 
@@ -615,7 +616,26 @@ class PoliticianDetailsPage extends Component {
     }
   }
 
+  // TagManger from Candidate page on View your full Ballot button-AnujaLawankar
   goToBallot = () => {
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'view_your_full_ballot',
+        userDetails: {
+          voterWeVoteId: VoterStore.getVoterWeVoteId(),
+        },
+        destinationDetails: {
+          destinationPageName: 'Ballot',  // Navigated Page
+          destinationPageType: 'ballot',  // Type of page
+          destinationPathname: '/ballot', // Path for Navigation
+        },
+        pageDetails: {
+          pageName: 'PoliticianDetailsPage',
+          pageType: 'politician',
+          pathname: window.location.pathname, // Current page path
+        },
+      },
+    });
     historyPush('/ballot');
   }
 
@@ -658,7 +678,6 @@ class PoliticianDetailsPage extends Component {
       wikipediaUrl, youtubeUrl,
     } = this.state;
     let { contestOfficeName } = this.state;
-    const { showOpinionModal } = this.state;
 
     const politicianLinksList = [];
     if (politicianUrl) {
@@ -931,7 +950,11 @@ class PoliticianDetailsPage extends Component {
           </Suspense>
         )}
         <Helmet>
-          <title>{htmlTitle}</title>
+          <title>
+            {htmlTitle}
+            {' - '}
+            {politicianNameParsedFromURLBeforeLoad}
+          </title>
           {politicianSEOFriendlyPathFromUrl ? (
             <link rel="canonical" href={`https://wevote.us/${politicianSEOFriendlyPathFromUrl}/-/`} />
           ) : (
@@ -1210,13 +1233,6 @@ class PoliticianDetailsPage extends Component {
                 />
               </ColumnOneThird>
               <ColumnTwoThirds>
-                {/* Opinion block */}
-                {/* Render the modal */}
-                <VoterPositionEntryAndDisplay
-                  show={showOpinionModal}
-                  toggleModal={this.toggleOpinionModal}
-                  politicianName={politicianName}
-                />
                 {(opponentCandidateList && opponentCandidateList.length > 0) && (
                   <CandidateCampaignListDesktop>
                     <CampaignSubSectionTitleWrapper>
