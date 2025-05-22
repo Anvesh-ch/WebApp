@@ -312,12 +312,13 @@ class PoliticianDetailsPage extends Component {
       // console.log("Politician ID id exists? ", politician);
       if (politician && politician.politician_we_vote_id) {
         // console.log('Politician Details retrieved, Adding DataLayer...');
-        const voterWeVoteId = VoterStore.getVoterWeVoteId();
         const politicianState = politician.state_code || 'na';
         const dataLayerObj = {
-          event: 'politicianLoadingPage',
+          event: 'politician_page_view',
           userDetails: {
-            voterWeVoteId,
+            stateCode: VoterStore.getStateCodeAny(),
+            userCohort: VoterStore.getAnalyticsUserCohort(),
+            voterWeVoteId: VoterStore.getVoterWeVoteId(),
           },
           politicianDetails: {
             politicianWeVoteId: politician.politician_we_vote_id,

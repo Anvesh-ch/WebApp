@@ -87,6 +87,10 @@ class VoterStore extends ReduceStore {
     return this.getState().address || {};
   }
 
+  getAnalyticsUserCohort () {
+    return 'organic'; // TODO: Add more options
+  }
+
   getBallotLocationForVoter () {
     // console.log('getBallotLocationForVoter this.getState().address:', this.getState().address);
     if (this.getState().address) {
@@ -225,6 +229,10 @@ class VoterStore extends ReduceStore {
 
   getStateCodeFromIPAddress () {
     return this.getState().voter.state_code_from_ip_address || '';
+  }
+
+  getStateCodeAny () {
+    return this.getStateCode() || this.getStateCodeFromIPAddress() || '';
   }
 
   getTextForMapSearch () {

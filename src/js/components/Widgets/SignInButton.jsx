@@ -20,6 +20,8 @@ export default function SignInButton (props) {
       dataLayer: {
         event: 'signInClick', // sign_in_click
         userDetails: {
+          stateCode: VoterStore.getStateCodeAny(),
+          userCohort: VoterStore.getAnalyticsUserCohort(),
           voterWeVoteId: VoterStore.getVoterWeVoteId(),
         },
         destinationDetails: {
