@@ -28,6 +28,9 @@ function UpdatePoliticianInformation (props) {
                     Add info
                   </div>
                 )}
+                destinationPageName="PoliticianEditForm"
+                destinationPageType="politician"
+                trackingOn
               />
             </AddInfoLink>
           </FlexLayoutDiv>
