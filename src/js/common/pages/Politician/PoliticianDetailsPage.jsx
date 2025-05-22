@@ -310,6 +310,7 @@ class PoliticianDetailsPage extends Component {
     if (!this.state.dataLayerSent) {
       // console.log("TagManager code executing...");
       // console.log("Politician ID id exists? ", politician);
+      // HELLO WORLD - Temp text that can be deleted
       if (politician && politician.politician_we_vote_id) {
         // console.log('Politician Details retrieved, Adding DataLayer...');
         const politicianState = politician.state_code || 'na';
@@ -780,7 +781,7 @@ class PoliticianDetailsPage extends Component {
       htmlTitle = politicianNameParsedFromURLBeforeLoad;
     }
     if (chosenWebsiteName) {
-      if (htmlTitle.length > 0 ) {
+      if (htmlTitle.length > 0) {
         htmlTitle += ' - ';
       }
       htmlTitle += chosenWebsiteName;
