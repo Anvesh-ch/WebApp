@@ -135,7 +135,6 @@ class PoliticianDetailsPage extends Component {
     // this.onScroll = this.onScroll.bind(this);
   }
 
-
   componentDidMount () {
     // console.log('PoliticianDetailsPage componentDidMount');
     const { match: { params } } = this.props;
