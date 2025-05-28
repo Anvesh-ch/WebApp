@@ -4,6 +4,7 @@ import withStyles from '@mui/styles/withStyles';
 import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
 import styled from 'styled-components';
+import TagManager from 'react-gtm-module';
 import ActivityActions from '../../actions/ActivityActions';
 import apiCalming from '../../common/utils/apiCalming';
 import { isIOSAppOnMac, setIconBadgeMessageCount } from '../../common/utils/cordovaUtils';
@@ -17,6 +18,7 @@ import ActivityStore from '../../stores/ActivityStore';
 import VoterStore from '../../stores/VoterStore';
 import { createDescriptionOfFriendPosts } from '../../utils/activityUtils';
 import DesignTokenColors from '../../common/components/Style/DesignTokenColors';
+import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
 
 const ImageHandler = React.lazy(() => import(/* webpackChunkName: 'ImageHandler' */ '../ImageHandler'));
 
@@ -95,22 +97,39 @@ class HeaderNotificationMenu extends Component {
     }
   }
 
-  onSettingsClick = () => {
-    this.handleClose();
-    historyPush('/settings/notifications');
-  }
+
+onSettingsClick = (currentPathname) => {
+  const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+  TagManager.dataLayer({
+    dataLayer: {
+      event: 'SettingsButtonClick', // Added detailed event name
+      pageDetails: {
+        pageName: currentPage.pageName,
+        pageType: currentPage.pageType,
+        pathname: currentPathname,
+      },
+      userDetails: {
+        weVoteVoterId: VoterStore.getVoterWeVoteId(),
+      },
+    },
+  });
+  console.log('dataLayer contents after click:', window.dataLayer);
+  this.handleClose();
+  historyPush('/settings/notifications');
+}
 
   generateMenuItemList = (allActivityNotices) => {
     const { classes } = this.props;
     const voterWeVoteId = VoterStore.getVoterWeVoteId();
     const menuItemList = [];
+    const { location: { pathname: currentPathname } } = window; // Get path here
     menuItemList.push(
       <MenuItem
         className={classes.menuItemClicked}
         data-toggle="dropdown"
         id="notificationsHeader"
         key="notificationsHeader"
-        onClick={this.onSettingsClick}
+        onClick={() => this.onSettingsClick(currentPathname)}
       >
         <NotificationsHeaderWrapper>
           <NotificationsTitle>
