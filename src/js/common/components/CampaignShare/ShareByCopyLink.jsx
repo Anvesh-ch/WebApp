@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
+import TagManager from 'react-gtm-module';
 import CampaignSupporterActions from '../../actions/CampaignSupporterActions';
 import { renderLog } from '../../utils/logging';
 import AppObservableStore, { messageService } from '../../stores/AppObservableStore';
@@ -96,6 +97,23 @@ class ShareByCopyLink extends Component {
     if (this.props.onClickFunction) {
       this.props.onClickFunction();
     }
+    // adding dataLayer for "Copy link" on Share Ballot
+    const currentPathname = window.location.pathname;
+
+    const dataLayerObject = {
+      event: 'ShareBallotCopyLinkClick',
+      shareDetails: {
+        shareType: this.props.shareType || 'ballotWithChoices',
+        campaignXWeVoteId: this.props.campaignXWeVoteId || null,
+      },
+      pageDetails: {
+        pageName: 'ShareBallotModal',
+        pathname: currentPathname,
+      },
+      timestamp: new Date().toISOString(),
+    };
+    console.log('DataLayer for copy link:', dataLayerObject);
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
   }
 
   render () {
@@ -124,6 +142,7 @@ ShareByCopyLink.propTypes = {
   darkButton: PropTypes.bool,
   mobileMode: PropTypes.bool,
   onClickFunction: PropTypes.func,
+  shareType: PropTypes.string,
   uniqueExternalId: PropTypes.string,
 };
 
