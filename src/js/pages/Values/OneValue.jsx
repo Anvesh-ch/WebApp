@@ -153,6 +153,31 @@ class OneValue extends Component {
   }
 
   changeListModeShown = (newListModeShown) => {
+    const { location: { pathname: currentPathname } } = window;
+    const { pageName, pageType } = lookupPageNameAndPageTypeDict(currentPathname);
+    const { issue } = this.state;
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'filterToggleClick',
+        filterSelected: newListModeShown,
+        pageDetails: {
+          pageName,
+          pageType,
+          pathname: currentPathname,
+        },
+        userDetails: {
+          voterWeVoteId: VoterStore.getVoterWeVoteId(),
+          stateCode: VoterStore.getVoterStateCode(),
+          userCohort: VoterStore.getAnalyticsUserCohort(),
+        },
+        topicDetails: {
+          topicName: issue.issue_name,
+          topicWeVoteId: issue.issue_we_vote_id,
+          consideredLeft: issue.considered_left,
+          consideredRight: issue.considered_right,
+        },
+      },
+    });
     this.setState({
       listModeShown: newListModeShown,
     });
@@ -271,25 +296,7 @@ class OneValue extends Component {
                 label={<span style={showEndorsersForThisElection ? { fontWeight: 600 } : {}}>For This Election</span>}
                 className={showEndorsersForThisElection ? classes.selectedChip : classes.notSelectedChip}
                 component="div"
-                // Yousra Elzamzami - WV-1135
-                onClick={() => {
-                  const {pageName, pageType} = lookupPageNameAndPageTypeDict(window.location.pathname);
-                  TagManager.dataLayer({
-                    dataLayer: {
-                      event: 'filterToggleClick',
-                      filterSelected: 'voterGuidesForThisElection',
-                      pageDetails: {
-                        pageName,
-                        pageType,
-                        pathname: window.location.pathname,
-                      },
-                      userDetails: {
-                        voterWeVoteId: VoterStore.getVoterWeVoteId(),
-                      },
-                    },
-                  });
-                  this.changeListModeShown('voterGuidesForThisElection');
-                }}
+                onClick={() => this.changeListModeShown('voterGuidesForThisElection')}
                 variant={showEndorsersForThisElection ? undefined : 'outlined'}
               />
               <Chip
@@ -298,24 +305,7 @@ class OneValue extends Component {
                 label={<span style={showAllEndorsers ? { fontWeight: 600 } : {}}>All Endorsers</span>}
                 className={showAllEndorsers ? classes.selectedChip : classes.notSelectedChip}
                 component="div"
-                onClick={() => {
-                  const { pageName, pageType } = lookupPageNameAndPageTypeDict(window.location.pathname);
-                  TagManager.dataLayer({
-                    dataLayer: {
-                      event: 'filterToggleClick',
-                      filterSelected: 'allEndorsers',
-                      pageDetails: {
-                        pageName,
-                        pageType,
-                        pathname: window.location.pathname,
-                      },
-                      userDetails: {
-                        voterWeVoteId: VoterStore.getVoterWeVoteId(),
-                      },
-                    },
-                  });
-                  this.changeListModeShown('allEndorsers');
-                }}
+                onClick={() => this.changeListModeShown('allEndorsers')}
                 variant={showAllEndorsers ? undefined : 'outlined'}
               />
             </FilterChoices>
