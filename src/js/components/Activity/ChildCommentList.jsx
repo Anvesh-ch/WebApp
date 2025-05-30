@@ -2,7 +2,6 @@ import { MoreHoriz } from '@mui/icons-material';
 import { Avatar, IconButton } from '@mui/material';
 import styled from 'styled-components';
 import withStyles from '@mui/styles/withStyles';
-import withTheme from '@mui/styles/withTheme';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactionActions from '../../actions/ReactionActions';
@@ -212,9 +211,10 @@ class ChildCommentList extends Component {
                   </SpeakerAvatar>
                 ) : (
                   <SpeakerAvatar>
-                    <Avatar sx={speakerDisplayNameToAvatarColor(childComment.commenter_name)}>
-                      {speakerDisplayNameToInitials(childComment.commenter_name)}
-                    </Avatar>
+                    {(() => {
+                      const { sx, children } = speakerDisplayNameToInitials(childComment.commenter_name);
+                      return <Avatar sx={sx}>{children}</Avatar>;
+                    })()}
                   </SpeakerAvatar>
                 )}
               </ChildCommentPhotoDiv>
