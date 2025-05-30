@@ -100,20 +100,27 @@ class HeaderNotificationMenu extends Component {
 
 onSettingsClick = (currentPathname) => {
   const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+  const destinationPage = lookupPageNameAndPageTypeDict('/settings/notifications');
   TagManager.dataLayer({
     dataLayer: {
-      event: 'SettingsButtonClick', // Added detailed event name
+      event: 'clickSettingsButton', // Added detailed event name
       pageDetails: {
         pageName: currentPage.pageName,
         pageType: currentPage.pageType,
         pathname: currentPathname,
       },
+      destinationDetails: {
+        destinationPageName: destinationPage.pageName,
+        destinationPageType: destinationPage.pageType,
+        destinationPathname: '/settings/notifications',
+      },
       userDetails: {
-        weVoteVoterId: VoterStore.getVoterWeVoteId(),
+        stateCode: VoterStore.getVoterStateCode(),
+        userCohort: VoterStore.getAnalyticsUserCohort(),
+        voterWeVoteId: VoterStore.getVoterWeVoteId(),
       },
     },
   });
-  console.log('dataLayer contents after click:', window.dataLayer);
   this.handleClose();
   historyPush('/settings/notifications');
 }
