@@ -937,8 +937,7 @@ class PoliticianDetailsPage extends Component {
               <PoliticianEndorsementsList
                 hideEncouragementToEndorse
                 politicianWeVoteId={politicianWeVoteIdForDisplay}
-                showTitle
-                startingNumberOfPositionsToDisplay={2}
+                startingNumberOfPositionsToDisplay={5}
               />
             </Suspense>
           </DelayedLoad>
