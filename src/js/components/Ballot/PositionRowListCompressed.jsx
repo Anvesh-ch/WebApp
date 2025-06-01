@@ -456,7 +456,6 @@ PositionRowListCompressed.propTypes = {
   positionListFromFriendsHasBeenRetrieved: PropTypes.array,
   showInfoOnly: PropTypes.bool,
   showOppose: PropTypes.bool,
-  // showOpposeDisplayNameIfNoSupport: PropTypes.bool,
   showSupport: PropTypes.bool,
 };
 
