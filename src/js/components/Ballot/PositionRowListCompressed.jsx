@@ -93,13 +93,10 @@ class PositionRowListCompressed extends Component {
   handleTalkingAboutClick = () => {
     const { location: { pathname: currentPathname } } = window;
     const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+    const { ballotItemWeVoteId } = this.props;
 
     const dataLayerObject = {
-      event: 'clickTalkingAbout',
-      candidateDetails: {
-        candidateName: this.props.candidateName,
-        candidateWeVoteId: this.props.ballotItemWeVoteId,
-      },
+      event: 'click_talking_about',
       destinationDetails: {
         destinationPageName: currentPage.pageName,
         destinationPageType: 'CandidateEndorsementModal',
@@ -122,6 +119,25 @@ class PositionRowListCompressed extends Component {
         voterWeVoteId: VoterStore.getVoterWeVoteId(),
       },
     };
+    // Add candidate or measure details based on ballotItemWeVoteId
+    if (ballotItemWeVoteId.includes('cand')) {
+      const candidate = CandidateStore.getCandidateByWeVoteId(ballotItemWeVoteId);
+      dataLayerObject.candidateDetails = {
+        candidateWeVoteId: ballotItemWeVoteId,
+        candidateName: candidate ? candidate.ballot_item_display_name : '',
+        // Add other properties from spreadsheet as available:
+        // image: candidate ? candidate.candidate_photo_url : '',
+        // officeName: candidate ? candidate.contest_office_name : '',
+        // politicalParty: candidate ? candidate.party : '',
+        // stateCode: candidate ? candidate.state_code : '',
+      };
+    } else if (ballotItemWeVoteId.includes('meas')) {
+      dataLayerObject.measureDetails = {
+        measureWeVoteId: ballotItemWeVoteId,
+        measureName: MeasureStore.getMeasureName(ballotItemWeVoteId),
+        // stateCode: // Add if available
+      };
+    }
 
     TagManager.dataLayer({ dataLayer: dataLayerObject });
 
@@ -129,6 +145,7 @@ class PositionRowListCompressed extends Component {
   };
 
   onClickShowOrganizationModalWithBallotItemInfoAndPositions () {
+    this.handleTalkingAboutClick();
     const { ballotItemWeVoteId } = this.props;
     AppObservableStore.setOrganizationModalBallotItemWeVoteId(ballotItemWeVoteId);
     AppObservableStore.setShowOrganizationModal(true);
@@ -192,12 +209,20 @@ class PositionRowListCompressed extends Component {
   }
 
   getTalkingAboutText = () => {
-    const { candidateName } = this.props;
-    const endorsementCount = this.getEndorsementCount();
+    const { ballotItemWeVoteId } = this.props;
+    let itemName = '';
 
+    if (ballotItemWeVoteId.includes('cand')) {
+      const candidate = CandidateStore.getCandidateByWeVoteId(ballotItemWeVoteId);
+      itemName = candidate ? candidate.ballot_item_display_name : '';
+    } else if (ballotItemWeVoteId.includes('meas')) {
+      itemName = MeasureStore.getMeasureName(ballotItemWeVoteId);
+    }
+
+    const endorsementCount = this.getEndorsementCount();
     if (endorsementCount === 0) return '';
-    if (endorsementCount === 1) return `is talking about ${candidateName}`;
-    return `are talking about ${candidateName}`;
+    if (endorsementCount === 1) return `is talking about ${itemName}`;
+    return `are talking about ${itemName}`;
   };
 
   getOrganizationCount = () => {
@@ -451,7 +476,6 @@ class PositionRowListCompressed extends Component {
 
 PositionRowListCompressed.propTypes = {
   ballotItemWeVoteId: PropTypes.string.isRequired,
-  candidateName: PropTypes.string,
   firstInstance: PropTypes.bool,
   positionListFromFriendsHasBeenRetrieved: PropTypes.array,
   showInfoOnly: PropTypes.bool,
