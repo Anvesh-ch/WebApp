@@ -206,7 +206,7 @@ class ShareModal extends Component {
       },
     });
     
-    this.props.closeShareModal(pathname);
+    this.props.closeShareModal(currentPathname);
   }
 
   render () {
