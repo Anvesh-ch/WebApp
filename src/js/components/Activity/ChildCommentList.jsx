@@ -2,7 +2,7 @@ import { MoreHoriz } from '@mui/icons-material';
 import { Avatar, IconButton } from '@mui/material';
 import styled from 'styled-components';
 import withStyles from '@mui/styles/withStyles';
-import withTheme from '@mui/styles/withTheme'
+import withTheme from '@mui/styles/withTheme';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactionActions from '../../actions/ReactionActions';
