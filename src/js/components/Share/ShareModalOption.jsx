@@ -68,6 +68,19 @@ class ShareModalOption extends Component {
     if (this.props.onClickFunction) {
       this.props.onClickFunction();
     }
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'ShareModalCopyLinkClick',
+      shareDetails: {
+        title: this.props.title || 'Copy link',
+        urlShared: this.props.urlToShare || '',
+      },
+      pageDetails: {
+        pageName: 'ShareModal',
+        pathname: window.location.pathname,
+      },
+      timestamp: new Date().toISOString(),
+    });
   }
 
   render () {

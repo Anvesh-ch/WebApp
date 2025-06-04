@@ -84,6 +84,19 @@ class ShareOnTwitterButton extends Component {
 
   saveActionShareButton = () => {
     CampaignSupporterActions.shareButtonClicked(true);
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'ShareBallotTwitterClick',
+      shareDetails: {
+        platform: 'Twitter',
+        campaignXWeVoteId: this.props.campaignXWeVoteId || null,
+      },
+      pageDetails: {
+        pageName: 'ShareBallotModal',
+        pathname: window.location.pathname,
+      },
+      timestamp: new Date().toISOString(),
+    });
   }
 
   render () {
