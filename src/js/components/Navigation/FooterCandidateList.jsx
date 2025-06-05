@@ -1,10 +1,10 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
-import TagManager from "react-gtm-module";
-import { convertStateTextToStateCode, stateCodeMap } from "../../common/utils/addressFunctions";
-import lookupPageNameAndPageTypeDict from "../../utils/lookupPageNameAndPageTypeDict";
-import VoterStore from "../../stores/VoterStore";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import TagManager from 'react-gtm-module';
+import { convertStateTextToStateCode, stateCodeMap } from '../../common/utils/addressFunctions';
+import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import VoterStore from '../../stores/VoterStore';
 // React functional component example
 export default function FooterCandidateList () {
   const stateNameList = Object.values(stateCodeMap);
@@ -20,28 +20,27 @@ export default function FooterCandidateList () {
     const destinationPage = lookupPageNameAndPageTypeDict(linkTo);
 
     const dataLayerObject = {
-      event: "click",
+      event: 'click',
       userDetails: {
-        voterWeVoteId: VoterStore.getVoterWeVoteId(),
         stateCode: VoterStore.getVoterStateCode(),
         userCohort: VoterStore.getAnalyticsUserCohort(),
+        voterWeVoteId: VoterStore.getVoterWeVoteId(),
       },
       pageDetails: {
-        pageType: page.pageType,
         pageName: page.pageName,
+        pageType: page.pageType,
         pathname: currentPathname,
       },
       destinationDetails: {
-        destinationPageType: destinationPage.pageType,
         destinationPageName: destinationPage.pageName,
+        destinationPageType: destinationPage.pageType,
         destinationPathname: linkTo,
       },
     };
 
-    TagManager.dataLayer(dataLayerObject); // <--- This is the correct way if it expects the object directly
+    TagManager.dataLayer(dataLayerObject);
 
-    // And you can log the variable you just defined
-    console.log(dataLayerObject);
+//    console.log(dataLayerObject);
   }
 
   return (
@@ -53,7 +52,7 @@ export default function FooterCandidateList () {
         stateCode = convertStateTextToStateCode(stateName);
         stateNamePhrase = `${stateName}-candidates`;
         stateNamePhraseLowerCase = stateNamePhrase
-          .replace(/\s+/g, "-")
+          .replace(/\s+/g, '-')
           .toLowerCase();
         // console.log('tempStateCode:', tempStateCode, ', stateAlreadySelected:', stateAlreadySelected);
         const linkTo = `/${stateNamePhraseLowerCase}/cs/`;
@@ -76,19 +75,19 @@ export default function FooterCandidateList () {
   );
 }
 
-const FooterCandidateListWrapper = styled("span")`
+const FooterCandidateListWrapper = styled('span')`
   align-items: center;
   display: flex;
   flex-flow: column;
   margin-top: 10px; // To match BallotElectionListWithFilters
 `;
 
-const SimpleModeItemWrapper = styled("div")`
+const SimpleModeItemWrapper = styled('div')`
   cursor: pointer;
   margin-top: 12px;
 `;
 
-const SimpleModeTitle = styled("h2")`
+const SimpleModeTitle = styled('h2')`
   margin: 0 !important;
   font-size: 18px;
   font-weight: 600;
