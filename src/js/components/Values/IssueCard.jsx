@@ -148,6 +148,7 @@ class IssueCard extends Component {
     const { issue } = this.state;
     const { pageName, pageType } = lookupPageNameAndPageTypeDict(currentPathname);
     const destinationPathname = this.getIssueLink();
+    const { destinationPageName, destinationPageType } = lookupPageNameAndPageTypeDict(destinationPathname);
 
     TagManager.dataLayer({
       dataLayer: {
@@ -172,8 +173,8 @@ class IssueCard extends Component {
           topicWeVoteId: issue.issue_we_vote_id,
         },
         destinationDetails: {
-          destinationPageName: 'IssuePage',
-          destinationPageType: 'issue',
+          destinationPageName,
+          destinationPageType,
           destinationPathname,
         },
       },
@@ -403,6 +404,7 @@ class IssueCard extends Component {
                               to={this.getIssueLink}
                               className="u-no-underline"
                               tabIndex={-1}
+                              onClick={this.handleIssueClick}
                         >
                           {issueImage}
                         </Link>
@@ -419,6 +421,7 @@ class IssueCard extends Component {
                     <Link id="valueListLink"
                           to={this.getIssueLink}
                           className="u-link-color"
+                          onClick={this.handleIssueClick}
                     >
                       {issueNameAndCount}
                     </Link>
