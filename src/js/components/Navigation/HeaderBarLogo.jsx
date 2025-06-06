@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import React, { Suspense } from 'react';
 import { Link } from 'react-router-dom';
+import TagManager from 'react-gtm-module';
 import styled from 'styled-components';
 import { isCordova } from '../../common/utils/isCordovaOrWebApp';
 import normalizedImagePath from '../../common/utils/normalizedImagePath';
 import HeaderLogoImage from './HeaderLogoImage';
-import TagManager from 'react-gtm-module';
 import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import VoterStore from '../../stores/VoterStore';
 
 const DelayedLoad = React.lazy(() => import(/* webpackChunkName: 'DelayedLoad' */ '../../common/components/Widgets/DelayedLoad'));
 
@@ -16,23 +17,32 @@ const logoDark = '../../../img/global/svg-icons/we-vote-logo-horizontal-color-da
 const HeaderBarLogo = ({ chosenSiteLogoUrl, isBeta, light }) => {
   const homepagePath = '/ready';
 
-  function handleClick() {
+  function handleClick () {
     const { location: { pathname: currentPathname } } = window;
-    const page = lookupPageNameAndPageTypeDict(currentPathname);
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
     const destinationPage = lookupPageNameAndPageTypeDict(homepagePath);
 
     TagManager.dataLayer({
       dataLayer: {
-        event: 'click',
+        actionDetails: {
+          actionType: 'navigate',
+          buttonId: 'logoHeaderBar',
+        },
+        event: 'action',
         pageDetails: {
-          pageType: page.pageType,
-          pageName: page.pageName,
+          pageName: currentPage.pageName,
+          pageType: currentPage.pageType,
           pathname: currentPathname,
         },
         destinationDetails: {
-          destinationPageType: destinationPage.pageType,
           destinationPageName: destinationPage.pageName,
+          destinationPageType: destinationPage.pageType,
           destinationPathname: homepagePath,
+        },
+        userDetails: {
+          stateCode: VoterStore.getVoterStateCode(),
+          userCohort: VoterStore.getAnalyticsUserCohort(),
+          voterWeVoteId: VoterStore.getVoterWeVoteId(),
         },
       },
     });
@@ -41,12 +51,12 @@ const HeaderBarLogo = ({ chosenSiteLogoUrl, isBeta, light }) => {
   return (
     <HeaderBarLogoWrapper id="HeaderBarLogoWrapper">
       {chosenSiteLogoUrl ? (
-        <Link to={homepagePath} id="logoHeaderBar" onClick={handleClick} >
+        <Link to={homepagePath} id="logoHeaderBar" onClick={handleClick}>
           <HeaderLogoImage src={chosenSiteLogoUrl} />
         </Link>
       ) : (
         <WeVoteLogoWrapper>
-          <Link to={homepagePath} id="logoHeaderBar" onClick={handleClick} >
+          <Link to={homepagePath} id="logoHeaderBar" onClick={handleClick}>
             <HeaderLogoImage src={light ? normalizedImagePath(logoLight) : normalizedImagePath(logoDark)} />
             {(isBeta && !isCordova()) && (
               <BetaMarker>
