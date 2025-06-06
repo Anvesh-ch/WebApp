@@ -133,7 +133,7 @@ class FooterMainWeVote extends Component {
                 linkIdAttribute="footerLinkWeVoteHelp"
                 url="https://help.wevote.us/hc/en-us"
                 target="_blank"
-                className="{classes.link}"
+                className={classes.link}
                 // destinationPageName={helpDestinationPage.pageName}
                 // destinationPageType={helpDestinationPage.pageType}
                 trackingOn
