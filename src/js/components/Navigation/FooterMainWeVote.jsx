@@ -44,41 +44,59 @@ class FooterMainWeVote extends Component {
     AppObservableStore.setShowHowItWorksModal(true);
 
     const { location: { pathname: currentPathname } } = window;
-    const page = lookupPageNameAndPageTypeDict(currentPathname);
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
     TagManager.dataLayer({
       dataLayer: {
-        event: 'click',
+        actionDetails: {
+          actionType: 'openModal',
+          buttonId: 'footerLinkHowItWorks',
+        },
+        event: 'action',
         pageDetails: {
-          pageType: page.pageType,
-          pageName: page.pageName,
+          pageName: currentPage.pageName,
+          pageType: currentPage.pageType,
           pathname: currentPathname,
         },
         destinationDetails: {
-          destinationPageType: page.pageType,
           destinationPageName: 'HowItWorksModal',
+          destinationPageType: currentPage.pageType,
           destinationPathname: currentPathname,
+        },
+        userDetails: {
+          stateCode: VoterStore.getVoterStateCode(),
+          userCohort: VoterStore.getAnalyticsUserCohort(),
+          voterWeVoteId: VoterStore.getVoterWeVoteId(),
         },
       },
     });
   }
 
-  pushDataLayer (destinationPath) {
+  pushDataLayer (destinationPath, buttonId = '') {
     const { location: { pathname: currentPathname } } = window;
-    const page = lookupPageNameAndPageTypeDict(currentPathname);
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
     const destinationPage = lookupPageNameAndPageTypeDict(destinationPath);
 
     TagManager.dataLayer({
       dataLayer: {
-        event: 'click',
+        actionDetails: {
+          actionType: 'navigate',
+          buttonId,
+        },
+        event: 'action',
         pageDetails: {
-          pageType: page.pageType,
-          pageName: page.pageName,
+          pageName: currentPage.pageName,
+          pageType: currentPage.pageType,
           pathname: currentPathname,
         },
         destinationDetails: {
-          destinationPageType: destinationPage.pageType,
           destinationPageName: destinationPage.pageName,
+          destinationPageType: destinationPage.pageType,
           destinationPathname: destinationPath,
+        },
+        userDetails: {
+          stateCode: VoterStore.getVoterStateCode(),
+          userCohort: VoterStore.getAnalyticsUserCohort(),
+          voterWeVoteId: VoterStore.getVoterWeVoteId(),
         },
       },
     });
@@ -127,7 +145,15 @@ class FooterMainWeVote extends Component {
         <TopSectionOuterWrapper>
           <TopSectionInnerWrapper>
             <OneRow>
-              <button type="button" style={{ border: 'none', backgroundColor: 'transparent', padding: '0' }} id="footerLinkHowItWorks" className={classes.onClickDiv} onClick={this.openHowItWorksModal}>How It Works</button>
+              <button
+                type="button"
+                style={{ border: 'none', backgroundColor: 'transparent', padding: '0' }}
+                id="footerLinkHowItWorks"
+                className={classes.onClickDiv}
+                onClick={this.openHowItWorksModal}
+              >
+                How It Works
+              </button>
               <RowSpacer />
               <OpenExternalWebSite
                 linkIdAttribute="footerLinkWeVoteHelp"

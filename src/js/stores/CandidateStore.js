@@ -180,7 +180,9 @@ class CandidateStore extends ReduceStore {
 
   getCandidateName (candidateWeVoteId) {
     const candidate = this.getCandidateByWeVoteId(candidateWeVoteId);
-    if (candidate && candidate.ballot_item_display_name) {
+    if (candidate && candidate.candidate_name) {
+      return candidate.candidate_name;
+    } else if (candidate && candidate.ballot_item_display_name) {
       return candidate.ballot_item_display_name;
     }
     return '';

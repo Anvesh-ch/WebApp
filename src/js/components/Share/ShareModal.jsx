@@ -183,29 +183,30 @@ class ShareModal extends Component {
     AnalyticsActions.saveActionShareButtonTwitter(VoterStore.electionId());
   }
 
-  closeShareModal = () => {
+  closeShareModal = (buttonId = '') => {
     const { location: { pathname: currentPathname } } = window;
-    const page = lookupPageNameAndPageTypeDict(currentPathname);
-    
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+
     TagManager.dataLayer({
       dataLayer: {
-        event: 'click',
-        userDetails: {
-          voterWeVoteId: VoterStore.getVoterWeVoteId(),
+        actionDetails: {
+          actionType: 'close',
+          buttonId,
         },
+        event: 'action',
         pageDetails: {
-          pageType: page.pageType,
-          pageName: page.pageName,
+          pageName: 'ShareModal',
+          pageType: currentPage.pageType,
           pathname: currentPathname,
         },
-        destinationDetails: {
-          destinationPageType: page.pageType,
-          destinationPageName: page.pageName,
-          destinationPathname: currentPathname,
+        userDetails: {
+          stateCode: VoterStore.getVoterStateCode(),
+          userCohort: VoterStore.getAnalyticsUserCohort(),
+          voterWeVoteId: VoterStore.getVoterWeVoteId(),
         },
       },
     });
-    
+
     this.props.closeShareModal(currentPathname);
   }
 
@@ -266,7 +267,7 @@ class ShareModal extends Component {
               <IconButton
                 aria-label="Close"
                 className={classes.closeButtonAbsolute}
-                onClick={this.closeShareModal}
+                onClick={() => this.closeShareModal('profileCloseShareModal')}
                 id="profileCloseShareModal"
                 size="large"
               >
@@ -355,7 +356,7 @@ class ShareModal extends Component {
             <IconButton
               aria-label="Close"
               className={classes.closeButton}
-              onClick={this.closeShareModal}
+              onClick={() => this.closeShareModal('profileCloseShareModal')}
               id="profileCloseShareModal"
               size="large"
             >

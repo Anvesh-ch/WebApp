@@ -71,7 +71,7 @@ class Donate extends Component {
         pageDetails: {
           pageName: currentPage.pageName,
           pageType: currentPage.pageType,
-          pathname: currentPathname
+          pathname: currentPathname,
         },
         userDetails: {
           stateCode: VoterStore.getVoterStateCode(),

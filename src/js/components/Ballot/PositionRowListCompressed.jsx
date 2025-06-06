@@ -90,13 +90,17 @@ class PositionRowListCompressed extends Component {
     if (this.positionItemTimer) clearTimeout(this.positionItemTimer);
   }
 
-  handleTalkingAboutClick = () => {
+  handleTalkingAboutClick = (buttonId = '') => {
     const { location: { pathname: currentPathname } } = window;
     const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
     const { ballotItemWeVoteId } = this.props;
 
     const dataLayerObject = {
-      event: 'click_talking_about',
+      actionDetails: {
+        actionType: 'openModal',
+        buttonId,
+      },
+      event: 'action',
       destinationDetails: {
         destinationPageName: currentPage.pageName,
         destinationPageType: 'CandidateEndorsementModal',
@@ -115,7 +119,7 @@ class PositionRowListCompressed extends Component {
       },
       userDetails: {
         stateCode: VoterStore.getVoterStateCode(),
-        userCohort: VoterStore.getAnalyticsUserCohort?.() || 'unknown',
+        userCohort: VoterStore.getAnalyticsUserCohort(),
         voterWeVoteId: VoterStore.getVoterWeVoteId(),
       },
     };
@@ -150,15 +154,15 @@ class PositionRowListCompressed extends Component {
     // console.log('Talking about click tracked');
   };
 
-  onClickShowOrganizationModalWithBallotItemInfoAndPositions () {
-    this.handleTalkingAboutClick();
+  onClickShowOrganizationModalWithBallotItemInfoAndPositions (buttonId = '') {
+    this.handleTalkingAboutClick(buttonId);
     const { ballotItemWeVoteId } = this.props;
     AppObservableStore.setOrganizationModalBallotItemWeVoteId(ballotItemWeVoteId);
     AppObservableStore.setShowOrganizationModal(true);
   }
 
-  onClickShowOrganizationModalWithPositions () {
-    this.handleTalkingAboutClick();
+  onClickShowOrganizationModalWithPositions (buttonId = '') {
+    this.handleTalkingAboutClick(buttonId);
     const { ballotItemWeVoteId } = this.props;
     // console.log(ballotItemWeVoteId)
     // console.log('onClickShowOrganizationModalWithPositions, ballotItemWeVoteId:', ballotItemWeVoteId);
@@ -446,7 +450,7 @@ class PositionRowListCompressed extends Component {
     return (
       <CandidateEndorsementsWrapper>
         <CandidateEndorsementsContainer data-modal-trigger>
-          <CandidateEndorsementPhotos onClick={() => this.onClickShowOrganizationModalWithPositions()}>
+          <CandidateEndorsementPhotos onClick={() => this.onClickShowOrganizationModalWithPositions('CandidateEndorsementPhotos')}>
             {filteredPositionList.map((onePosition) => {
               // console.log('numberOfPositionItemsDisplayed:', numberOfPositionItemsDisplayed, ', numberOfImagesToDisplay:', numberOfImagesToDisplay);
               // console.log('onePosition:', onePosition);
@@ -491,9 +495,9 @@ class PositionRowListCompressed extends Component {
             <CandidateEndorsementText
                 onClick={() => {
                   if (filteredPositionList && filteredPositionList.length === 0) {
-                    this.onClickShowOrganizationModalWithBallotItemInfoAndPositions();
+                    this.onClickShowOrganizationModalWithBallotItemInfoAndPositions('CandidateEndorsementText');
                   } else {
-                    this.onClickShowOrganizationModalWithPositions();
+                    this.onClickShowOrganizationModalWithPositions('CandidateEndorsementText');
                   }
                 }}
                 className="u-link-underline-on-hover"

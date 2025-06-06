@@ -128,7 +128,7 @@ class ReadyLight extends Component {
             </ElectionCountdownOuterWrapper>
             <ViewBallotButtonWrapper className="col-12" style={{ paddingTop: '18px' }}>
               <Suspense fallback={<></>}>
-                <ViewUpcomingBallotButton onClickFunction={this.goToBallot} onlyOfferViewYourBallot />
+                <ViewUpcomingBallotButton goToBallotFunction={this.goToBallot} onlyOfferViewYourBallot />
               </Suspense>
             </ViewBallotButtonWrapper>
 
@@ -175,7 +175,7 @@ class ReadyLight extends Component {
               </ReadyIntroductionMobileWrapper>
               <ViewBallotButtonWrapper className="col-12 u-show-mobile-tablet">
                 <Suspense fallback={<></>}>
-                  <ViewUpcomingBallotButton onClickFunction={this.goToBallot} />
+                  <ViewUpcomingBallotButton goToBallotFunction={this.goToBallot} />
                 </Suspense>
               </ViewBallotButtonWrapper>
               {!isAndroid() && (

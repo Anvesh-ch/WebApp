@@ -152,14 +152,14 @@ class IssueCard extends Component {
 
     TagManager.dataLayer({
       dataLayer: {
+        actionDetails: {
+          buttonId: 'valueListLink',
+        },
         event: 'action',
         pageDetails: {
           pageName,
           pageType,
           pathname: currentPathname,
-        },
-        actionDetails: {
-          buttonId: 'valueListLink',
         },
         userDetails: {
           stateCode: VoterStore.getVoterStateCode(),

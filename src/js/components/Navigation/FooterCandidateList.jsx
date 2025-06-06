@@ -12,23 +12,20 @@ export default function FooterCandidateList () {
   let stateNamePhrase;
   let stateNamePhraseLowerCase;
 
-  function handleClick (linkTo) {
-    const {
-      location: { pathname: currentPathname },
-    } = window;
-    const page = lookupPageNameAndPageTypeDict(currentPathname);
+  function handleClick (linkTo, buttonId = '') {
+    const { location: { pathname: currentPathname } } = window;
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
     const destinationPage = lookupPageNameAndPageTypeDict(linkTo);
 
     const dataLayerObject = {
-      event: 'click',
-      userDetails: {
-        stateCode: VoterStore.getVoterStateCode(),
-        userCohort: VoterStore.getAnalyticsUserCohort(),
-        voterWeVoteId: VoterStore.getVoterWeVoteId(),
+      actionDetails: {
+        actionType: 'navigate',
+        buttonId,
       },
+      event: 'action',
       pageDetails: {
-        pageName: page.pageName,
-        pageType: page.pageType,
+        pageName: currentPage.pageName,
+        pageType: currentPage.pageType,
         pathname: currentPathname,
       },
       destinationDetails: {
@@ -36,11 +33,14 @@ export default function FooterCandidateList () {
         destinationPageType: destinationPage.pageType,
         destinationPathname: linkTo,
       },
+      userDetails: {
+        stateCode: VoterStore.getVoterStateCode(),
+        userCohort: VoterStore.getAnalyticsUserCohort(),
+        voterWeVoteId: VoterStore.getVoterWeVoteId(),
+      },
     };
 
     TagManager.dataLayer(dataLayerObject);
-
-//    console.log(dataLayerObject);
   }
 
   return (
@@ -63,9 +63,10 @@ export default function FooterCandidateList () {
               id={`${stateNamePhraseLowerCase}_Link`}
               className="u-link-color"
               to={linkTo}
-              onClick={() => handleClick(linkTo)}
+              onClick={() => handleClick(linkTo, `${stateNamePhraseLowerCase}_Link`)}
             >
               {stateName}
+              {' '}
               candidates
             </Link>
           </SimpleModeItemWrapper>

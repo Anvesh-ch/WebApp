@@ -152,23 +152,27 @@ class OneValue extends Component {
     });
   }
 
-  changeListModeShown = (newListModeShown) => {
+  changeListModeShown = (buttonId) => {
     const { location: { pathname: currentPathname } } = window;
     const { pageName, pageType } = lookupPageNameAndPageTypeDict(currentPathname);
     const { issue } = this.state;
     TagManager.dataLayer({
       dataLayer: {
-        event: 'filterToggleClick',
-        filterSelected: newListModeShown,
+        actionDetails: {
+          actionType: 'filter',
+          buttonId,
+        },
+        event: 'action',
+        // filterSelected: buttonId,
         pageDetails: {
           pageName,
           pageType,
           pathname: currentPathname,
         },
         userDetails: {
-          voterWeVoteId: VoterStore.getVoterWeVoteId(),
           stateCode: VoterStore.getVoterStateCode(),
           userCohort: VoterStore.getAnalyticsUserCohort(),
+          voterWeVoteId: VoterStore.getVoterWeVoteId(),
         },
         topicDetails: {
           topicName: issue.issue_name,
@@ -179,7 +183,7 @@ class OneValue extends Component {
       },
     });
     this.setState({
-      listModeShown: newListModeShown,
+      listModeShown: buttonId,
     });
   }
 
