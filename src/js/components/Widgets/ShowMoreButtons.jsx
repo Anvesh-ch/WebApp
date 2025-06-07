@@ -40,7 +40,9 @@ class ShowMoreButtons extends React.Component {
         pathname: currentPathname,
       },
       userDetails: {
-        weVoteVoterId: VoterStore.getVoterWeVoteId(),
+        stateCode: VoterStore.getVoterStateCode(),
+        userCohort: VoterStore.getAnalyticsUserCohort(),
+        voterWeVoteId: VoterStore.getVoterWeVoteId(),
       },
     };
     // console.log(currentPathname);

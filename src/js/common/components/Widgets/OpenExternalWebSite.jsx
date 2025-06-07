@@ -11,7 +11,7 @@ import stringContains from '../../utils/stringContains';
 
 export default class OpenExternalWebSite extends Component {
   sendExternalLinkInfoToGTM = () => {
-    const { destinationPageName, destinationPageType, pageName, pageType, trackingOn, url } = this.props;
+    const { destinationPageName, destinationPageType, linkIdAttribute, pageName, pageType, trackingOn, url } = this.props;
     if (trackingOn) {
       const { location: { pathname: currentPathname } } = window;
       const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
@@ -22,6 +22,9 @@ export default class OpenExternalWebSite extends Component {
       const destinationPageTypeLocalBackup = destinationPage.pageType;
       // console.log('External link clicked:', this.props.url);
       const dataLayerObj = {
+        actionDetails: {
+          buttonId: linkIdAttribute,
+        },
         event: 'click',
         destinationDetails: {
           destinationPageName: destinationPageName || destinationPageNameLocalBackup,

@@ -199,6 +199,7 @@ class BallotTitleHeaderNationalPlaceholder extends Component {
                             }}
                             className={linksOff ? '' : 'u-link-color'}
                           >
+                            className={linksOff ? '' : 'u-link-color'}>
                             {textForMapSearch}
                           </span>
                         </BallotAddress>
