@@ -65,26 +65,6 @@ class BallotTitleHeaderNationalPlaceholder extends Component {
     this.setState({
       textForMapSearch: VoterStore.getTextForMapSearch(),
     });
-    const { location: { pathname: currentPathname } } = window;
-    const page = lookupPageNameAndPageTypeDict(currentPathname);
-    const dataLayerObject = {
-      event: 'click',
-      userDetails: {
-        stateCode: VoterStore.getVoterStateCode(),
-        userCohort: VoterStore.getAnalyticsUserCohort(),
-        voterWeVoteId: VoterStore.getVoterWeVoteId(),
-      },
-      pageDetails: {
-        pageName: page.pageName,
-        pageType: page.pageType,
-        pathname: currentPathname,
-      },
-      ballotAddressDetails: {
-        address: VoterStore.getTextForMapSearch(),
-      },
-    };
-    console.log('dataLayerObject:', dataLayerObject);
-    TagManager.dataLayer({ dataLayer: dataLayerObject });
   }
 
   showSelectBallotModalChooseElection = () => {
@@ -105,6 +85,27 @@ class BallotTitleHeaderNationalPlaceholder extends Component {
       const showEditAddress = true;
       const showSelectBallotModal = true;
       // this.props.toggleSelectBallotModal('', showEditAddress, false);
+      const { location: { pathname: currentPathname } } = window;
+      const page = lookupPageNameAndPageTypeDict(currentPathname);
+      const dataLayerObject = {
+        event: 'click',
+        userDetails: {
+          stateCode: VoterStore.getVoterStateCode(),
+          userCohort: VoterStore.getAnalyticsUserCohort(),
+          voterWeVoteId: VoterStore.getVoterWeVoteId(),
+        },
+        pageDetails: {
+          pageName: page.pageName,
+          pageType: page.pageType,
+          pathname: currentPathname,
+        },
+        ballotAddressDetails: {
+          address: VoterStore.getTextForMapSearch(),
+        },
+      };
+      console.log('dataLayerObject:', dataLayerObject);
+      TagManager.dataLayer({ dataLayer: dataLayerObject });
+
       AppObservableStore.setShowSelectBallotModal(showSelectBallotModal, showEditAddress);
     }
   }
