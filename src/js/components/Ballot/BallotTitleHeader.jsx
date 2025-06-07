@@ -114,7 +114,7 @@ class BallotTitleHeader extends Component {
       const { location: { pathname: currentPathname } } = window;
       const page = lookupPageNameAndPageTypeDict(currentPathname);
       const dataLayerObject = {
-        event: 'click',
+        event: 'action',
         userDetails: {
           stateCode: VoterStore.getVoterStateCode(),
           userCohort: VoterStore.getAnalyticsUserCohort(),
@@ -129,7 +129,7 @@ class BallotTitleHeader extends Component {
           address: VoterStore.getTextForMapSearch(),
         },
       };
-      console.log('dataLayerObject:', dataLayerObject);
+//       console.log('dataLayerObject:', dataLayerObject);
       TagManager.dataLayer({ dataLayer: dataLayerObject });
 
       AppObservableStore.setShowSelectBallotModal(showSelectBallotModal, showEditAddress);
