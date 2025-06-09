@@ -1,11 +1,14 @@
 import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
+import TagManager from 'react-gtm-module';
 import styled from 'styled-components';
 import IssueActions from '../../actions/IssueActions';
 import apiCalming from '../../common/utils/apiCalming';
 import { renderLog } from '../../common/utils/logging';
 import IssueStore from '../../stores/IssueStore';
+import VoterStore from '../../stores/VoterStore';
 import ShowMoreButtons from '../Widgets/ShowMoreButtons';
+import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
 
 const IssueCard = React.lazy(() => import(/* webpackChunkName: 'IssueCard' */ './IssueCard'));
 
@@ -62,6 +65,7 @@ export default class ReadyPageValuesList extends Component {
 
   showMoreIssues = () => {
     const { allIssuesCount } = this.state;
+
     this.setState({
       limitNumberOfIssuesShownToThisNumber: allIssuesCount,
     });
@@ -136,6 +140,8 @@ export default class ReadyPageValuesList extends Component {
               <ShowMoreButtons
                 showMoreId="showMoreReadyPageValuesList"
                 showMoreButtonsLink={this.showMoreIssues}
+                actionType='showMore'
+                buttonId="toggleContentButton-showMoreReadyPageValuesList"
               />
             </ShowMoreWrapperCentered>
           )}
