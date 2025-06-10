@@ -2,6 +2,7 @@ import withStyles from '@mui/styles/withStyles';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { TwitterShareButton } from 'react-share';
+import TagManager from 'react-gtm-module';
 import styled from 'styled-components';
 import VoterStore from '../../../stores/VoterStore';
 import CampaignSupporterActions from '../../actions/CampaignSupporterActions';
@@ -92,8 +93,7 @@ class ShareOnTwitterButton extends Component {
     const { location: { pathname: currentPathname } } = window;
     const page = lookupPageNameAndPageTypeDict(currentPathname);
 
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
+    const dataLayerObject = {
       event: 'ShareBallotTwitterClick',
       shareDetails: {
         platform: 'Twitter',
@@ -111,8 +111,11 @@ class ShareOnTwitterButton extends Component {
         voterWeVoteId: VoterStore.getVoterWeVoteId(),
       },
       timestamp: new Date().toISOString(),
-    });
-  }
+    };
+
+    console.log('DataLayer for Twitter share:', dataLayerObject);
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
+  };
 
   render () {
     renderLog('ShareOnTwitterButton');  // Set LOG_RENDER_EVENTS to log all renders
