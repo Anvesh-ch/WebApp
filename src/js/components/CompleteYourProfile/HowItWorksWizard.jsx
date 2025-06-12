@@ -17,7 +17,6 @@ const HowItWorksWizard = ({ steps, activeStep }) => {
 
   const hideHowItWorksWizard = () => {
     setShowHowItWorksWizard(false);
-
     // console.log('HowItWorksWizard props:', { steps, activeStep });
     // dataLayer tracking
     const { location: { pathname: currentPathname } } = window;
