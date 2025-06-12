@@ -11,43 +11,44 @@ import VoterStore from '../../stores/VoterStore';
 
 class ShowMoreButtons extends React.Component {
   handleShowMoreClick = () => {
-    const{
-      actionType,
-      buttonId, 
+    const {
+      showMoreId,
       showMoreButtonsLink,
-      } = this.props;
+      showMoreButtonWasClicked,
+    } = this.props;
 
-      const { location: { pathname: currentPathname } } = window;
-      const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+    const actionType = showMoreButtonWasClicked ? 'showLess' : 'showMore';
 
-      const dataLayerPayload = {
-        event: 'action',
-        actionDetails: {
-          actionType,
-          buttonId,
-        },
-        pageDetails: {
-          pageName: currentPage.pageName,
-          pageType: currentPage.pageType,
-          pathname: currentPathname,
-        },
-        userDetails: {
-          stateCode: VoterStore.getVoterStateCode(),
-          userCohort: VoterStore.getAnalyticsUserCohort(),
-          voterWeVoteId: VoterStore.getVoterWeVoteId(),
-        },
-      };
-      TagManager.dataLayer({ dataLayer: dataLayerPayload });
-      console.log(window.dataLayer);
-      showMoreButtonsLink();
+    const { location: { pathname: currentPathname } } = window;
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+
+    const dataLayerPayload = {
+      event: 'action',
+      actionDetails: {
+        actionType,
+        showMoreId,
+      },
+      pageDetails: {
+        pageName: currentPage.pageName,
+        pageType: currentPage.pageType,
+        pathname: currentPathname,
+      },
+      userDetails: {
+        stateCode: VoterStore.getVoterStateCode(),
+        userCohort: VoterStore.getAnalyticsUserCohort(),
+        voterWeVoteId: VoterStore.getVoterWeVoteId(),
+      },
     };
+    TagManager.dataLayer({ dataLayer: dataLayerPayload });
+    showMoreButtonsLink();
+  };
 
   render () {
     renderLog('ShowMoreButtons');
     const { classes, showLessCustomText, showMoreButtonWasClicked, showMoreCustomText, showMoreId } = this.props;
-    const showMoreText = showMoreButtonWasClicked
-      ? (showLessCustomText || 'show less')
-      : (showMoreCustomText || 'show more');
+    const showMoreText = showMoreButtonWasClicked ?
+      (showLessCustomText || 'show less') :
+      (showMoreCustomText || 'show more');
 
     return (
       <ShowMoreButtonsStyled className="card-child" id={`toggleContentButton-${showMoreId}`} onClick={this.handleShowMoreClick}>
@@ -72,8 +73,6 @@ ShowMoreButtons.propTypes = {
   showMoreButtonsLink: PropTypes.func.isRequired,
   showMoreButtonWasClicked: PropTypes.bool,
   showMoreCustomText: PropTypes.string,
-  actionType: PropTypes.string,
-  buttonId: PropTypes.string,
 };
 
 const styles = (theme) => ({
