@@ -88,6 +88,10 @@ class BallotTitleHeaderNationalPlaceholder extends Component {
       const { location: { pathname: currentPathname } } = window;
       const page = lookupPageNameAndPageTypeDict(currentPathname);
       const dataLayerObject = {
+        actionDetails: {
+          actionType: 'openModal',
+          buttonId: 'editAddressButton',
+        },
         event: 'action',
         userDetails: {
           stateCode: VoterStore.getVoterStateCode(),
@@ -99,11 +103,13 @@ class BallotTitleHeaderNationalPlaceholder extends Component {
           pageType: page.pageType,
           pathname: currentPathname,
         },
-        ballotAddressDetails: {
-          address: VoterStore.getTextForMapSearch(),
+        electionDetails: {
+          electionGeo: {
+            fullAddress: VoterStore.getTextForMapSearch(),
+          },
         },
       };
-//       console.log('dataLayerObject:', dataLayerObject);
+      //console.log('dataLayerObject:', dataLayerObject);
       TagManager.dataLayer({ dataLayer: dataLayerObject });
 
       AppObservableStore.setShowSelectBallotModal(showSelectBallotModal, showEditAddress);
