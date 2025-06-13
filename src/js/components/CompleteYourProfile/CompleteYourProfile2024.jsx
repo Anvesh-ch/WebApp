@@ -32,6 +32,29 @@ class CompleteYourProfile2024 extends Component {
   }
 
   componentDidMount () {
+    // Track component load/impression for analytics
+    const { location: { pathname: currentPathname } } = window;
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+
+    const dataLayerObject = {
+      actionDetails: {
+        actionType: 'impression',
+        componentName: 'CompleteYourProfile2024',
+      },
+      event: 'action',
+      pageDetails: {
+        pageName: currentPage.pageName,
+        pageType: currentPage.pageType,
+        pathname: currentPathname,
+      },
+      userDetails: {
+        stateCode: VoterStore.getVoterStateCode(),
+        userCohort: VoterStore.getAnalyticsUserCohort(),
+        voterWeVoteId: VoterStore.getVoterWeVoteId(),
+      },
+    };
+    // console.log('CompleteYourProfile2024 component loaded:', dataLayerObject);
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
     this.ballotStoreListener = BallotStore.addListener(this.onBallotStoreChange.bind(this));
     this.supportStoreListener = SupportStore.addListener(this.onSupportStoreChange.bind(this));
     this.voterStoreListener = VoterStore.addListener(this.onVoterStoreChange.bind(this));
@@ -200,8 +223,8 @@ class CompleteYourProfile2024 extends Component {
       },
       event: 'action',
       destinationDetails: {
-        destinationPageName: currentPage.pageName,
-        destinationPageType: 'HowItWorksModal', // Use same pageType as current page
+        destinationPageName: 'HowItWorksModal',
+        destinationPageType: currentPage.pageType, // Use same pageType as current page
         destinationPathname: currentPathname,
       },
       pageDetails: {
@@ -235,8 +258,8 @@ class CompleteYourProfile2024 extends Component {
       },
       event: 'action',
       destinationDetails: {
-        destinationPageName: currentPage.pageName,
-        destinationPageType: 'PersonalizedScoreIntroModal',
+        destinationPageName: 'PersonalizedScoreIntroModal',
+        destinationPageType: currentPage.pageType,
         destinationPathname: currentPathname,
       },
       pageDetails: {
@@ -299,17 +322,17 @@ class CompleteYourProfile2024 extends Component {
 
       const dataLayerObject = {
         actionDetails: {
-          actionType: 'openModal',
+          actionType: !showSignInModal ? 'openModal' : 'closeModal',
           buttonId: 'SignInToSaveStep',
         },
         event: 'action',
         destinationDetails: {
-          destinationPageName: currentPage.pageName,
-          destinationPageType: 'SignInModal',
+          destinationPageName: 'SignInModal',
+          destinationPageType: currentPage.pageType,
           destinationPathname: currentPathname,
         },
         pageDetails: {
-          pageName: currentPage.pageName,
+          pageName: 'HowItWorksWizard',
           pageType: currentPage.pageType,
           pathname: currentPathname,
         },

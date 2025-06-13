@@ -15,7 +15,7 @@ const crossIcon = normalizedImagePath('../../../img/global/svg-icons/cross.svg')
 const HowItWorksWizard = ({ steps, activeStep }) => {
   const [showHowItWorksWizard, setShowHowItWorksWizard] = useState(true);
 
-  const hideHowItWorksWizard = () => {
+  const hideHowItWorksWizard = (buttonId) => {
     setShowHowItWorksWizard(false);
     // console.log('HowItWorksWizard props:', { steps, activeStep });
     // dataLayer tracking
@@ -26,11 +26,11 @@ const HowItWorksWizard = ({ steps, activeStep }) => {
     const dataLayerObject = {
       actionDetails: {
         actionType: 'close',
-        buttonId: 'CloseHowItWorksWizard',
+        buttonId,
       },
       event: 'action',
       pageDetails: {
-        PageName: currentPage.pageName,
+        PageName: 'HowItWorksWizard',
         PageType: currentPage.pageType,
         pathname: currentPathname,
       },
@@ -62,7 +62,10 @@ const HowItWorksWizard = ({ steps, activeStep }) => {
             See how to turn your values into voting decisions!
           </span>
         </p>
-        <HowItWorksCrossIconContainer onClick={hideHowItWorksWizard}>
+        <HowItWorksCrossIconContainer
+          id="CloseHowItWorksWizard"
+          onClick={() => hideHowItWorksWizard('CloseHowItWorksWizard')}
+        >
           <img src={crossIcon} alt="Close" style={{ filter: 'brightness(1.9)' }} />
         </HowItWorksCrossIconContainer>
       </HowItWorksHeader>
