@@ -117,11 +117,11 @@ export default class ReadyPageValuesList extends Component {
           </PopularTopicsH1>
           <PopularTopicsDescription>
             Follow topics
-            {" "}
+            {' '}
             <TextBold>
               to see endorsements
             </TextBold>
-            {" "}
+            {' '}
             for candidates from people who share your values.
           </PopularTopicsDescription>
           <div>
@@ -160,7 +160,7 @@ const PopularTopicsH1 = styled('h1')`
   font-size: 22px;
   font-weight: 500;
   margin-bottom: 8px;
-  margin-top: 0px;
+  margin-top: 0;
 `;
 
 const PopularTopicsDescription = styled('p')(({ theme }) => (`

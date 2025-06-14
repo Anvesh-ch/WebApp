@@ -26,7 +26,7 @@ class ShowMoreButtons extends React.Component {
       event: 'action',
       actionDetails: {
         actionType,
-        showMoreId,
+        buttonId: showMoreId,
       },
       pageDetails: {
         pageName: currentPage.pageName,
