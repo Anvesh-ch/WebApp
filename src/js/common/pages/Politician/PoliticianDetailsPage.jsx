@@ -1052,10 +1052,11 @@ class PoliticianDetailsPage extends Component {
                     </AboutAndEditFlex>
                     {politicianDescription ? (
                       <ReadMore numberOfLines={6}
-                      textToDisplay={politicianDescription}
-                      eventName="clickShowMoreAboutPolitician"
-                      politicianIdShowMore={PoliticianDetailsPage.politicianWeVoteIdForDisplay}
-                      politicianNameShowMore={politicianName}/>
+                          textToDisplay={politicianDescription}
+                          buttonId="clickShowMoreAboutPolitician"
+                          id="clickShowMoreAboutPolitician"
+                          politicianWeVoteId={politicianWeVoteId}
+                      />
                     ) : (
                       <NoInformationProvided>No description has been provided for this candidate.</NoInformationProvided>
                     )}

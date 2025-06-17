@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import TruncateMarkup from 'react-truncate-markup';
+import TagManager from 'react-gtm-module';
 import styled from 'styled-components';
 import { renderLog } from '../../utils/logging';
-import TagManager from 'react-gtm-module';
 import lookupPageNameAndPageTypeDict from '../../../utils/lookupPageNameAndPageTypeDict';
 import VoterStore from '../../../stores/VoterStore';
+import PoliticianStore from '../../../common/stores/PoliticianStore';
 
 export default class ReadMore extends Component {
   constructor (...args) {
@@ -30,23 +31,23 @@ export default class ReadMore extends Component {
   toggleLines (event) {
     event.preventDefault();
     const { readMore } = this.state;
+    const showMoreLabel = readMore ? 'showMore' : 'showLess';
     const { location: { pathname: currentPathname } } = window;
     const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
 
     const {
-      eventName = 'clickShowMoreAboutPolitician',
-      politicianIdShowMore,
-      politicianNameShowMore,
+      buttonId = 'clickShowMoreAboutPolitician',
+      politicianWeVoteId,
     } = this.props;
 
-    console.log("Right here!",readMore, politicianNameShowMore, politicianIdShowMore);
+    console.log("Right here!",readMore, politicianWeVoteId);
 
     TagManager.dataLayer({
     dataLayer: {
-      event: 'click',
+      event: 'action',
       actionDetails: {
-        actionType: 'showMore',
-        buttonId: eventName
+        actionType: showMoreLabel,
+        buttonId: buttonId
         },
       pageDetails: {
         pageName: currentPage.pageName,
@@ -54,9 +55,8 @@ export default class ReadMore extends Component {
         pathname: currentPathname,
       },
       politicianDetails: {
-        politicianWeVoteId: politicianIdShowMore,
-        politicianName: politicianNameShowMore,
-//         politicianStateCode: politician.state_code,
+        politicianWeVoteId: politicianWeVoteId,
+        politicianName: PoliticianStore.getPoliticianName(politicianWeVoteId),
        },
       userDetails: {
         stateCode: VoterStore.getVoterStateCode(),
@@ -65,8 +65,8 @@ export default class ReadMore extends Component {
       },
     },
     });
-    console.log("✅ GTM dataLayer after push:", window.dataLayer);
-    console.log("Right here!", currentPathname, currentPage);
+    console.log("GTM dataLayer after push:", window.dataLayer);
+
     if (readMore && this.props.onShowMoreAlternateFunction) {
       this.props.onShowMoreAlternateFunction();
     } else {
@@ -202,9 +202,8 @@ ReadMore.propTypes = {
   numberOfLines: PropTypes.number,
   onShowMoreAlternateFunction: PropTypes.func,
   textToDisplay: PropTypes.node.isRequired,
-  eventName: PropTypes.string,
-  politicianIdShowMore: PropTypes.string,
-  politicianNameShowMore: PropTypes.string,
+  buttonId: PropTypes.string,
+  politicianWeVoteId: PropTypes.string,
 };
 
 const ReadMoreCollapsedWrapper = styled('span')`
