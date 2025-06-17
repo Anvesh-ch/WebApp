@@ -91,6 +91,15 @@ function calculatePageNameAndPageTypeDict (path) {
   if (path.startsWith('/ballot')) {
     settingsPageName = 'Ballot';
     settingsPageType = 'ballot';
+  } else if (path.startsWith('/candidate/')) {
+    settingsPageName = 'Candidate';
+    settingsPageType = 'candidate';
+  } else if (path.startsWith('/measure/')) {
+    settingsPageName = 'Measure';
+    settingsPageType = 'measure';
+  } else if (path.startsWith('/voterguide/')) {
+    settingsPageName = 'OrganizationVoterGuide';
+    settingsPageType = 'organizationVoterGuide';
   } else if (path.endsWith('/cs/')) {
     settingsPageName = 'CampaignsHomeLoader';
     settingsPageType = 'candidate';

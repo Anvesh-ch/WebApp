@@ -189,9 +189,11 @@ class ShareModal extends Component {
     
     TagManager.dataLayer({
       dataLayer: {
-        event: 'click',
+        event: 'action',
         userDetails: {
           voterWeVoteId: VoterStore.getVoterWeVoteId(),
+          stateCode: VoterStore.getVoterStateCode(),
+          userCohort: VoterStore.getAnalyticsUserCohort(),
         },
         pageDetails: {
           pageType: page.pageType,
@@ -200,8 +202,12 @@ class ShareModal extends Component {
         },
         destinationDetails: {
           destinationPageType: page.pageType,
-          destinationPageName: page.pageName,
+          destinationPageName: "ShareModal",
           destinationPathname: currentPathname,
+        },
+        actionDetails: {
+          actionType: 'close',
+          buttonId: 'profileCloseShareModal',
         },
       },
     });
