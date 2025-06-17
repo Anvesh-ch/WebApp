@@ -172,8 +172,8 @@ class BallotTitleHeaderNationalPlaceholder extends Component {
                             tabIndex={0}
                             role="button"
                             onKeyDown={(event) => {
-                              if (event.key === 'Enter') this.showSelectBallotModalEditAddress()
-                              }}
+                              if (event.key === 'Enter') this.showSelectBallotModalEditAddress();
+                            }}
                             className={linksOff ? '' : 'u-link-color'}>
                             {textForMapSearch}
                           </span>

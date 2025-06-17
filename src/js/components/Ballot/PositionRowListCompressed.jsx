@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import styled from 'styled-components';
+import TagManager from 'react-gtm-module';
 import FriendActions from '../../actions/FriendActions';
 import OrganizationActions from '../../actions/OrganizationActions';
 import LoadingWheel from '../../common/components/Widgets/LoadingWheel';
@@ -17,6 +18,7 @@ import BallotStore from '../../stores/BallotStore';
 import CandidateStore from '../../stores/CandidateStore';
 import FriendStore from '../../stores/FriendStore';
 import IssueStore from '../../stores/IssueStore';
+import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
 import MeasureStore from '../../stores/MeasureStore';
 import OrganizationStore from '../../stores/OrganizationStore';
 import VoterGuideStore from '../../stores/VoterGuideStore';
@@ -36,10 +38,10 @@ class PositionRowListCompressed extends Component {
     super(props);
     this.state = {
       filteredPositionList: [],
-      filteredPositionListLength: 0,
+      // filteredPositionListLength: 0,
       numberOfImagesToDisplay: STARTING_NUMBER_OF_IMAGES_TO_DISPLAY,
       numberOfNamesToDisplay: STARTING_NUMBER_OF_NAMES_TO_DISPLAY,
-      supportPositionListLength: 0,
+      // supportPositionListLength: 0,
     };
   }
 
@@ -88,9 +90,85 @@ class PositionRowListCompressed extends Component {
     if (this.positionItemTimer) clearTimeout(this.positionItemTimer);
   }
 
-  onBallotStoreChange () {
-    // console.log('PositionRowListCompressed onBallotStoreChange');
-    this.onCachedPositionsChange();
+  handleTalkingAboutClick = (buttonId = '') => {
+    const { location: { pathname: currentPathname } } = window;
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+    const { ballotItemWeVoteId } = this.props;
+
+    const dataLayerObject = {
+      actionDetails: {
+        actionType: 'openModal',
+        buttonId,
+      },
+      event: 'action',
+      destinationDetails: {
+        destinationPageName: currentPage.pageName,
+        destinationPageType: 'CandidateEndorsementModal',
+        destinationPathname: currentPathname,
+      },
+      endorsementDetails: {
+        endorsementCount: this.getEndorsementCount(),
+        interactionType: 'click_talking_about',
+        organizationCount: this.getOrganizationCount(),
+        talkingAboutText: this.getTalkingAboutText(),
+      },
+      pageDetails: {
+        pageName: currentPage.pageName,
+        pageType: currentPage.pageType,
+        pathname: currentPathname,
+      },
+      userDetails: {
+        stateCode: VoterStore.getVoterStateCode(),
+        userCohort: VoterStore.getAnalyticsUserCohort(),
+        voterWeVoteId: VoterStore.getVoterWeVoteId(),
+      },
+    };
+    // Add candidate or measure details based on ballotItemWeVoteId
+    if (ballotItemWeVoteId.includes('cand')) {
+      const candidate = CandidateStore.getCandidateByWeVoteId(ballotItemWeVoteId);
+
+      // console.log('Candidate object structure:', candidate);
+      // console.log('Available candidate properties:', candidate ? Object.keys(candidate) : 'No candidate found');
+
+      dataLayerObject.candidateDetails = {
+        candidateWeVoteId: ballotItemWeVoteId,
+        candidateName: candidate ? CandidateStore.getCandidateName(ballotItemWeVoteId) : '',
+        // Add other properties from spreadsheet as available:
+        image: candidate ? candidate.candidate_photo_url_medium : '',
+        officeName: candidate ? candidate.contest_office_name : '',
+        politicalParty: candidate ? candidate.party : '',
+        stateCode: candidate ? candidate.state_code : '',
+      };
+      // console.log('Final candidateDetails for analytics:', dataLayerObject.candidateDetails);
+    } else if (ballotItemWeVoteId.includes('meas')) {
+      dataLayerObject.measureDetails = {
+        measureWeVoteId: ballotItemWeVoteId,
+        measureName: MeasureStore.getMeasureName(ballotItemWeVoteId),
+        // stateCode: // Add if available
+      };
+      // console.log('Final measureDetails for analytics:', dataLayerObject.measureDetails);
+    }
+    // console.log('Complete dataLayerObject being sent to analytics:', dataLayerObject);
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
+
+    // console.log('Talking about click tracked');
+  };
+
+  onClickShowOrganizationModalWithBallotItemInfoAndPositions (buttonId = '') {
+    this.handleTalkingAboutClick(buttonId);
+    const { ballotItemWeVoteId } = this.props;
+    AppObservableStore.setOrganizationModalBallotItemWeVoteId(ballotItemWeVoteId);
+    AppObservableStore.setShowOrganizationModal(true);
+  }
+
+  onClickShowOrganizationModalWithPositions (buttonId = '') {
+    this.handleTalkingAboutClick(buttonId);
+    const { ballotItemWeVoteId } = this.props;
+    // console.log(ballotItemWeVoteId)
+    // console.log('onClickShowOrganizationModalWithPositions, ballotItemWeVoteId:', ballotItemWeVoteId);
+    AppObservableStore.setOrganizationModalBallotItemWeVoteId(ballotItemWeVoteId);
+    AppObservableStore.setShowOrganizationModal(true);
+    AppObservableStore.setHideOrganizationModalBallotItemInfo(true);
   }
 
   onCandidateStoreChange () {
@@ -140,23 +218,68 @@ class PositionRowListCompressed extends Component {
     this.onCachedPositionsChange();
   }
 
-  onClickShowOrganizationModalWithPositions () {
+  getTalkingAboutText = () => {
     const { ballotItemWeVoteId } = this.props;
-    // console.log(ballotItemWeVoteId)
-    // console.log('onClickShowOrganizationModalWithPositions, ballotItemWeVoteId:', ballotItemWeVoteId);
-    AppObservableStore.setOrganizationModalBallotItemWeVoteId(ballotItemWeVoteId);
-    AppObservableStore.setShowOrganizationModal(true);
-    AppObservableStore.setHideOrganizationModalBallotItemInfo(true);
-  }
+    let itemName = '';
 
-  onClickShowOrganizationModalWithBallotItemInfoAndPositions () {
+    if (ballotItemWeVoteId.includes('cand')) {
+      const candidate = CandidateStore.getCandidateByWeVoteId(ballotItemWeVoteId);
+      itemName = candidate ? candidate.ballot_item_display_name : '';
+    } else if (ballotItemWeVoteId.includes('meas')) {
+      itemName = MeasureStore.getMeasureName(ballotItemWeVoteId);
+    }
+
+    const endorsementCount = this.getEndorsementCount();
+    if (endorsementCount === 0) return '';
+    if (endorsementCount === 1) return `is talking about ${itemName}`;
+    return `are talking about ${itemName}`;
+  };
+
+  getOrganizationCount = () => {
     const { ballotItemWeVoteId } = this.props;
-    AppObservableStore.setOrganizationModalBallotItemWeVoteId(ballotItemWeVoteId);
-    AppObservableStore.setShowOrganizationModal(true);
-  }
+    // Get all positions for this ballot item
+    let allCachedPositionsForThisBallotItem;
+    if (ballotItemWeVoteId.includes('cand')) {
+      allCachedPositionsForThisBallotItem = CandidateStore.getAllCachedPositionsByCandidateWeVoteId(ballotItemWeVoteId);
+    } else if (ballotItemWeVoteId.includes('meas')) {
+      allCachedPositionsForThisBallotItem = MeasureStore.getAllCachedPositionsByMeasureWeVoteId(ballotItemWeVoteId);
+    }
+    if (!allCachedPositionsForThisBallotItem) return 0;
+    // Get friend organization IDs
+    const friendOrgIds = FriendStore.currentFriendsOrganizationWeVoteIDList();
+    if (!friendOrgIds || friendOrgIds.length === 0) return 0;
+    // Filter positions to only include friend organizations
+    const friendPositions = allCachedPositionsForThisBallotItem.filter(
+      (position) => friendOrgIds.includes(position.speaker_we_vote_id),
+    );
+    const uniqueOrgs = new Set(
+      friendPositions.map((position) => position.speaker_we_vote_id),
+    );
+    return uniqueOrgs.size;
+  };
+
+  getEndorsementCount = () => {
+    const { ballotItemWeVoteId } = this.props;
+    // Get all positions for this ballot item
+    let allCachedPositionsForThisBallotItem;
+    if (ballotItemWeVoteId.includes('cand')) {
+      allCachedPositionsForThisBallotItem = CandidateStore.getAllCachedPositionsByCandidateWeVoteId(ballotItemWeVoteId);
+    } else if (ballotItemWeVoteId.includes('meas')) {
+      allCachedPositionsForThisBallotItem = MeasureStore.getAllCachedPositionsByMeasureWeVoteId(ballotItemWeVoteId);
+    }
+    if (!allCachedPositionsForThisBallotItem) return 0;
+    // Get friend organization IDs
+    const friendOrgIds = FriendStore.currentFriendsOrganizationWeVoteIDList();
+    if (!friendOrgIds || friendOrgIds.length === 0) return 0;
+    // Filter positions to only include friend organizations
+    const friendPositions = allCachedPositionsForThisBallotItem.filter(
+      (position) => friendOrgIds.includes(position.speaker_we_vote_id),
+    );
+    return friendPositions.length;
+  };
 
   onPositionListUpdate = (allCachedPositionsForThisBallotItem) => {
-    const { showInfoOnly, showOppose, showOpposeDisplayNameIfNoSupport, showSupport } = this.props;
+    const { showInfoOnly, showOppose, showSupport } = this.props;
     const organizationsVoterIsFollowing = OrganizationStore.getOrganizationsVoterIsFollowing();
     // eslint-disable-next-line arrow-body-style
     let filteredPositionList = allCachedPositionsForThisBallotItem.map((position) => {
@@ -187,13 +310,10 @@ class PositionRowListCompressed extends Component {
       });
     });
 
-    if (showOpposeDisplayNameIfNoSupport) {
-      let supportPositionList = JSON.parse(JSON.stringify(filteredPositionList));
-      supportPositionList = limitToShowSupport(supportPositionList);
-      this.setState({
-        supportPositionListLength: supportPositionList.length,
-      });
-    }
+    // if (showOpposeDisplayNameIfNoSupport) {
+    //   let supportPositionList = JSON.parse(JSON.stringify(filteredPositionList));
+    //   supportPositionList = limitToShowSupport(supportPositionList);
+    // }
 
     if (showInfoOnly) {
       filteredPositionList = limitToShowInfoOnly(filteredPositionList);
@@ -212,7 +332,7 @@ class PositionRowListCompressed extends Component {
     // console.log('PositionRowListCompressed onPositionListUpdate, filteredPositionList:', filteredPositionList);
     this.setState({
       filteredPositionList,
-      filteredPositionListLength: filteredPositionList.length,
+      // filteredPositionListLength: filteredPositionList.length,
     });
   }
 
@@ -243,7 +363,7 @@ class PositionRowListCompressed extends Component {
     //   showOpposeDisplayNameIfNoSupport, showSupport,
     // } = this.props;
     const {
-      filteredPositionList, filteredPositionListLength, numberOfImagesToDisplay, numberOfNamesToDisplay,
+      filteredPositionList, numberOfImagesToDisplay, numberOfNamesToDisplay,
       // supportPositionListLength,
     } = this.state;
     renderLog('PositionRowListCompressed');  // Set LOG_RENDER_EVENTS to log all renders
@@ -299,7 +419,11 @@ class PositionRowListCompressed extends Component {
               </>
             ) : (
               <>
-                See endorsements from {filteredPositionList.length} advocates, like:
+                See endorsements from
+                {' '}
+                {filteredPositionList.length}
+                {' '}
+                advocates, like:
               </>
             )}
             <br />
@@ -326,7 +450,7 @@ class PositionRowListCompressed extends Component {
     return (
       <CandidateEndorsementsWrapper>
         <CandidateEndorsementsContainer data-modal-trigger>
-          <CandidateEndorsementPhotos onClick={() => this.onClickShowOrganizationModalWithPositions()}>
+          <CandidateEndorsementPhotos onClick={() => this.onClickShowOrganizationModalWithPositions('CandidateEndorsementPhotos')}>
             {filteredPositionList.map((onePosition) => {
               // console.log('numberOfPositionItemsDisplayed:', numberOfPositionItemsDisplayed, ', numberOfImagesToDisplay:', numberOfImagesToDisplay);
               // console.log('onePosition:', onePosition);
@@ -371,9 +495,9 @@ class PositionRowListCompressed extends Component {
             <CandidateEndorsementText
                 onClick={() => {
                   if (filteredPositionList && filteredPositionList.length === 0) {
-                    this.onClickShowOrganizationModalWithBallotItemInfoAndPositions();
+                    this.onClickShowOrganizationModalWithBallotItemInfoAndPositions('CandidateEndorsementText');
                   } else {
-                    this.onClickShowOrganizationModalWithPositions();
+                    this.onClickShowOrganizationModalWithPositions('CandidateEndorsementText');
                   }
                 }}
                 className="u-link-underline-on-hover"
@@ -387,13 +511,13 @@ class PositionRowListCompressed extends Component {
     );
   }
 }
+
 PositionRowListCompressed.propTypes = {
   ballotItemWeVoteId: PropTypes.string.isRequired,
+  firstInstance: PropTypes.bool,
   showInfoOnly: PropTypes.bool,
   showOppose: PropTypes.bool,
-  showOpposeDisplayNameIfNoSupport: PropTypes.bool,
   showSupport: PropTypes.bool,
-  firstInstance: PropTypes.bool,
 };
 
 const styles = () => ({

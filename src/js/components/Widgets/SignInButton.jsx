@@ -13,12 +13,16 @@ import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageType
 export default function SignInButton (props) {
   renderLog('SignInButton');  // Set LOG_RENDER_EVENTS to log all renders
 
-  // GTM Data Layer push for SignIn button on HomePage by AnujaLawankar-March24th,2025
-  const { pageName, pageType } = lookupPageNameAndPageTypeDict(window.location.pathname);
+  const { location: { pathname: currentPathname } } = window;
+  const { pageName, pageType } = lookupPageNameAndPageTypeDict(currentPathname);
   const handleClick = () => {
     TagManager.dataLayer({
       dataLayer: {
-        event: 'signInClick', // sign_in_click
+        actionDetails: {
+          actionType: 'openModal',
+          buttonId: 'SignIn',
+        },
+        event: 'action',
         userDetails: {
           stateCode: VoterStore.getVoterStateCode(),
           userCohort: VoterStore.getAnalyticsUserCohort(),
@@ -26,13 +30,13 @@ export default function SignInButton (props) {
         },
         destinationDetails: {
           destinationPageName: 'SignInModal',
-          destinationPageType: 'auth',
-          destinationPathname: window.location.pathname,
+          destinationPageType: pageType,
+          destinationPathname: currentPathname,
         },
         pageDetails: {
           pageName,
           pageType,
-          pathname: window.location.pathname,
+          pathname: currentPathname,
         },
       },
     });
