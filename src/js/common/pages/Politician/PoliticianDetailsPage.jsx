@@ -1051,15 +1051,16 @@ class PoliticianDetailsPage extends Component {
                       </div>
                     </AboutAndEditFlex>
                     {politicianDescription ? (
-                      <ReadMore numberOfLines={6}
-                        textToDisplay={politicianDescription}
-                        buttonId="clickShowMoreAboutPolitician"
-                        id="clickShowMoreAboutPolitician"
-                        politicianWeVoteId={politicianWeVoteIdForDisplay}
-                      />
-                    ) : (
-                      <NoInformationProvided>No description has been provided for this candidate.</NoInformationProvided>
-                    )}
+                            <ReadMore
+                              numberOfLines={6}
+                              textToDisplay={politicianDescription}
+                              buttonId="clickShowMoreAboutPolitician"
+                              id="clickShowMoreAboutPolitician"
+                              politicianWeVoteId={politicianWeVoteIdForDisplay}
+                            />
+                        ) : (
+                          <NoInformationProvided>No description has been provided for this candidate.</NoInformationProvided>
+                        )}
                   </CampaignDescription>
                 </DelayedLoad>
               )}
@@ -1221,7 +1222,13 @@ class PoliticianDetailsPage extends Component {
                           </div>
                         </AboutAndEditFlex>
                         {politicianDescription ? (
-                          <ReadMore numberOfLines={6} textToDisplay={politicianDescription} />
+                           <ReadMore
+                              numberOfLines={6}
+                              textToDisplay={politicianDescription}
+                              buttonId="clickShowMoreAboutPolitician"
+                              id="clickShowMoreAboutPolitician"
+                              politicianWeVoteId={politicianWeVoteIdForDisplay}
+                            />
                         ) : (
                           <NoInformationProvided>No description has been provided for this candidate.</NoInformationProvided>
                         )}

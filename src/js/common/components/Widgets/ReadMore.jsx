@@ -34,13 +34,12 @@ export default class ReadMore extends Component {
     const showMoreLabel = readMore ? 'showMore' : 'showLess';
     const { location: { pathname: currentPathname } } = window;
     const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+    const { politicianWeVoteId } = this.props;
+    const { buttonId } = this.props;
+    const politician = PoliticianStore.getPoliticianByWeVoteId(politicianWeVoteId);
+    const politicianName = PoliticianStore.getPoliticianName(politicianWeVoteId);
 
-    const {
-      buttonId = 'clickShowMoreAboutPolitician',
-      politicianWeVoteId,
-    } = this.props;
-
-    console.log("Right here!",readMore, politicianWeVoteId);
+    console.log("Right here!", politicianWeVoteId, politicianName);
 
     TagManager.dataLayer({
     dataLayer: {
@@ -56,7 +55,7 @@ export default class ReadMore extends Component {
       },
       politicianDetails: {
         politicianWeVoteId: politicianWeVoteId,
-        politicianName: PoliticianStore.getPoliticianName(politicianWeVoteId),
+        politicianName: politicianName,
        },
       userDetails: {
         stateCode: VoterStore.getVoterStateCode(),
@@ -203,7 +202,9 @@ ReadMore.propTypes = {
   onShowMoreAlternateFunction: PropTypes.func,
   textToDisplay: PropTypes.node.isRequired,
   buttonId: PropTypes.string,
+  id: PropTypes.string,
   politicianWeVoteId: PropTypes.string,
+  politicianState: PropTypes.string
 };
 
 const ReadMoreCollapsedWrapper = styled('span')`
