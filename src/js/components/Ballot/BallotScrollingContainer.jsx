@@ -26,6 +26,7 @@ import BallotMatchIndicator from '../BallotItem/BallotMatchIndicator';
 import PositionRowListCompressed from './PositionRowListCompressed';
 import BallotMatchIndicator2024 from '../BallotItem/BallotMatchIndicator2024';
 import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import VoterStore from '../../stores/VoterStore';
 
 // const DelayedLoad = React.lazy(() => import(/* webpackChunkName: 'DelayedLoad' */ '../../common/components/Widgets/DelayedLoad'));
 const ImageHandler = React.lazy(() => import(/* webpackChunkName: 'ImageHandler' */ '../ImageHandler'));
@@ -83,8 +84,11 @@ class BallotScrollingContainer extends Component {
     const { location: { pathname: currentPathname } } = window;
     const currentPageDetails = lookupPageNameAndPageTypeDict(currentPathname);
     const dataLayerObject = {
-      event: 'click',
-      element_id: candidateData.we_vote_id,
+      actionDetails: {
+        actionType: 'openModal',
+        buttonId: `ballotItemScrollingArea-${candidateWeVoteId}`,
+      },
+      event: 'action',
       candidateDetails: {
         candidateWeVoteId: candidateData.we_vote_id,
         candidateName: candidateData.ballot_item_display_name,
@@ -103,6 +107,11 @@ class BallotScrollingContainer extends Component {
         pageName: 'CandidateModal',
         pageType: currentPageDetails.pageType,
         pathname: currentPathname,
+      },
+      userDetails: {
+        stateCode: VoterStore.getVoterStateCode(),
+        userCohort: VoterStore.getAnalyticsUserCohort(),
+        voterWeVoteId: VoterStore.getVoterWeVoteId(),
       },
     };
     console.log('Pushing to dataLayer:', dataLayerObject);
@@ -161,6 +170,7 @@ class BallotScrollingContainer extends Component {
         </LeftArrowOuterWrapper>
         <BallotHorizontallyScrollingContainer
           ref={this.scrollElement}
+          id={`ballotItemScrollingArea-${oneCandidate.we_vote_id}`}
           isChosen={SupportStore.getVoterSupportsByBallotItemWeVoteId(oneCandidate.we_vote_id)}
           onScroll={this.checkArrowVisibility}
           showLeftGradient={!this.state.hideLeftArrow}

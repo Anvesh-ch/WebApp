@@ -44,41 +44,59 @@ class FooterMainWeVote extends Component {
     AppObservableStore.setShowHowItWorksModal(true);
 
     const { location: { pathname: currentPathname } } = window;
-    const page = lookupPageNameAndPageTypeDict(currentPathname);
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
     TagManager.dataLayer({
       dataLayer: {
-        event: 'click',
+        actionDetails: {
+          actionType: 'openModal',
+          buttonId: 'footerLinkHowItWorks',
+        },
+        event: 'action',
         pageDetails: {
-          pageType: page.pageType,
-          pageName: page.pageName,
+          pageName: currentPage.pageName,
+          pageType: currentPage.pageType,
           pathname: currentPathname,
         },
         destinationDetails: {
-          destinationPageType: page.pageType,
           destinationPageName: 'HowItWorksModal',
+          destinationPageType: currentPage.pageType,
           destinationPathname: currentPathname,
+        },
+        userDetails: {
+          stateCode: VoterStore.getVoterStateCode(),
+          userCohort: VoterStore.getAnalyticsUserCohort(),
+          voterWeVoteId: VoterStore.getVoterWeVoteId(),
         },
       },
     });
   }
 
-  pushDataLayer (destinationPath) {
+  pushDataLayer (destinationPath, buttonId = '') {
     const { location: { pathname: currentPathname } } = window;
-    const page = lookupPageNameAndPageTypeDict(currentPathname);
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
     const destinationPage = lookupPageNameAndPageTypeDict(destinationPath);
 
     TagManager.dataLayer({
       dataLayer: {
-        event: 'click',
+        actionDetails: {
+          actionType: 'navigate',
+          buttonId,
+        },
+        event: 'action',
         pageDetails: {
-          pageType: page.pageType,
-          pageName: page.pageName,
+          pageName: currentPage.pageName,
+          pageType: currentPage.pageType,
           pathname: currentPathname,
         },
         destinationDetails: {
-          destinationPageType: destinationPage.pageType,
           destinationPageName: destinationPage.pageName,
+          destinationPageType: destinationPage.pageType,
           destinationPathname: destinationPath,
+        },
+        userDetails: {
+          stateCode: VoterStore.getVoterStateCode(),
+          userCohort: VoterStore.getAnalyticsUserCohort(),
+          voterWeVoteId: VoterStore.getVoterWeVoteId(),
         },
       },
     });
@@ -87,6 +105,7 @@ class FooterMainWeVote extends Component {
   render () {
     const { classes } = this.props;
     const { voterContactEmailListCount } = this.state;
+    // const helpDestinationPage = lookupPageNameAndPageTypeDict("https://help.wevote.us/hc/en-us");
     return (
       <Wrapper>
         {isWebApp() && (
@@ -126,26 +145,35 @@ class FooterMainWeVote extends Component {
         <TopSectionOuterWrapper>
           <TopSectionInnerWrapper>
             <OneRow>
-              <button type="button" style={{ border: 'none', backgroundColor: 'transparent', padding: '0' }} id="footerLinkHowItWorks" className={classes.onClickDiv} onClick={this.openHowItWorksModal}>How It Works</button>
+              <button
+                type="button"
+                style={{ border: 'none', backgroundColor: 'transparent', padding: '0' }}
+                id="footerLinkHowItWorks"
+                className={classes.onClickDiv}
+                onClick={this.openHowItWorksModal}
+              >
+                How It Works
+              </button>
               <RowSpacer />
               <OpenExternalWebSite
                 linkIdAttribute="footerLinkWeVoteHelp"
                 url="https://help.wevote.us/hc/en-us"
                 target="_blank"
-                body={(
-                  <span>Help</span>
-                )}
                 className={classes.link}
+                // destinationPageName={helpDestinationPage.pageName}
+                // destinationPageType={helpDestinationPage.pageType}
+                trackingOn
+                body={(<span>Help</span>)}
               />
               <RowSpacer />
-              <Link id="footerLinkPrivacy" className={classes.link} to="/privacy" onClick={() => this.pushDataLayer("/privacy")}>Privacy</Link>
+              <Link id="footerLinkPrivacy" className={classes.link} to="/privacy" onClick={() => this.pushDataLayer('/privacy')}>Privacy</Link>
               <RowSpacer />
-              <Link id="footerLinkTermsOfUse" className={classes.link} to="/more/terms" onClick={() => this.pushDataLayer("/more/terms")}>Terms</Link>
+              <Link id="footerLinkTermsOfUse" className={classes.link} to="/more/terms" onClick={() => this.pushDataLayer('/more/terms')}>Terms</Link>
             </OneRow>
             <OneRow>
               {isWebApp() ? (
                 <>
-                  <Link id="footerLinkAboutFAQ" to="/more/faq" className={classes.link} onClick={() => this.pushDataLayer("/more/faq")}>
+                  <Link id="footerLinkAboutFAQ" to="/more/faq" className={classes.link} onClick={() => this.pushDataLayer('/more/faq')}>
                     About &amp; FAQ
                   </Link>
                   <RowSpacer />
@@ -153,9 +181,8 @@ class FooterMainWeVote extends Component {
                     linkIdAttribute="footerLinkTeam"
                     url={`${webAppConfig.WE_VOTE_URL_PROTOCOL + webAppConfig.WE_VOTE_HOSTNAME}/more/about`}
                     target="_blank"
-                    body={(
-                      <span>Team</span>
-                    )}
+                    trackingOn
+                    body={(<span>Team</span>)}
                     className={classes.link}
                   />
                   <RowSpacer />
@@ -163,17 +190,16 @@ class FooterMainWeVote extends Component {
                     linkIdAttribute="footerLinkCredits"
                     url={`${webAppConfig.WE_VOTE_URL_PROTOCOL + webAppConfig.WE_VOTE_HOSTNAME}/more/credits`}
                     target="_blank"
-                    body={(
-                      <span>Credits &amp; Thanks</span>
-                    )}
+                    trackingOn
+                    body={(<span>Credits &amp; Thanks</span>)}
                     className={classes.link}
                   />
                 </>
               ) : (
                 <>
-                  <Link to="/more/faq" className={classes.link} onClick={() => this.pushDataLayer("/more/faq")}>Frequently Asked Questions</Link>
+                  <Link to="/more/faq" className={classes.link} onClick={() => this.pushDataLayer('/more/faq')}>Frequently Asked Questions</Link>
                   <RowSpacer />
-                  <Link to="/more/attributions" className={classes.link} onClick={() => this.pushDataLayer("/more/attributions")}>Attributions</Link>
+                  <Link to="/more/attributions" className={classes.link} onClick={() => this.pushDataLayer('/more/attributions')}>Attributions</Link>
                 </>
               )}
             </OneRow>
@@ -183,9 +209,8 @@ class FooterMainWeVote extends Component {
                   linkIdAttribute="footerLinkVolunteer"
                   url="https://wevote.applytojob.com/apply"
                   target="_blank"
-                  body={(
-                    <span>Volunteering Opportunities</span>
-                  )}
+                  trackingOn
+                  body={(<span>Volunteering Opportunities</span>)}
                   className={classes.link}
                 />
                 <RowSpacer />
@@ -193,7 +218,7 @@ class FooterMainWeVote extends Component {
                   className={classes.link}
                   id="footerMainLinkDonate"
                   to="/donate"
-                  onClick={() => this.pushDataLayer("/donate")}
+                  onClick={() => this.pushDataLayer('/donate')}
                 >
                   Donate
                 </Link>
