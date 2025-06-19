@@ -3,6 +3,7 @@ import withTheme from '@mui/styles/withTheme';
 import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import TagManager from 'react-gtm-module';
 import styled from 'styled-components';
 import VoterStore from '../../stores/VoterStore';
 import { renderLog } from '../../common/utils/logging';
@@ -69,8 +70,7 @@ class ShareModalOption extends Component {
     if (this.props.onClickFunction) {
       this.props.onClickFunction();
     }
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
+    const dataLayerObject = {
       event: 'ShareModalCopyLinkClick',
       shareDetails: {
         title: this.props.title || 'Copy link',
@@ -86,7 +86,9 @@ class ShareModalOption extends Component {
         voterWeVoteId: VoterStore.getVoterWeVoteId(),
       },
       timestamp: new Date().toISOString(),
-    });
+    };
+    console.log('DataLayer for ShareModal Copy Link:', dataLayerObject);
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
   }
 
   render () {
