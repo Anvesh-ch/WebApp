@@ -62,7 +62,7 @@ function CardForListBody (props) {
     politicalPartySvgNameWithPath = '../../img/global/svg-icons/political-party-working-families.svg';
   }
   const politicianDetailsURL = `${webAppConfig.WE_VOTE_URL_PROTOCOL + webAppConfig.WE_VOTE_HOSTNAME}${politicianBasePath}`;
-  const destinationPage = lookupPageNameAndPageTypeDict(politicianBasePath);
+  const destinationPage = lookupPageNameAndPageTypeDict(politicianDetailsURL);
   // console.log('politicianBasePath:', politicianBasePath);
   // console.log('CardForListBody politicianDetailsURL:', politicianDetailsURL, ', destinationPage: ', destinationPage);
   const location = useLocation();
@@ -109,8 +109,6 @@ function CardForListBody (props) {
                           destinationPageName={destinationPage.pageName}
                           destinationPageType={destinationPage.pageType}
                           trackingOn
-                          candidateWeVoteId={candidateWeVoteId}
-                          politicianWeVoteId={politicianWeVoteId}
                         />
                       </Suspense>
                     </LaunchIconWrapper>
