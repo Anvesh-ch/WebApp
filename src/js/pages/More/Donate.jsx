@@ -252,7 +252,7 @@ class Donate extends Component {
           </p>
         </>
       )}
-      <p>
+      <DonationDescription>
         If you believe every voter deserves to feel confident and prepared, please give now.
         {!readMore && (
           <ReadMoreButton
@@ -263,7 +263,7 @@ class Donate extends Component {
             Read more...
           </ReadMoreButton>
         )}
-      </p>
+      </DonationDescription>
       {readMore && (
         <OpenExternalWebSite
           linkIdAttribute="annualBudget"
@@ -340,7 +340,6 @@ class Donate extends Component {
             </CenteredText>
             {windowWidth > 532 && (
               <TwoColumns>
-                {/*<OneColumn50Percent className="u-show-desktop-tablet">*/}
                 <TextAndDonorboxColumn className="u-show-desktop-tablet">
                   {/*{this.preDonateDescription()}*/}
                   {/*{' '}*/}
@@ -354,8 +353,7 @@ class Donate extends Component {
                     </DonorboxWrapper>
                   </InnerWrapper>
                 </TextAndDonorboxColumn>
-                {/*</OneColumn50Percent>*/}
-                <OneColumn50Percent>
+                <DonationImageContainer>
                   {/*<InnerWrapper>*/}
                   {/*  <DonorboxWrapper>*/}
                   {/*    <Suspense fallback={<div>Loading...</div>}>*/}
@@ -366,7 +364,7 @@ class Donate extends Component {
                   <DonationImage
                     src={Donation}
                   />
-                </OneColumn50Percent>
+                </DonationImageContainer>
               </TwoColumns>
             )}
             <br />
@@ -660,8 +658,6 @@ const DonorboxWrapper = styled('div')`
 const Wrapper = styled('div')`
   display: flex;
   flex-flow: column nowrap;
-  //align-items: center;
-  //background: white;
   overflow-x: hidden;
   height: 100%;
 `;
@@ -765,24 +761,21 @@ const ContributeGridItemJoin = styled('div', {
   grid-column: auto / span 2;
 `));
 
-const OneColumn50Percent = styled('div')`
-  height: 99vh;
+const DonationImageContainer = styled('div')`
+  height: 99%;
   width: 70%;
   overflow: hidden;
 `;
 
 const TextAndDonorboxColumn = styled('div')`
   max-width: 400px;
-  height: 99vh;
-  overflow-y: auto;
 `;
 
 const DonationImage = styled('img')`
-  width: 100%;
-  height: 100%;
+  width: 57%;
   object-fit: cover;
-  object-position: top;
   display: block;
+  position: fixed;
 `;
 
 const DonationDescriptionContainer = styled('div')`
@@ -796,11 +789,11 @@ const DonationDescription = styled('p')`
 const TwoColumns = styled('div')`
   background: white;
   margin-left: 15%;
+  margin-bottom: -3.5%;
+  padding-bottom: 1%;
   display: flex;
-  //justify-content: center;
   align-items: flex-start;
-  margin-bottom: -40px;
-  height: 100vh;
+  height: 100%;
 `;
 
 const ReadMoreButton = styled('button')`
