@@ -96,6 +96,8 @@ function PositionForBallotItem ({ classes, linksOpenExternalWebsite, position })
             target="_blank"
             trackingOn
             url={speakerLinkExternal}
+            destinationPageName="PoliticianDetailsPage"
+            destinationPageType="politician"
           />
         </Suspense>
       ) : (
@@ -110,6 +112,8 @@ function PositionForBallotItem ({ classes, linksOpenExternalWebsite, position })
                 target="_blank"
                 trackingOn
                 url={speakerLinkExternal}
+                destinationPageName="PoliticianDetailsPage"
+                destinationPageType="politician"
               />
             </Suspense>
           ) : (
@@ -208,6 +212,8 @@ function PositionForBallotItem ({ classes, linksOpenExternalWebsite, position })
                       target="_blank"
                       trackingOn
                       url={moreInfoUrl}
+                      destinationPageName="OpinionSource"
+                      destinationPageType="reference"
                     />
                   </Suspense>
                 </Popover>
