@@ -30,8 +30,8 @@ const HowItWorksWizard = ({ steps, activeStep }) => {
       },
       event: 'action',
       pageDetails: {
-        PageName: 'HowItWorksWizard',
-        PageType: currentPage.pageType,
+        pageName: 'HowItWorksWizard',
+        pageType: currentPage.pageType,
         pathname: currentPathname,
       },
       userDetails: {
@@ -63,7 +63,7 @@ const HowItWorksWizard = ({ steps, activeStep }) => {
           </span>
         </p>
         <HowItWorksCrossIconContainer
-          id="CloseHowItWorksWizard"
+          id="closeHowItWorksWizard"
           onClick={() => hideHowItWorksWizard('CloseHowItWorksWizard')}
         >
           <img src={crossIcon} alt="Close" style={{ filter: 'brightness(1.9)' }} />
