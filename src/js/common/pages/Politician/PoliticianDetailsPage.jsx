@@ -313,6 +313,7 @@ class PoliticianDetailsPage extends Component {
       // console.log('Politician ID id exists? ', politician);
       if (politician && politician.politician_we_vote_id) {
         // console.log('Politician Details retrieved, Adding DataLayer...');
+        const { location: { pathname: currentPathname } } = window;
         const politicianState = politician.state_code || 'na';
         const dataLayerObj = {
           event: 'landing',
@@ -327,9 +328,9 @@ class PoliticianDetailsPage extends Component {
             politicianState,
           },
           pageDetails: {
-            pageType: 'politician', // in which page we are currently
             pageName: this.constructor.name, // name of page from constructor itself
-            pathname: window.location.pathname, // location of the current window contains pathname
+            pageType: 'politician', // in which page we are currently
+            pathname: currentPathname,
           },
         };
         TagManager.dataLayer({ dataLayer: dataLayerObj });
@@ -1051,16 +1052,16 @@ class PoliticianDetailsPage extends Component {
                       </div>
                     </AboutAndEditFlex>
                     {politicianDescription ? (
-                            <ReadMore
-                              numberOfLines={6}
-                              textToDisplay={politicianDescription}
-                              buttonId="clickShowMoreAboutPolitician"
-                              id="clickShowMoreAboutPolitician"
-                              politicianWeVoteId={politicianWeVoteIdForDisplay}
-                            />
-                        ) : (
-                          <NoInformationProvided>No description has been provided for this candidate.</NoInformationProvided>
-                        )}
+                      <ReadMore
+                        numberOfLines={6}
+                        textToDisplay={politicianDescription}
+                        buttonId="clickShowMoreAboutPolitician"
+                        id="clickShowMoreAboutPolitician"
+                        politicianWeVoteId={politicianWeVoteIdForDisplay}
+                      />
+                    ) : (
+                      <NoInformationProvided>No description has been provided for this candidate.</NoInformationProvided>
+                    )}
                   </CampaignDescription>
                 </DelayedLoad>
               )}
@@ -1222,13 +1223,13 @@ class PoliticianDetailsPage extends Component {
                           </div>
                         </AboutAndEditFlex>
                         {politicianDescription ? (
-                           <ReadMore
-                              numberOfLines={6}
-                              textToDisplay={politicianDescription}
-                              buttonId="clickShowMoreAboutPolitician"
-                              id="clickShowMoreAboutPolitician"
-                              politicianWeVoteId={politicianWeVoteIdForDisplay}
-                            />
+                          <ReadMore
+                            numberOfLines={6}
+                            textToDisplay={politicianDescription}
+                            buttonId="clickShowMoreAboutPolitician"
+                            id="clickShowMoreAboutPolitician"
+                            politicianWeVoteId={politicianWeVoteIdForDisplay}
+                          />
                         ) : (
                           <NoInformationProvided>No description has been provided for this candidate.</NoInformationProvided>
                         )}
