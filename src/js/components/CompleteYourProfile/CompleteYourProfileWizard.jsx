@@ -75,7 +75,7 @@ const CompleteYourProfileWizard = ({ steps, activeStep }) => {
         </p>
         <CompleteYourProfileCrossIconContainer
           id="closeCompleteYourProfileWizard"
-          onClick={() => hideCompleteYourProfileWizard('CloseCompleteYourProfileWizard')}
+          onClick={() => hideCompleteYourProfileWizard('closeCompleteYourProfileWizard')}
         >
           <img src={crossIcon} alt="Close" style={{ filter: 'brightness(1.9)' }} />
         </CompleteYourProfileCrossIconContainer>
