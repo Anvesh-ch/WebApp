@@ -308,8 +308,8 @@ class Ballot extends Component {
       raceLevelFilterType: BallotStore.getRaceLevelFilterTypeSaved() || 'All',
       voterBallotItemsRetrieveHasReturned: BallotStore.voterBallotItemsRetrieveHasReturned(),
     });
+    window.scrollTo(0, 0);
     if (googleCivicElectionIdFromUrl) {
-      window.scrollTo(0, 0);
       this.setState({
         showLoadingBallotMessage: true,
       });
