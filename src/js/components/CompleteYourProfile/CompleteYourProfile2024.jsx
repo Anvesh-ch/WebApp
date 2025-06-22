@@ -6,7 +6,7 @@ import AppObservableStore from '../../common/stores/AppObservableStore';
 import BallotStore from '../../stores/BallotStore';
 import SupportStore from '../../stores/SupportStore';
 import VoterStore from '../../stores/VoterStore';
-import HowItWorksWizard from './HowItWorksWizard';
+import CompleteYourProfileWizard from './CompleteYourProfileWizard';
 import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
 
 const SignInModal = React.lazy(() => import(/* webpackChunkName: 'SignInModal' */ '../../common/components/SignIn/SignInModal'));
@@ -38,10 +38,10 @@ class CompleteYourProfile2024 extends Component {
 
     const dataLayerObject = {
       actionDetails: {
-        actionType: 'impression',
+        actionType: 'landing',
         componentName: 'CompleteYourProfile2024',
       },
-      event: 'action',
+      event: 'landing',
       pageDetails: {
         pageName: currentPage.pageName,
         pageType: currentPage.pageType,
@@ -334,7 +334,7 @@ class CompleteYourProfile2024 extends Component {
           destinationPathname: currentPathname,
         },
         pageDetails: {
-          pageName: 'HowItWorksWizard',
+          pageName: 'CompleteYourProfileWizard',
           pageType: currentPage.pageType,
           pathname: currentPathname,
         },
@@ -416,7 +416,6 @@ class CompleteYourProfile2024 extends Component {
 
     // If we have completed all the steps, don't render this component
     const allStepsHaveBeenCompleted = howItWorksWatched && personalizedScoreIntroCompleted && voterIsSignedIn;
-    // Prior: (addressIntroCompleted || addressIntroCompletedByCookie) && howItWorksWatched && personalizedScoreIntroCompleted && valuesIntroCompleted && voterIsSignedIn
     const showCompleteYourProfileForDebugging = false;
     if (showCompleteYourProfileForDebugging) {
       // Pass by this OFF switch so we render this component
@@ -440,7 +439,7 @@ class CompleteYourProfile2024 extends Component {
           </Suspense>
         )}
 
-        <HowItWorksWizard steps={steps} activeStep={activeStep} />
+        <CompleteYourProfileWizard steps={steps} activeStep={activeStep} />
       </div>
     );
   }
