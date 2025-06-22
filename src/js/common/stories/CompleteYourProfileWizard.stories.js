@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { action } from '@storybook/addon-actions';
 import styled from 'styled-components';
-import HowItWorks from '../../components/CompleteYourProfile/HowItWorksWizard';
+import CompleteYourProfile from '../../components/CompleteYourProfile/CompleteYourProfileWizard';
 
-// WV-380: Created controls for the HowItWorks component allowing steps object to be modified,
+// WV-380: Created controls for the CompleteYourProfile component allowing steps object to be modified,
 // multi-check on activeSteps,
 // and completed status to be toggled true/false.
 
@@ -42,7 +42,7 @@ const initialSteps = [
 
 export default {
   title: 'Design System/CompleteYourProfile',
-  component: HowItWorks,
+  component: CompleteYourProfile,
   parameters: {
     layout: 'centered',
   },
@@ -75,7 +75,7 @@ const Container = styled.div`
   height: 100vh;
 `;
 
-export const HowItWorksWizard = (args) => {
+export const CompleteYourProfileWizard = (args) => {
   const [steps, setSteps] = useState(args.steps);
   useEffect(() => {
     setSteps((prevSteps) => prevSteps.map((step) => ({
@@ -96,7 +96,7 @@ export const HowItWorksWizard = (args) => {
 
   return (
     <Container>
-      <HowItWorks steps={steps.map((step, i) => ({
+      <CompleteYourProfile steps={steps.map((step, i) => ({
         ...step,
         onClick: () => handleStepToggle(i),
       }))}
@@ -106,7 +106,7 @@ export const HowItWorksWizard = (args) => {
   );
 };
 
-HowItWorksWizard.args = {
+CompleteYourProfileWizard.args = {
   steps: initialSteps,
   activeStep: [1],
 };

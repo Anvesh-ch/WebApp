@@ -4,20 +4,31 @@ import styled from 'styled-components';
 import TagManager from 'react-gtm-module';
 import Colors from '../../common/components/Style/Colors';
 import normalizedImagePath from '../../common/utils/normalizedImagePath';
-import HowItWorksStep from './Step';
+import CompleteYourProfileStep from './Step';
 import DesignTokenColors from '../../common/components/Style/DesignTokenColors';
 import VoterStore from '../../stores/VoterStore';
 import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import stringContains from '../../common/utils/stringContains';
+import Cookies from '../../common/utils/js-cookie/Cookies';
 
 const crossIcon = normalizedImagePath('../../../img/global/svg-icons/cross.svg');
 
 
-const HowItWorksWizard = ({ steps, activeStep }) => {
-  const [showHowItWorksWizard, setShowHowItWorksWizard] = useState(true);
+const CompleteYourProfileWizard = ({ steps, activeStep }) => {
+  const completeYourProfileOpen = !(Cookies.get('complete_your_profile_closed'));
+  const [showCompleteYourProfileWizard, setShowCompleteYourProfileWizard] = useState(completeYourProfileOpen);
 
-  const hideHowItWorksWizard = (buttonId) => {
-    setShowHowItWorksWizard(false);
-    // console.log('HowItWorksWizard props:', { steps, activeStep });
+  const hideCompleteYourProfileWizard = (buttonId) => {
+    setShowCompleteYourProfileWizard(false);
+    // Set cookie to close the wizard for 18 hours
+    const { location: { origin } } = window;
+    const expirationDate = new Date(new Date().getTime() + 18 * 60 * 60 * 1000); // 18 hours from now
+    if (origin && stringContains('wevote.us', origin)) {
+      Cookies.set('complete_your_profile_closed', '1', { expires: expirationDate, path: '/', domain: 'wevote.us' });
+    } else {
+      Cookies.set('complete_your_profile_closed', '1', { expires: expirationDate, path: '/' });
+    }
+    // console.log('CompleteYourProfileWizard props:', { steps, activeStep });
     // dataLayer tracking
     const { location: { pathname: currentPathname } } = window;
     // console.log('Current pathname:', currentPathname);
@@ -30,7 +41,7 @@ const HowItWorksWizard = ({ steps, activeStep }) => {
       },
       event: 'action',
       pageDetails: {
-        pageName: 'HowItWorksWizard',
+        pageName: 'CompleteYourProfileWizard',
         pageType: currentPage.pageType,
         pathname: currentPathname,
       },
@@ -47,13 +58,13 @@ const HowItWorksWizard = ({ steps, activeStep }) => {
     // console.log('DataLayer object being sent:', dataLayerObject);
     TagManager.dataLayer({ dataLayer: dataLayerObject });
 
-    // console.log('DataLayer tracking completed for HowItWorksWizard close');
+    // console.log('DataLayer tracking completed for CompleteYourProfileWizard close');
   };
 
 
-  return showHowItWorksWizard && (
-    <HowItWorksContainer>
-      <HowItWorksHeader>
+  return showCompleteYourProfileWizard && (
+    <CompleteYourProfileContainer>
+      <CompleteYourProfileHeader>
         <p>
           <span className="u-show-mobile">
             Turn your values into voting decisions!
@@ -62,17 +73,17 @@ const HowItWorksWizard = ({ steps, activeStep }) => {
             See how to turn your values into voting decisions!
           </span>
         </p>
-        <HowItWorksCrossIconContainer
-          id="closeHowItWorksWizard"
-          onClick={() => hideHowItWorksWizard('CloseHowItWorksWizard')}
+        <CompleteYourProfileCrossIconContainer
+          id="closeCompleteYourProfileWizard"
+          onClick={() => hideCompleteYourProfileWizard('CloseCompleteYourProfileWizard')}
         >
           <img src={crossIcon} alt="Close" style={{ filter: 'brightness(1.9)' }} />
-        </HowItWorksCrossIconContainer>
-      </HowItWorksHeader>
+        </CompleteYourProfileCrossIconContainer>
+      </CompleteYourProfileHeader>
 
-      <HowItWorksStepsContainer>
+      <CompleteYourProfileStepsContainer>
         {steps.map((step) => (
-          <HowItWorksStep
+          <CompleteYourProfileStep
             label={step.title}
             step={step.id}
             completed={step.completed}
@@ -83,17 +94,17 @@ const HowItWorksWizard = ({ steps, activeStep }) => {
             width={step.width}
           />
         ))}
-      </HowItWorksStepsContainer>
-    </HowItWorksContainer>
+      </CompleteYourProfileStepsContainer>
+    </CompleteYourProfileContainer>
   );
 };
 
-HowItWorksWizard.propTypes = {
+CompleteYourProfileWizard.propTypes = {
   steps: PropTypes.array,
   activeStep: PropTypes.number,
 };
 
-const HowItWorksContainer = styled('div')`
+const CompleteYourProfileContainer = styled('div')`
   font-family: 'Open Sans', sans-serif;
   border-radius: 10px;
   border: 1px solid ${Colors.grey};
@@ -102,7 +113,7 @@ const HowItWorksContainer = styled('div')`
   overflow: hidden;
 `;
 
-const HowItWorksHeader = styled('div')`
+const CompleteYourProfileHeader = styled('div')`
   min-height: 33px;
   background: ${Colors.primary2024};
   display: flex;
@@ -119,15 +130,15 @@ const HowItWorksHeader = styled('div')`
   }
 `;
 
-const HowItWorksCrossIconContainer = styled('div')`
+const CompleteYourProfileCrossIconContainer = styled('div')`
   padding-right: 8px;
   cursor: pointer;
 `;
 
-const HowItWorksStepsContainer = styled('div')`
+const CompleteYourProfileStepsContainer = styled('div')`
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
 `;
 
-export default HowItWorksWizard;
+export default CompleteYourProfileWizard;
