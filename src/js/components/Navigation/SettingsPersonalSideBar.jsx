@@ -281,7 +281,7 @@ export default class SettingsPersonalSideBar extends Component {
             >
               <div>
                 <Link to="/settings/domain" className="SettingsItem__summary__item" id="settingsDomain">
-                  <LinkSpan isActive={String(editMode) === 'domain'}>
+                  <LinkSpan $isActive={String(editMode) === 'domain'}>
                     Domain
                   </LinkSpan>
                   <Suspense fallback={<></>}>
@@ -437,12 +437,12 @@ export default class SettingsPersonalSideBar extends Component {
           )}
 
           {isSignedIn && (
-            <LinkContainer isActive={String(editMode) === 'text'}>
+            <LinkContainer $isActive={String(editMode) === 'text'}>
               <BorderTopContainer onClick={this.voterSignOut}>
                 <Link to="/ready" className="SettingsItem__summary__item" id="site text">
                   <SignOutIcon />
                   <LinkSpan
-                    isActive={String(editMode) === 'text'}
+                    $isActive={String(editMode) === 'text'}
                     id="signOut_Settings"
                   >
                     Sign Out
@@ -463,37 +463,37 @@ const BorderBottomContainer = styled('div')`
 `;
 
 const ImportContactsIcon = styled(ImportContactsOutlined)`
-  color: ${(props) => (props.isActive ? DesignTokenColors.primary600 : DesignTokenColors.neutralUI600)};
+  color: ${(props) => (props.$isActive ? DesignTokenColors.primary600 : DesignTokenColors.neutralUI600)};
   margin: -3px 10px 0 8px;
 `;
 
 const ProfileIcon = styled(AccountBoxRounded)`
-  color: ${(props) => (props.isActive ? DesignTokenColors.primary600 : DesignTokenColors.neutralUI600)};
+  color: ${(props) => (props.$isActive ? DesignTokenColors.primary600 : DesignTokenColors.neutralUI600)};
   margin: -3px 10px 0 6px;
 `;
 
 const SecurityIcon = styled(Lock)`
-  color: ${(props) => (props.isActive ? DesignTokenColors.primary600 : DesignTokenColors.neutralUI600)};
+  color: ${(props) => (props.$isActive ? DesignTokenColors.primary600 : DesignTokenColors.neutralUI600)};
   margin: -3px 10px 0 6px;
 `;
 
 const PrivacyIcon = styled(SecurityRounded)`
-  color: ${(props) => (props.isActive ? DesignTokenColors.primary600 : DesignTokenColors.neutralUI600)};
+  color: ${(props) => (props.$isActive ? DesignTokenColors.primary600 : DesignTokenColors.neutralUI600)};
   margin: -3px 10px 0 6px;
 `;
 
 const NotificationsIcon = styled(CampaignRounded)`
-  color: ${(props) => (props.isActive ? DesignTokenColors.primary600 : DesignTokenColors.neutralUI600)};
+  color: ${(props) => (props.$isActive ? DesignTokenColors.primary600 : DesignTokenColors.neutralUI600)};
   margin: -3px 7px 0 9px;
 `;
 
 const FriendsIcon = styled(PeopleAltRounded)`
-  color: ${(props) => (props.isActive ? DesignTokenColors.primary600 : DesignTokenColors.neutralUI600)};
+  color: ${(props) => (props.$isActive ? DesignTokenColors.primary600 : DesignTokenColors.neutralUI600)};
   margin: -3px 10px 0 8px;
 `;
 
 const DiscussIcon = styled(TextsmsRounded)`
-  color: ${(props) => (props.isActive ? DesignTokenColors.primary600 : DesignTokenColors.neutralUI600)};
+  color: ${(props) => (props.$isActive ? DesignTokenColors.primary600 : DesignTokenColors.neutralUI600)};
   margin: -3px 10px 0 8px;
 `;
 
@@ -509,13 +509,13 @@ const BorderTopContainer = styled('div')`
 `;
 
 const LinkContainer = styled('div')`
-  border-left: ${(props) => (props.isActive ? `3px solid ${DesignTokenColors.primary600}` : 'none')};
-  margin: 0 0 .25rem ${(props) => (props.isActive ? '-.2rem' : 0)};
+  border-left: ${(props) => (props.$isActive ? `3px solid ${DesignTokenColors.primary600}` : 'none')};
+  margin: 0 0 .25rem ${(props) => (props.$isActive ? '-.2rem' : 0)};
   padding-bottom: .25rem;
 `;
 
 const LinkSpan = styled('span')`
-  color: ${(props) => (props.isActive ? `${DesignTokenColors.primary600}` : `${DesignTokenColors.neutral600}`)};
+  color: ${(props) => (props.$isActive ? `${DesignTokenColors.primary600}` : `${DesignTokenColors.neutral600}`)};
   fontSize: '1rem',
   textDecoration: 'none',
 `;

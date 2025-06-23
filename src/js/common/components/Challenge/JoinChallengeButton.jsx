@@ -128,20 +128,26 @@ class JoinChallengeButton extends React.Component {
     // console.log('goToInviteFriends currentPathname: ', currentPathname);
 
     // Adding event data to dataLayer for Google Tag Manager to fire the inviteFriendsToChallenge tag
-    const page = lookupPageNameAndPageTypeDict(currentPathname);
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
     const destinationPage = lookupPageNameAndPageTypeDict(inviteFriendsPath);
     TagManager.dataLayer({
       dataLayer: {
-        event: 'inviteFriendsToChallenge',
+        actionDetails: {
+          actionType: 'invite',
+          buttonId: 'joinChallengeButton',
+        },
+        event: 'action',
         userDetails: {
+          stateCode: VoterStore.getVoterStateCode(),
+          userCohort: VoterStore.getAnalyticsUserCohort(),
           voterWeVoteId: VoterStore.getVoterWeVoteId(),
         },
         challengeDetails: {
           challengeWeVoteId,
         },
         pageDetails: {
-          pageName: page.pageName,
-          pageType: page.pageType,
+          pageName: currentPage.pageName,
+          pageType: currentPage.pageType,
           pathname: currentPathname,
         },
         destinationDetails: {
@@ -177,25 +183,31 @@ class JoinChallengeButton extends React.Component {
       AppObservableStore.setSetUpAccountEntryPath(joinChallengeNextStepPath);
       // console.log('goToJoinChallenge currentPathname: ', currentPathname);
       // Adding event data to dataLayer for Google Tag Manager to fire the inviteFriendsToChallenge tag
-      const page = lookupPageNameAndPageTypeDict(currentPathname);
+      const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
       const destinationPage = lookupPageNameAndPageTypeDict(joinChallengeNextStepPath);
       TagManager.dataLayer({
         dataLayer: {
-          event: 'joinChallenge',
+          actionDetails: {
+            actionType: 'join',
+            buttonId: 'joinChallengeButton',
+          },
+          event: 'action',
           userDetails: {
+            stateCode: VoterStore.getVoterStateCode(),
+            userCohort: VoterStore.getAnalyticsUserCohort(),
             voterWeVoteId: VoterStore.getVoterWeVoteId(),
           },
           challengeDetails: {
             challengeWeVoteId,
           },
           pageDetails: {
-            pageType: page.pageType,
-            pageName: page.pageName,
+            pageName: currentPage.pageName,
+            pageType: currentPage.pageType,
             pathname: currentPathname,
           },
           destinationDetails: {
-            destinationPageType: destinationPage.pageType,
             destinationPageName: destinationPage.pageName,
+            destinationPageType: destinationPage.pageType,
             destinationPathname: joinChallengeNextStepPath,
           },
         },

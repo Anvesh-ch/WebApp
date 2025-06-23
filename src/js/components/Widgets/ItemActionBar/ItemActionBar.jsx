@@ -256,23 +256,29 @@ class ItemActionBar extends PureComponent {
     }
   }
 
-  openHelpWinOrDefeatModal = (isHelpWinOrHelpDefeat) => {
+  openHelpWinOrDefeatModal = (isHelpWinOrHelpDefeat, buttonId = '') => {
     const { location: { pathname: currentPathname } } = window;
-    const page = lookupPageNameAndPageTypeDict(currentPathname);
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
 
     const dataLayerObject = {
-      event: `click_${isHelpWinOrHelpDefeat}_modal_open`,
+      actionDetails: {
+        actionType: 'openModal',
+        buttonId,
+      },
+      event: 'action',
       userDetails: {
+        stateCode: VoterStore.getVoterStateCode(),
+        userCohort: VoterStore.getAnalyticsUserCohort(),
         voterWeVoteId: VoterStore.getVoterWeVoteId(),
       },
       pageDetails: {
-        pageName: page.pageName,
-        pageType: page.pageType,
+        pageName: currentPage.pageName,
+        pageType: currentPage.pageType,
         pathname: currentPathname,
       },
       destinationDetails: {
-        destinationPageName: page.pageName,
-        destinationPageType: 'PayToPromoteProcessModal',
+        destinationPageName: isHelpWinOrHelpDefeat,
+        destinationPageType: currentPage.pageType,
         destinationPathname: currentPathname,
       },
     };
@@ -321,7 +327,7 @@ class ItemActionBar extends PureComponent {
           }}
           color="primary"
           id={`itemActionBarHelpThemWinButton-${externalUniqueId}-${localUniqueId}`}
-          onClick={() => this.openHelpWinOrDefeatModal('help_win')}
+          onClick={() => this.openHelpWinOrDefeatModal('help_win', `itemActionBarHelpThemWinButton-${externalUniqueId}-${localUniqueId}`)}
           variant="contained"
         >
           <HelpButtonLabel>
@@ -348,7 +354,7 @@ class ItemActionBar extends PureComponent {
           className={`${opposeHideInMobile ? 'd-none d-sm-block ' : ''}`}
           color="primary"
           id={`itemActionBarHelpDefeatButton-${externalUniqueId}-${localUniqueId}`}
-          onClick={() => this.openHelpWinOrDefeatModal('help_defeat')}
+          onClick={() => this.openHelpWinOrDefeatModal('help_defeat', `itemActionBarHelpDefeatButton-${externalUniqueId}-${localUniqueId}`)}
           variant="contained"
         >
           <HelpButtonLabel>
