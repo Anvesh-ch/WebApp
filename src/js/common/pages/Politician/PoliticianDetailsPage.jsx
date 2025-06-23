@@ -309,13 +309,14 @@ class PoliticianDetailsPage extends Component {
     }
     // --------Zubin - TAGMANAGER DATA LAYER LOGIC---------
     if (!this.state.dataLayerSent) {
-      // console.log("TagManager code executing...");
-      // console.log("Politician ID id exists? ", politician);
+      // console.log('TagManager code executing...');
+      // console.log('Politician ID id exists? ', politician);
       if (politician && politician.politician_we_vote_id) {
         // console.log('Politician Details retrieved, Adding DataLayer...');
+        const { location: { pathname: currentPathname } } = window;
         const politicianState = politician.state_code || 'na';
         const dataLayerObj = {
-          event: 'politician_page_view',
+          event: 'landing',
           userDetails: {
             stateCode: VoterStore.getVoterStateCode(),
             userCohort: VoterStore.getAnalyticsUserCohort(),
@@ -327,9 +328,9 @@ class PoliticianDetailsPage extends Component {
             politicianState,
           },
           pageDetails: {
-            pageType: 'politician', // in which page we are currently
             pageName: this.constructor.name, // name of page from constructor itself
-            pathname: window.location.pathname, // location of the current window contains pathname
+            pageType: 'politician', // in which page we are currently
+            pathname: currentPathname,
           },
         };
         TagManager.dataLayer({ dataLayer: dataLayerObj });
@@ -637,24 +638,6 @@ class PoliticianDetailsPage extends Component {
 
   // TagManger from Candidate page on View your full Ballot button-AnujaLawankar
   goToBallot = () => {
-    TagManager.dataLayer({
-      dataLayer: {
-        event: 'view_your_full_ballot',
-        userDetails: {
-          voterWeVoteId: VoterStore.getVoterWeVoteId(),
-        },
-        destinationDetails: {
-          destinationPageName: 'Ballot',  // Navigated Page
-          destinationPageType: 'ballot',  // Type of page
-          destinationPathname: '/ballot', // Path for Navigation
-        },
-        pageDetails: {
-          pageName: 'PoliticianDetailsPage',
-          pageType: 'politician',
-          pathname: window.location.pathname, // Current page path
-        },
-      },
-    });
     historyPush('/ballot');
   }
 
@@ -1069,7 +1052,13 @@ class PoliticianDetailsPage extends Component {
                       </div>
                     </AboutAndEditFlex>
                     {politicianDescription ? (
-                      <ReadMore numberOfLines={6} textToDisplay={politicianDescription} />
+                      <ReadMore
+                        numberOfLines={6}
+                        textToDisplay={politicianDescription}
+                        buttonId="clickShowMoreAboutPolitician"
+                        id="clickShowMoreAboutPolitician"
+                        politicianWeVoteId={politicianWeVoteIdForDisplay}
+                      />
                     ) : (
                       <NoInformationProvided>No description has been provided for this candidate.</NoInformationProvided>
                     )}
@@ -1234,7 +1223,13 @@ class PoliticianDetailsPage extends Component {
                           </div>
                         </AboutAndEditFlex>
                         {politicianDescription ? (
-                          <ReadMore numberOfLines={6} textToDisplay={politicianDescription} />
+                          <ReadMore
+                            numberOfLines={6}
+                            textToDisplay={politicianDescription}
+                            buttonId="clickShowMoreAboutPolitician"
+                            id="clickShowMoreAboutPolitician"
+                            politicianWeVoteId={politicianWeVoteIdForDisplay}
+                          />
                         ) : (
                           <NoInformationProvided>No description has been provided for this candidate.</NoInformationProvided>
                         )}
@@ -1308,7 +1303,7 @@ class PoliticianDetailsPage extends Component {
                 )}
                 <ViewBallotButtonWrapper>
                   <Suspense fallback={<></>}>
-                    <ViewUpcomingBallotButton buttonText="View Your Full Ballot" onClickFunction={this.goToBallot} onlyOfferViewYourBallot />
+                    <ViewUpcomingBallotButton buttonText="View Your Full Ballot" goToBallotFunction={this.goToBallot} onlyOfferViewYourBallot />
                   </Suspense>
                 </ViewBallotButtonWrapper>
                 {/* {commentListTeaserHtml} */}
@@ -1359,7 +1354,7 @@ class PoliticianDetailsPage extends Component {
             <SupportButtonPanel>
               <CenteredDiv>
                 <Suspense fallback={<span>&nbsp;</span>}>
-                  <ViewUpcomingBallotButton buttonText="View Your Full Ballot" onClickFunction={this.goToBallot} onlyOfferViewYourBallot />
+                  <ViewUpcomingBallotButton buttonText="View Your Full Ballot" goToBallotFunction={this.goToBallot} onlyOfferViewYourBallot />
                   {/* {(finalElectionDateInPast) ? ( || usePoliticianWeVoteIdForBallotItem */}
                   {/*  <ItemActionBar */}
                   {/*    ballotItemWeVoteId={politicianWeVoteId} */}

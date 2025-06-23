@@ -400,7 +400,10 @@ class IssueStore extends ReduceStore {
     // Exit if we don't have a successful response (since we expect certain variables in a successful response below)
     if (!action.res || !action.res.success) return state;
     const { allCachedIssues, issueScoreForEachBallotItem } = state;
-    let { issueWeVoteIdsSupportingEachBallotItem, issueWeVoteIdsUnderEachBallotItem, issueWeVoteIdsVoterCanFollow, issueWeVoteIdsLinkedToByOrganizationDict } = state;
+    let {
+      issueWeVoteIdsSupportingEachBallotItem, issueWeVoteIdsUnderEachBallotItem, issueWeVoteIdsVoterCanFollow,
+      issueWeVoteIdsLinkedToByOrganizationDict,
+    } = state;
     const { issueWeVoteIdsBySlug, issueWeVoteIdsToLinkToByOrganizationDict } = state;
     let { issueWeVoteIdsVoterIsFollowing } = state;
     let ballotItemWeVoteId;
@@ -489,12 +492,15 @@ class IssueStore extends ReduceStore {
           if (!issueWeVoteIdsVoterIsFollowing.includes(issue.issue_we_vote_id) && !issueWeVoteIdsVoterCanFollow.includes(issue.issue_we_vote_id)) {
             issueWeVoteIdsVoterCanFollow.push(issue.issue_we_vote_id);
           }
-          if (issue.linked_organization_preview_list) {
+          if (issue.linked_organization_preview_list && issue.linked_organization_preview_list.length > 0) {
             issue.linked_organization_preview_list.forEach((linkedOrganizationPreview) => {
               linkedIssueListForOneOrganization = issueWeVoteIdsLinkedToByOrganizationDict[linkedOrganizationPreview.organization_we_vote_id] || [];
               // console.log('IssueStore, case issueDescriptionsRetrieve, issueWeVoteIdsLinked:', issueWeVoteIdsLinked);
               organizationWeVoteIdsForIssue = organizationWeVoteIdsLinkedToIssueDict[issue.issue_we_vote_id] || [];
               organizationWeVoteIdsForIssue.push(linkedOrganizationPreview.organization_we_vote_id);
+              // if (issue.issue_we_vote_id === 'wv02issue68') {
+              //   console.log('issueDescriptionsRetrieve organizationWeVoteIdsForIssue:', organizationWeVoteIdsForIssue);
+              // }
               organizationWeVoteIdsLinkedToIssueDict[issue.issue_we_vote_id] = organizationWeVoteIdsForIssue;
               if (!linkedIssueListForOneOrganization.includes(issue.issue_we_vote_id)) {
                 linkedIssueListForOneOrganization.push(issue.issue_we_vote_id);
@@ -529,8 +535,12 @@ class IssueStore extends ReduceStore {
 
         // console.log('action.res.voter_issues_only:', action.res.voter_issues_only);
         issueList.forEach((issue) => {
-          if (issue.linked_organization_we_vote_id_list) {
+          // console.log('** IssueStore issueOrganizationsRetrieve issue:', issue);
+          if (issue.linked_organization_we_vote_id_list && issue.linked_organization_we_vote_id_list.length > 0) {
             organizationWeVoteIdsForIssue = issue.linked_organization_we_vote_id_list || [];
+            // if (issue.issue_we_vote_id === 'wv02issue68') {
+            //   console.log('*** issue.issue_we_vote_id:', issue.issue_we_vote_id, ', organizationWeVoteIdsForIssue:', organizationWeVoteIdsForIssue);
+            // }
             organizationWeVoteIdsLinkedToIssueDict[issue.issue_we_vote_id] = organizationWeVoteIdsForIssue;
             organizationWeVoteIdsForIssue.forEach((linkedOrganizationWeVoteId) => {
               linkedIssueListForOneOrganization = issueWeVoteIdsLinkedToByOrganizationDict[linkedOrganizationWeVoteId] || [];
@@ -606,6 +616,9 @@ class IssueStore extends ReduceStore {
           issueWeVoteIdsSupportingEachBallotItem = {}; // Reset
           if (issuesUnderBallotItemsList.length) {
             issuesUnderBallotItemsList.forEach((issueBlock) => {
+              // if (issueBlock.ballot_item === 'wv87cand2313126') {
+              //   console.log('Steve Garvey issuesUnderBallotItemsRetrieve INCOMING issueBlock:', issueBlock);
+              // }
               issueWeVoteIdsSupportingEachBallotItem[issueBlock.ballot_item] = issueBlock.support;
               issueWeVoteIdsUnderEachBallotItem[issueBlock.ballot_item] = [...new Set([...issueBlock.support, ...issueBlock.oppose])];
             });
@@ -797,6 +810,9 @@ class IssueStore extends ReduceStore {
               issueWeVoteIdsLinked.forEach((issueWeVoteId) => {
                 organizationWeVoteIdsForIssue = organizationWeVoteIdsLinkedToIssueDict[issueWeVoteId] || [];
                 organizationWeVoteIdsForIssue.push(voterGuide.organization_we_vote_id);
+                // if (issueWeVoteId === 'wv02issue68') {
+                //   console.log('voterGuidesToFollowRetrieve organizationWeVoteIdsForIssue:', organizationWeVoteIdsForIssue);
+                // }
                 organizationWeVoteIdsLinkedToIssueDict[issueWeVoteId] = organizationWeVoteIdsForIssue;
                 if (!linkedIssueListForOneOrganization.includes(issueWeVoteId)) {
                   linkedIssueListForOneOrganization.push(issueWeVoteId);
@@ -918,6 +934,9 @@ class IssueStore extends ReduceStore {
               issueWeVoteIdsLinked.forEach((issueWeVoteId) => {
                 organizationWeVoteIdsForIssue = organizationWeVoteIdsLinkedToIssueDict[issueWeVoteId] || [];
                 organizationWeVoteIdsForIssue.push(voterGuide.organization_we_vote_id);
+                // if (issueWeVoteId === 'wv02issue68') {
+                //   console.log('voterGuidesUpcomingRetrieve organizationWeVoteIdsForIssue:', organizationWeVoteIdsForIssue);
+                // }
                 organizationWeVoteIdsLinkedToIssueDict[issueWeVoteId] = organizationWeVoteIdsForIssue;
                 if (!linkedIssueListForOneOrganization.includes(issueWeVoteId)) {
                   linkedIssueListForOneOrganization.push(issueWeVoteId);
