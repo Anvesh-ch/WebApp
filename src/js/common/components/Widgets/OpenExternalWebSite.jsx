@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import TagManager from 'react-gtm-module';
-import CandidateStore from "../../../stores/CandidateStore";
-import PoliticianStore from "../../../common/stores/PoliticianStore";
+import CandidateStore from '../../../stores/CandidateStore';
+import PoliticianStore from '../../stores/PoliticianStore';
 import VoterStore from '../../../stores/VoterStore';
 import { cordovaOpenSafariView } from '../../utils/cordovaUtils';
 import { isAndroid, isWebApp } from '../../utils/isCordovaOrWebApp';
@@ -141,9 +141,5 @@ OpenExternalWebSite.propTypes = {
   trackingOn: PropTypes.bool,
   url: PropTypes.string.isRequired,
   candidateWeVoteId: PropTypes.string,
-  candidateName: PropTypes.string,
-  officeName: PropTypes.string,
   politicianWeVoteId: PropTypes.string,
-  politicalParty: PropTypes.string,
-  stateCode: PropTypes.string,
 };
