@@ -135,6 +135,10 @@ function calculatePageNameAndPageTypeDict (path) {
     settingsPageName = 'TwitterHandleLanding';
     settingsPageType = 'twitterHandleLanding';
   }
+  if (/^\/[^/\s]+$/.test(path)) {
+    settingsPageName = 'TwitterHandleLanding';
+    settingsPageType = 'endorser';  // Changed from 'twitterHandleLanding' to 'endorser'
+  }
 
   return {
     pageName: settingsPageName,

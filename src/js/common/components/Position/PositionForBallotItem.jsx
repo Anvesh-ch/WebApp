@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Suspense, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { BlockOutlined, CheckOutlined, Launch, MoreHoriz } from '@mui/icons-material';
 import Popover from '@mui/material/Popover';
@@ -12,8 +13,9 @@ import speakerDisplayNameToInitials from '../../utils/speakerDisplayNameToInitia
 import {
   getDateFromUltimateElectionDate, getTodayAsInteger, timeFromDate,
 } from '../../utils/dateFormat';
-import AppObservableStore from '../../stores/AppObservableStore';
+// import AppObservableStore from '../../stores/AppObservableStore';
 import stringContains from '../../utils/stringContains';
+import lookupPageNameAndPageTypeDict from '../../../utils/lookupPageNameAndPageTypeDict';
 
 const OpenExternalWebSite = React.lazy(() => import(/* webpackChunkName: 'OpenExternalWebSite' */ '../Widgets/OpenExternalWebSite'));
 const ReadMore = React.lazy(() => import(/* webpackChunkName: 'ReadMore' */ '../Widgets/ReadMore'));
@@ -74,8 +76,8 @@ function PositionForBallotItem ({ classes, linksOpenExternalWebsite, position })
   }
   const voterGuideWeVoteIdLink = `/voterguide/${organizationWeVoteId}`;
   const speakerLink = speakerTwitterHandle ? `/${speakerTwitterHandle}` : voterGuideWeVoteIdLink;
-  const hostnameAndPort = AppObservableStore.getWeVoteRootURL();
-  const speakerLinkExternal = `${hostnameAndPort}${speakerLink}`;
+  // const hostnameAndPort = AppObservableStore.getWeVoteRootURL();
+  // const speakerLinkExternal = `${hostnameAndPort}${speakerLink}`;
   // console.log('PositionForBallotItem organizationWeVoteId:', organizationWeVoteId, ', campaignXWeVoteId:', campaignXWeVoteId);
 
   const speakerImageJsx = (
@@ -89,33 +91,39 @@ function PositionForBallotItem ({ classes, linksOpenExternalWebsite, position })
   );
   return (
     <PositionForBallotItemWrapper>
-      {(linksOpenExternalWebsite && speakerLinkExternal) ? (
-        <Suspense fallback={<></>}>
-          <OpenExternalWebSite
-            body={<>{speakerImageJsx}</>}
-            target="_blank"
-            trackingOn
-            url={speakerLinkExternal}
-            destinationPageName="PoliticianDetailsPage"
-            destinationPageType="politician"
-          />
-        </Suspense>
+      {linksOpenExternalWebsite ? (
+        <Link
+          to={speakerLink}
+          onClick={() => {
+            const { pageName, pageType } = lookupPageNameAndPageTypeDict(speakerLink);
+            window.dataLayer?.push({
+              event: 'landing',
+              destinationPageName: pageName,
+              destinationPageType: pageType,
+            });
+          }}
+        >
+          {speakerImageJsx}
+        </Link>
       ) : (
         <>{speakerImageJsx}</>
       )}
       <SpeakerInfoWrapper>
         <SpeakerInfoNameFavoritesWrapper>
-          {(linksOpenExternalWebsite && speakerLinkExternal) ? (
-            <Suspense fallback={<></>}>
-              <OpenExternalWebSite
-                body={<SpeakerName>{speakerDisplayName}</SpeakerName>}
-                target="_blank"
-                trackingOn
-                url={speakerLinkExternal}
-                destinationPageName="PoliticianDetailsPage"
-                destinationPageType="politician"
-              />
-            </Suspense>
+          {linksOpenExternalWebsite ? (
+            <Link
+              to={speakerLink}
+              onClick={() => {
+                const { pageName, pageType } = lookupPageNameAndPageTypeDict(speakerLink);
+                window.dataLayer?.push({
+                  event: 'landing',
+                  destinationPageName: pageName,
+                  destinationPageType: pageType,
+                });
+              }}
+            >
+              <SpeakerName>{speakerDisplayName}</SpeakerName>
+            </Link>
           ) : (
             <SpeakerName>{speakerDisplayName}</SpeakerName>
           )}
