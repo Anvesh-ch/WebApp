@@ -3,6 +3,7 @@ import withStyles from '@mui/styles/withStyles';
 import withTheme from '@mui/styles/withTheme';
 import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
+import parser from 'parse-address';
 import styled from 'styled-components';
 import TagManager from 'react-gtm-module';
 import AppObservableStore from '../../common/stores/AppObservableStore';
@@ -104,7 +105,8 @@ class BallotTitleHeader extends Component {
     }
   }
 
-  showSelectBallotModalEditAddress = () => {
+  showSelectBallotModalEditAddress = (buttonId) => {
+    console.log('Passed buttonId:', buttonId);
     const { linksOff } = this.props;
     // console.log('BallotTitleHeader showSelectBallotModalEditAddress linksOff:', linksOff);
     if (!linksOff) {
@@ -113,10 +115,25 @@ class BallotTitleHeader extends Component {
       // this.props.toggleSelectBallotModal('', showEditAddress, false);
       const { location: { pathname: currentPathname } } = window;
       const page = lookupPageNameAndPageTypeDict(currentPathname);
+
+      const address = VoterStore.getTextForMapSearch();
+      let city = '';
+      let region = '';
+      let zip = '';
+
+      if (address) {
+        const parsedAddress = parser.parseLocation(address);
+        if (parsedAddress) {
+          city = parsedAddress.city || '';
+          region = parsedAddress.state || '';
+          zip = parsedAddress.zip || '';
+        }
+      }
+
       const dataLayerObject = {
         actionDetails: {
           actionType: 'openModal',
-          buttonId: 'editAddressButton',
+          buttonId,
         },
         event: 'action',
         userDetails: {
@@ -131,11 +148,13 @@ class BallotTitleHeader extends Component {
         },
         electionDetails: {
           electionGeo: {
-            fullAddress: VoterStore.getTextForMapSearch(),
+            city,
+            region,
+            zip,
           },
         },
       };
-      //console.log('dataLayerObject:', dataLayerObject);
+      console.log('dataLayerObject:', dataLayerObject);
       TagManager.dataLayer({ dataLayer: dataLayerObject });
 
       AppObservableStore.setShowSelectBallotModal(showSelectBallotModal, showEditAddress);
@@ -219,7 +238,7 @@ class BallotTitleHeader extends Component {
                           centerText={centerText}
                           className={linksOff ? '' : 'u-cursor--pointer'}
                           id="ballotTitleBallotAddress"
-                          onClick={this.showSelectBallotModalEditAddress}
+                          onClick={() => this.showSelectBallotModalEditAddress('ballotTitleBallotAddress')}
                         >
                           {ballotCaveat && (
                             <div>{ballotCaveat}</div>
@@ -233,7 +252,7 @@ class BallotTitleHeader extends Component {
                               centerText={centerText}
                               className={linksOff ? '' : 'u-cursor--pointer'}
                               id="ballotTitleBallotAddress"
-                              onClick={this.showSelectBallotModalEditAddress}
+                              onClick={() => this.showSelectBallotModalEditAddress('ballotTitleBallotAddress')}
                             >
                               Ballot for
                               {' '}
@@ -254,7 +273,7 @@ class BallotTitleHeader extends Component {
                                   centerText={centerText}
                                   className={linksOff ? '' : 'u-cursor--pointer'}
                                   id="ballotTitleBallotAddressSubstituted"
-                                  onClick={this.showSelectBallotModalEditAddress}
+                                  onClick={() => this.showSelectBallotModalEditAddress('ballotTitleBallotAddressSubstituted')}
                                 >
                                   Ballot for
                                   {' '}
@@ -269,7 +288,7 @@ class BallotTitleHeader extends Component {
                                   centerText={centerText}
                                   className={linksOff ? '' : 'u-cursor--pointer'}
                                   id="ballotTitleBallotAddress"
-                                  onClick={this.showSelectBallotModalEditAddress}
+                                  onClick={() => this.showSelectBallotModalEditAddress('ballotTitleBallotAddress')}
                                 >
                                   <span tabIndex={0} className={linksOff ? '' : 'u-link-color u-link-underline-on-hover'}>
                                     Click to enter your address

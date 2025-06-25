@@ -1,6 +1,7 @@
 import { Edit } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import parser from 'parse-address';
 import styled from 'styled-components';
 import TagManager from 'react-gtm-module';
 import daysUntil from '../../common/utils/daysUntil';
@@ -78,7 +79,8 @@ class BallotTitleHeaderNationalPlaceholder extends Component {
     }
   }
 
-  showSelectBallotModalEditAddress = () => {
+  showSelectBallotModalEditAddress = (buttonId) => {
+    console.log('Passed buttonId:', buttonId);
     const { linksOff } = this.props;
     // console.log('BallotTitleHeaderNationalPlaceholder showSelectBallotModalEditAddress linksOff:', linksOff);
     if (!linksOff) {
@@ -87,10 +89,25 @@ class BallotTitleHeaderNationalPlaceholder extends Component {
       // this.props.toggleSelectBallotModal('', showEditAddress, false);
       const { location: { pathname: currentPathname } } = window;
       const page = lookupPageNameAndPageTypeDict(currentPathname);
+
+      const address = VoterStore.getTextForMapSearch();
+      let city = '';
+      let region = '';
+      let zip = '';
+
+      if (address) {
+        const parsedAddress = parser.parseLocation(address);
+        if (parsedAddress) {
+          city = parsedAddress.city || '';
+          region = parsedAddress.state || '';
+          zip = parsedAddress.zip || '';
+        }
+      }
+
       const dataLayerObject = {
         actionDetails: {
           actionType: 'openModal',
-          buttonId: 'editAddressButton',
+          buttonId,
         },
         event: 'action',
         userDetails: {
@@ -105,11 +122,13 @@ class BallotTitleHeaderNationalPlaceholder extends Component {
         },
         electionDetails: {
           electionGeo: {
-            fullAddress: VoterStore.getTextForMapSearch(),
+            city,
+            region,
+            zip,
           },
         },
       };
-      //console.log('dataLayerObject:', dataLayerObject);
+      console.log('dataLayerObject:', dataLayerObject);
       TagManager.dataLayer({ dataLayer: dataLayerObject });
 
       AppObservableStore.setShowSelectBallotModal(showSelectBallotModal, showEditAddress);
@@ -205,7 +224,6 @@ class BallotTitleHeaderNationalPlaceholder extends Component {
                             }}
                             className={linksOff ? '' : 'u-link-color'}
                           >
-                            className={linksOff ? '' : 'u-link-color'}>
                             {textForMapSearch}
                           </span>
                         </BallotAddress>
