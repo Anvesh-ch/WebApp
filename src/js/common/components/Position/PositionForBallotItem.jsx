@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { Suspense, useState } from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { BlockOutlined, CheckOutlined, Launch, MoreHoriz } from '@mui/icons-material';
 import Popover from '@mui/material/Popover';
@@ -92,38 +91,32 @@ function PositionForBallotItem ({ classes, linksOpenExternalWebsite, position })
   return (
     <PositionForBallotItemWrapper>
       {linksOpenExternalWebsite ? (
-        <Link
-          to={speakerLink}
-          onClick={() => {
-            const { pageName, pageType } = lookupPageNameAndPageTypeDict(speakerLink);
-            window.dataLayer?.push({
-              event: 'landing',
-              destinationPageName: pageName,
-              destinationPageType: pageType,
-            });
-          }}
-        >
-          {speakerImageJsx}
-        </Link>
+        <Suspense fallback={<></>}>
+          <OpenExternalWebSite
+            body={speakerImageJsx}
+            url={speakerLink}
+            target="_blank"
+            trackingOn
+            destinationPageName={lookupPageNameAndPageTypeDict(speakerLink).pageName}
+            destinationPageType={lookupPageNameAndPageTypeDict(speakerLink).pageType}
+          />
+        </Suspense>
       ) : (
         <>{speakerImageJsx}</>
       )}
       <SpeakerInfoWrapper>
         <SpeakerInfoNameFavoritesWrapper>
           {linksOpenExternalWebsite ? (
-            <Link
-              to={speakerLink}
-              onClick={() => {
-                const { pageName, pageType } = lookupPageNameAndPageTypeDict(speakerLink);
-                window.dataLayer?.push({
-                  event: 'landing',
-                  destinationPageName: pageName,
-                  destinationPageType: pageType,
-                });
-              }}
-            >
-              <SpeakerName>{speakerDisplayName}</SpeakerName>
-            </Link>
+            <Suspense fallback={<></>}>
+              <OpenExternalWebSite
+                body={<SpeakerName>{speakerDisplayName}</SpeakerName>}
+                url={speakerLink}
+                target="_blank"
+                trackingOn
+                destinationPageName={lookupPageNameAndPageTypeDict(speakerLink).pageName}
+                destinationPageType={lookupPageNameAndPageTypeDict(speakerLink).pageType}
+              />
+            </Suspense>
           ) : (
             <SpeakerName>{speakerDisplayName}</SpeakerName>
           )}
@@ -220,8 +213,8 @@ function PositionForBallotItem ({ classes, linksOpenExternalWebsite, position })
                       target="_blank"
                       trackingOn
                       url={moreInfoUrl}
-                      destinationPageName="OpinionSource"
-                      destinationPageType="reference"
+                      destinationPageName={lookupPageNameAndPageTypeDict(moreInfoUrl).pageName}
+                      destinationPageType={lookupPageNameAndPageTypeDict(moreInfoUrl).pageType}
                     />
                   </Suspense>
                 </Popover>
