@@ -3,8 +3,7 @@
 // If there is a static path for a page, enter it here. If the path includes dynamic elements,
 //  you'll need to generate the pageName and pageType dynamically in calculatePageNameAndPageTypeDict below.
 // TODO Update to with hard-coded External URLs we use
-import { isPoliticianSEOFriendlyURL } from '../common/utils/isSEOFriendlyURL';
-import lookupPageNameAndPageTypeDict from './lookupPageNameAndPageTypeDict';
+import { isChallengeSEOFriendlyURL, isPoliticianSEOFriendlyURL } from '../common/utils/isSEOFriendlyURL';
 
 const pageNameAndTypeSimpleDictForExternalUrls = {
   'https://google.com': {
@@ -27,7 +26,7 @@ const pageNameAndTypeSimpleDictForExternalUrls = {
  * @param pathOrURL
  * @returns {{pageName: string, pageType: string}}
  */
-function calculatePageNameAndPageTypeDict (pathOrURL) {
+function calculatePageNameAndPageTypeDictForExternalUrls (pathOrURL) {
   // console.log("gtmPageNameAndType, path:", path);
   let pageName = 'notSet'; // Per our naming convention for pageName, this would normally be 'NotSet' but I think the value of having pageName being identical to pageType will save us grief in the future.
   let pageType = 'notSet';
@@ -82,7 +81,7 @@ function calculatePageNameAndPageTypeDict (pathOrURL) {
     pageType = 'endorser';  // Changed from 'twitterHandleLanding' to 'endorser'
   }
 
-  if (pathOrURL.startsWith('https//' || 'http://')) {
+  if (pathOrURL.startsWith('https//') || pathOrURL.startsWith('http://')) {
     if (pathOrURL.startsWith('https://instagram.com')) {
       pageName = 'InstagramProfile';
       pageType = 'socialMedia';
