@@ -154,6 +154,7 @@ class IssueCard extends Component {
       dataLayer: {
         actionDetails: {
           buttonId: 'valueListLink',
+          actionType: 'navigate', // By AnujaL
         },
         event: 'action',
         pageDetails: {
@@ -466,6 +467,7 @@ class IssueCard extends Component {
               {includeLinkToIssue ? (
                 <Link id="issueAdvocatesLink"
                       to={this.getIssueLink}
+                      onClick={this.handleIssueClick} // By AnujaL
                 >
                   {issueAdvocates}
                 </Link>
