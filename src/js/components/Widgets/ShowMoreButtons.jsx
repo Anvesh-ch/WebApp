@@ -42,7 +42,6 @@ class ShowMoreButtons extends React.Component {
     };
 
     const officeData = OfficeStore.getOffice(this.props.officeWeVoteId) || {};
-    console.log('DEBUG Office Data:', officeData);
 
     if (this.props.officeWeVoteId) {
       // const officeData = OfficeStore.getOffice(this.props.officeWeVoteId) || {};
