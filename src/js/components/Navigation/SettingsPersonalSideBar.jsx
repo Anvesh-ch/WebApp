@@ -39,7 +39,7 @@ export default class SettingsPersonalSideBar extends Component {
       this.setState({ isOrganization: this.isOrganization(this.props.organizationType) });
     }
     this.appStateSubscription = messageService.getMessage().subscribe(() => this.onAppObservableStoreChange());
-    const { isSignedIn } = this.props;
+    const isSignedIn = VoterStore.getVoterIsSignedIn();
     this.setState({
       isOnPartnerUrl: AppObservableStore.isOnPartnerUrl(),
       voterIsAdminForThisUrl: AppObservableStore.isVoterAdminForThisUrl(VoterStore.getLinkedOrganizationWeVoteId()),
@@ -69,9 +69,11 @@ export default class SettingsPersonalSideBar extends Component {
     this.setState({
       isOnPartnerUrl: AppObservableStore.isOnPartnerUrl(),
     });
-  }
-// helper function 
+  } 
+// helper functions 
   fireSettingsGTMEvent = ({ buttonId, destinationPath = '', actionType = 'navigate' }) => {
+    const { isSignedIn} = this.state;
+
     TagManager.dataLayer({
       dataLayer: {
         event: 'action',
@@ -89,13 +91,12 @@ export default class SettingsPersonalSideBar extends Component {
           pagePath: window.location.pathname,
         },
         userDetails: {
-          isSignedIn: VoterStore.getVoterIsSignedIn(),
-          voterId: VoterStore.getVoterId(),
+          isSignedIn,
         },
       },
     });
   };
-  
+
   voterSignOut = () => {
     this.fireSettingsGTMEvent({
       buttonId: 'signOutPersonalSidebar',
@@ -142,8 +143,8 @@ export default class SettingsPersonalSideBar extends Component {
                     destinationPath: '/settings/contacts',
                   })}
                 >
-                  <ImportContactsIcon isActive={String(editMode) === 'contact'} />
-                  <LinkSpan isActive={String(editMode) === 'contacts'}>
+                  <ImportContactsIcon isActive={String(editMode) === 'contacts'} />
+                  <LinkSpan isActive={String(editMode) === 'contacts'} >
                     Import Contacts
                   </LinkSpan>
                 </Link>
