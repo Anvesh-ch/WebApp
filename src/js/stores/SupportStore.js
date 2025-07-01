@@ -27,14 +27,14 @@ class SupportStore extends ReduceStore {
     return this.getInitialState();
   }
 
-  getBallotItemStatSheet (ballotItemWeVoteId) {
+  getBallotItemStatSheet (ballotItemWeVoteId, politicianWeVoteId = '') {
     if (!(this.voterSupportsList && this.voterOpposesList)) { //  && this.supportCounts && this.opposeCounts
       // console.log('getBallotItemStatSheet undefined');
       return undefined;
     }
     const isCandidate = stringContains('cand', ballotItemWeVoteId);
     const isMeasure = stringContains('meas', ballotItemWeVoteId);
-    const isPolitician = stringContains('pol', ballotItemWeVoteId);
+    const isPolitician = stringContains('pol', politicianWeVoteId);
     let allCachedPositions = [];
     if (isCandidate) {
       allCachedPositions = CandidateStore.getAllCachedPositionsByCandidateWeVoteId(ballotItemWeVoteId);
@@ -42,16 +42,18 @@ class SupportStore extends ReduceStore {
       allCachedPositions = MeasureStore.getAllCachedPositionsByMeasureWeVoteId(ballotItemWeVoteId);
     } else if (isPolitician) {
       // TODO Reality check this
-      allCachedPositions = CandidateStore.getAllCachedPositionsByPoliticianWeVoteId(ballotItemWeVoteId);
+      allCachedPositions = CandidateStore.getAllCachedPositionsByPoliticianWeVoteId(politicianWeVoteId);
     }
-    // console.log('getBallotItemStatSheet allCachedPositions:', allCachedPositions);
+    // if (politicianWeVoteId === 'wv87pol49070' || ballotItemWeVoteId === 'wv87cand3133998') { // Adam Schiff
+    //   console.log('getBallotItemStatSheet, ballotItemWeVoteId:', ballotItemWeVoteId, ', politicianWeVoteId: ', politicianWeVoteId, ', allCachedPositions:', allCachedPositions);
+    // }
     const results = extractScoreFromNetworkFromPositionList(allCachedPositions);
     const { numberOfSupportPositionsForScore, numberOfOpposePositionsForScore, numberOfInfoOnlyPositionsForScore } = results;
     // console.log('getBallotItemStatSheet ballotItemWeVoteId:', ballotItemWeVoteId, ', this.voterSupportsList:', this.voterSupportsList);
     return {
-      voterSupportsBallotItem: this.voterSupportsList[ballotItemWeVoteId] || false,
-      voterOpposesBallotItem: this.voterOpposesList[ballotItemWeVoteId] || false,
-      voterPositionIsPublic: this.isForPublicList[ballotItemWeVoteId] || false, // Default to friends only
+      voterSupportsBallotItem: this.voterSupportsList[ballotItemWeVoteId] || this.voterSupportsList[politicianWeVoteId] || false,
+      voterOpposesBallotItem: this.voterOpposesList[ballotItemWeVoteId] || this.voterOpposesList[politicianWeVoteId] || false,
+      voterPositionIsPublic: this.isForPublicList[ballotItemWeVoteId] || this.isForPublicList[politicianWeVoteId] || false, // Default to friends only
       voterTextStatement: this.statementList[ballotItemWeVoteId] || '',
       numberOfSupportPositionsForScore: numberOfSupportPositionsForScore || 0,
       numberOfOpposePositionsForScore: numberOfOpposePositionsForScore || 0,
@@ -121,12 +123,15 @@ class SupportStore extends ReduceStore {
   }
 
   // Turn action into a dictionary/object format with we_vote_id as key for fast lookup
-  parseListToHash (property, list) { // eslint-disable-line
+  extractValueByPropertyAndStoreListInDictionaryByWeVoteId (property, list) { // eslint-disable-line
     const hashMap = {};
     if (list !== undefined && property) {
       list.forEach((el) => {
         if (el.ballot_item_we_vote_id && el[property]) {
           hashMap[el.ballot_item_we_vote_id] = el[property];
+        }
+        if (el.politician_we_vote_id && el[property]) {
+          hashMap[el.politician_we_vote_id] = el[property];
         }
       });
     }
@@ -140,6 +145,10 @@ class SupportStore extends ReduceStore {
     let ballotItemWeVoteId = '';
     if (action.res.ballot_item_we_vote_id) {
       ballotItemWeVoteId = action.res.ballot_item_we_vote_id;
+    }
+    let politicianWeVoteId = '';
+    if (action.res.politician_we_vote_id) {
+      politicianWeVoteId = action.res.politician_we_vote_id;
     }
 
     let isCandidate = false;
@@ -159,27 +168,48 @@ class SupportStore extends ReduceStore {
         // state.voter_supports is an updated hash with the contents of position list['is_support']
         return {
           ...state,
-          voter_supports: this.parseListToHash('is_support', action.res.position_list),
-          voter_opposes: this.parseListToHash('is_oppose', action.res.position_list),
-          voter_statement_text: this.parseListToHash('statement_text', action.res.position_list),
-          is_public_position: this.parseListToHash('is_public_position', action.res.position_list),
+          voter_supports: this.extractValueByPropertyAndStoreListInDictionaryByWeVoteId('is_support', action.res.position_list),
+          voter_opposes: this.extractValueByPropertyAndStoreListInDictionaryByWeVoteId('is_oppose', action.res.position_list),
+          voter_statement_text: this.extractValueByPropertyAndStoreListInDictionaryByWeVoteId('statement_text', action.res.position_list),
+          is_public_position: this.extractValueByPropertyAndStoreListInDictionaryByWeVoteId('is_public_position', action.res.position_list),
         };
 
       case 'voterOpposingSave':
-        ({ voter_supports: voterSupports } = state);
-        if (voterSupports && voterSupports[ballotItemWeVoteId] !== undefined) {
+        ({ voter_opposes: voterOpposes, voter_supports: voterSupports } = state);
+        if (!voterOpposes) {
+          voterOpposes = {};
+        }
+        if (ballotItemWeVoteId) {
+          voterOpposes[ballotItemWeVoteId] = true;
+        }
+        if (politicianWeVoteId) {
+          voterOpposes[politicianWeVoteId] = true;
+        }
+        if (!voterSupports) {
+          voterSupports = {};
+        }
+        if (ballotItemWeVoteId && voterSupports[ballotItemWeVoteId] !== undefined) {
           delete voterSupports[ballotItemWeVoteId];
+        }
+        if (politicianWeVoteId && voterSupports[politicianWeVoteId] !== undefined) {
+          delete voterSupports[politicianWeVoteId];
         }
         return {
           ...state,
           voter_supports: voterSupports,
-          voter_opposes: assign({}, state.voter_opposes, { [ballotItemWeVoteId]: true }),
+          voter_opposes: voterOpposes,
         };
 
       case 'voterStopOpposingSave':
         ({ voter_opposes: voterOpposes } = state);
-        if (voterOpposes && voterOpposes[ballotItemWeVoteId] !== undefined) {
+        if (!voterOpposes) {
+          voterOpposes = {};
+        }
+        if (voterOpposes[ballotItemWeVoteId] !== undefined) {
           delete voterOpposes[ballotItemWeVoteId];
+        }
+        if (voterOpposes[politicianWeVoteId] !== undefined) {
+          delete voterOpposes[politicianWeVoteId];
         }
         return {
           ...state,
@@ -187,20 +217,41 @@ class SupportStore extends ReduceStore {
         };
 
       case 'voterSupportingSave':
-        ({ voter_opposes: voterOpposes } = state);
-        if (voterOpposes && voterOpposes[ballotItemWeVoteId] !== undefined) {
+        ({ voter_opposes: voterOpposes, voter_supports: voterSupports } = state);
+        if (!voterOpposes) {
+          voterOpposes = {};
+        }
+        if (ballotItemWeVoteId && voterOpposes[ballotItemWeVoteId] !== undefined) {
           delete voterOpposes[ballotItemWeVoteId];
+        }
+        if (politicianWeVoteId && voterOpposes[politicianWeVoteId] !== undefined) {
+          delete voterOpposes[politicianWeVoteId];
+        }
+        if (!voterSupports) {
+          voterSupports = {};
+        }
+        if (ballotItemWeVoteId) {
+          voterSupports[ballotItemWeVoteId] = true;
+        }
+        if (politicianWeVoteId) {
+          voterSupports[politicianWeVoteId] = true;
         }
         return {
           ...state,
-          voter_supports: assign({}, state.voter_supports, { [ballotItemWeVoteId]: true }),
+          voter_supports: voterSupports,
           voter_opposes: voterOpposes,
         };
 
       case 'voterStopSupportingSave':
         ({ voter_supports: voterSupports } = state);
-        if (voterSupports && voterSupports[ballotItemWeVoteId] !== undefined) {
+        if (!voterSupports) {
+          voterSupports = {};
+        }
+        if (ballotItemWeVoteId && voterSupports[ballotItemWeVoteId] !== undefined) {
           delete voterSupports[ballotItemWeVoteId];
+        }
+        if (politicianWeVoteId && voterSupports[politicianWeVoteId] !== undefined) {
+          delete voterSupports[politicianWeVoteId];
         }
         return {
           ...state,

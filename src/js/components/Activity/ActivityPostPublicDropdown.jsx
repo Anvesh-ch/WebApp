@@ -27,7 +27,7 @@ const ActivityPostPublicDropdown = (props) => {
           value={visibilityIsPublic ? 'Public' : 'Friends Only'}
           onChange={handleVisibilityChange}
           className={classes.selectVisibility}
-          disableUnderline
+          // disableUnderline
           IconComponent={ArrowDropDownIcon}
           aria-label="Select visibility for your opinion"
           MenuProps={{
@@ -47,7 +47,7 @@ const ActivityPostPublicDropdown = (props) => {
 };
 
 ActivityPostPublicDropdown.propTypes = {
-  visibilityIsPublic: PropTypes.bool.isRequired,
+  visibilityIsPublic: PropTypes.bool,
   onVisibilityChange: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
