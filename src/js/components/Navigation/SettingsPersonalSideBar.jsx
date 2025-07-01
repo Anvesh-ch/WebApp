@@ -519,8 +519,8 @@ const LinkContainer = styled('div')`
 
 const LinkSpan = styled('span')`
   color: ${(props) => (props.$isActive ? `${DesignTokenColors.primary600}` : `${DesignTokenColors.neutral600}`)};
-  fontSize: '1rem',
-  textDecoration: 'none',
+  font-size: '1rem';
+  text-decoration: 'none';
 `;
 
 SettingsPersonalSideBar.propTypes = {
