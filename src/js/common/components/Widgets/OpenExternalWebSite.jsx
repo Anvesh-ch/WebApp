@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import TagManager from 'react-gtm-module';
+import CandidateStore from '../../../stores/CandidateStore';
+import PoliticianStore from '../../stores/PoliticianStore';
 import VoterStore from '../../../stores/VoterStore';
 import { cordovaOpenSafariView } from '../../utils/cordovaUtils';
 import { isAndroid, isWebApp } from '../../utils/isCordovaOrWebApp';
@@ -11,7 +13,7 @@ import stringContains from '../../utils/stringContains';
 
 export default class OpenExternalWebSite extends Component {
   sendExternalLinkInfoToGTM = () => {
-    const { destinationPageName, destinationPageType, linkIdAttribute, pageName, pageType, trackingOn, url } = this.props;
+    const { candidateWeVoteId, politicianWeVoteId, destinationPageName, destinationPageType, linkIdAttribute, pageName, pageType, trackingOn, url } = this.props;
     if (trackingOn) {
       const { location: { pathname: currentPathname } } = window;
       const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
@@ -23,6 +25,7 @@ export default class OpenExternalWebSite extends Component {
       // console.log('External link clicked:', this.props.url);
       const dataLayerObj = {
         actionDetails: {
+          actionType: 'navigate',
           buttonId: linkIdAttribute,
         },
         event: 'click',
@@ -34,7 +37,7 @@ export default class OpenExternalWebSite extends Component {
         pageDetails: {
           pageName: pageName || pageNameLocalBackup,
           pageType: pageType || pageTypeLocalBackup,
-          pathname: window.location.pathname,
+          pathname: currentPathname,
         },
         userDetails: {
           stateCode: VoterStore.getVoterStateCode(),
@@ -42,7 +45,30 @@ export default class OpenExternalWebSite extends Component {
           voterWeVoteId: VoterStore.getVoterWeVoteId(),
         },
       };
-      //console.log('Sending dataLayerObj to GTM:', dataLayerObj);
+      if (candidateWeVoteId) {
+        const candidate = CandidateStore.getCandidateByWeVoteId(candidateWeVoteId);
+        if (candidate) {
+          dataLayerObj.candidateDetails = {
+            candidateWeVoteId: candidate.we_vote_id,
+            candidateName: candidate.ballot_item_display_name,
+            candidateTwitterHandle: candidate.twitter_handle,
+            candidatePoliticalParty: candidate.party,
+            contestOfficeWeVoteId: candidate.contest_office_we_vote_id,
+          };
+        }
+      }
+      if (politicianWeVoteId) {
+        const politician = PoliticianStore.getPoliticianByWeVoteId(politicianWeVoteId);
+        if (politician) {
+          dataLayerObj.politicianDetails = {
+            politicianWeVoteId: politician.we_vote_id,
+            politicianName: politician.politician_name,
+            politicianTwitterHandle: politician.twitter_handle,
+            politicianPoliticalParty: politician.political_party,
+          };
+        }
+      }
+      // console.log('Sending dataLayerObj to GTM:', dataLayerObj);
       TagManager.dataLayer({ dataLayer: dataLayerObj });
     }
   }
@@ -114,4 +140,6 @@ OpenExternalWebSite.propTypes = {
   title: PropTypes.string,
   trackingOn: PropTypes.bool,
   url: PropTypes.string.isRequired,
+  candidateWeVoteId: PropTypes.string,
+  politicianWeVoteId: PropTypes.string,
 };
