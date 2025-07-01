@@ -16,7 +16,7 @@ import apiCalming from '../common/utils/apiCalming';
 import historyPush from '../common/utils/historyPush';
 import { isAndroid, isWebApp } from '../common/utils/isCordovaOrWebApp';
 import { renderLog } from '../common/utils/logging';
-import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import lookupPageNameAndPageTypeDict from '../utils/lookupPageNameAndPageTypeDict';
 import ReadyFinePrint from '../components/Ready/ReadyFinePrint';
 import ReadyIntroduction from '../components/Ready/ReadyIntroduction';
 import ReadyTaskPlan from '../components/Ready/ReadyTaskPlan';
@@ -124,26 +124,28 @@ class Ready extends Component {
     // Terry - only fire datalayer when voter data is ready
     const voterFirstRetrieveCompleted = VoterStore.voterFirstRetrieveCompleted();
     // Terry - set condition to have datalayer fire when voter data was retrieved & this.dataLayerFired == False
-    if (voterFirstRetrieveCompleted && !this.dataLayerFired) {
-      const { location: { pathname: currentPathname } } = window;
-      const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+    if (!this.dataLayerFired){  
+      if (voterFirstRetrieveCompleted) {
+        const { location: { pathname: currentPathname } } = window;
+        const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
 
-      TagManager.dataLayer({
-        dataLayer: {
-          event: 'landing',
-          pageDetails: {
-            pageName: currentPage.pageName,
-            pageType: currentPage.pageType,
-            pathname: currentPathname,
+        TagManager.dataLayer({
+          dataLayer: {
+            event: 'landing',
+            pageDetails: {
+              pageName: currentPage.pageName,
+              pageType: currentPage.pageType,
+              pathname: currentPathname,
+            },
+            userDetails: {
+              stateCode: VoterStore.getVoterStateCode(),
+              userCohort: VoterStore.getAnalyticsUserCohort(),
+              voterWeVoteId: VoterStore.getVoterWeVoteId(),
+            },
           },
-          userDetails: {
-            stateCode: VoterStore.getVoterStateCode(),
-            userCohort: VoterStore.getAnalyticsUserCohort(),
-            voterWeVoteId: VoterStore.getVoterWeVoteId(),
-          },
-        },
-      });
-      this.dataLayerFired = true;
+        });
+        this.dataLayerFired = true;
+      }
     }
   }
 
