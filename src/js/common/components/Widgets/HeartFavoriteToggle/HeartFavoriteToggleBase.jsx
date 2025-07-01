@@ -375,7 +375,7 @@ class HeartFavoriteToggleBase extends Component {
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
-    const supportToolTip = isMobileScreenSize() ? (<span />) : (
+    const supportToolTip = isMobileScreenSize() ? (<></>) : (
       <Tooltip className="u-z-index-9020" id="supportTooltip">
         <div>
           <span>{this.supportHoverText()}</span>
@@ -383,7 +383,7 @@ class HeartFavoriteToggleBase extends Component {
       </Tooltip>
     );
 
-    const opposeToolTip = isMobileScreenSize() ? (<span />) : (
+    const opposeToolTip = isMobileScreenSize() ? (<></>) : (
       <Tooltip className="u-z-index-9020" id="opposeTooltip">
         <div>
           <span>{this.opposeHoverText()}</span>
