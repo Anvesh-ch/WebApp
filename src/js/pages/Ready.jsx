@@ -51,10 +51,10 @@ class Ready extends Component {
     this.state = {
       chosenReadyIntroductionText: '',
       chosenReadyIntroductionTitle: '',
+      dataLayerFired: false, // Terry - tracking whether dataLayer was fired, default set to false
       voterIsSignedIn: false,
     };
-    // Terry - tracking whether dataLayer was fired, default set to false
-    this.dataLayerFired = false;
+    
   }
 
   componentDidMount () {
@@ -119,18 +119,20 @@ class Ready extends Component {
 
   componentDidUpdate () {
     if (AppObservableStore.isSnackMessagePending()) openSnackbar({});
-
+    const { dataLayerFired } = this.state;
     // Terry - Changes made for WV-1448 adding landing datalayers
     // Terry - only fire datalayer when voter data is ready
-    const voterFirstRetrieveCompleted = VoterStore.voterFirstRetrieveCompleted();
     // Terry - set condition to have datalayer fire when voter data was retrieved & this.dataLayerFired == False
-    if (!this.dataLayerFired){  
-      if (voterFirstRetrieveCompleted) {
+    if (!dataLayerFired){  
+      if (VoterStore.voterFirstRetrieveCompleted()) {
         const { location: { pathname: currentPathname } } = window;
         const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
 
         TagManager.dataLayer({
           dataLayer: {
+            actionDetails:{
+              
+            },
             event: 'landing',
             pageDetails: {
               pageName: currentPage.pageName,
@@ -144,7 +146,9 @@ class Ready extends Component {
             },
           },
         });
-        this.dataLayerFired = true;
+        this.setState({
+          dataLayerFired: true
+        });
       }
     }
   }
