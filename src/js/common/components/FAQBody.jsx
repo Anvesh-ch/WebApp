@@ -1,11 +1,13 @@
 import React, { Component, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import TagManager from 'react-gtm-module';
 import { isCordova, isWebApp } from '../utils/isCordovaOrWebApp';
 import { renderLog } from '../utils/logging';
 import ToolBar from './Widgets/ToolBar';
-import webAppConfig from '../../config';
 import { Video, PlayerContainer } from './Style/VideoStyles';
+import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import VoterStore from '../../stores/VoterStore';
 
 
 const OpenExternalWebSite = React.lazy(() => import(/* webpackChunkName: 'OpenExternalWebSite' */ './Widgets/OpenExternalWebSite'));
@@ -13,6 +15,37 @@ const OpenExternalWebSite = React.lazy(() => import(/* webpackChunkName: 'OpenEx
 export default class FAQBody extends Component {
   static getProps () {
     return {};
+  }
+
+  pushDataLayer (destinationPath, buttonId) {
+    const { location: { pathname: currentPathname } } = window;
+    const page = lookupPageNameAndPageTypeDict(currentPathname);
+    const destinationPage = lookupPageNameAndPageTypeDict(destinationPath);
+
+    const dataLayerObj = {
+      event: 'action',
+      actionDetails: {
+        actionType: 'navigate',
+        buttonId,
+      },
+      pageDetails: {
+        pageName: page.pageName,
+        pageType: page.pageType,
+        pathname: currentPathname,
+      },
+      destinationDetails: {
+        destinationPageType: destinationPage.pageType,
+        destinationPageName: destinationPage.pageName,
+        destinationPathname: destinationPath,
+      },
+      userDetails: {
+        stateCode: VoterStore.getVoterStateCode(),
+        userCohort: VoterStore.getAnalyticsUserCohort(),
+        voterWeVoteId: VoterStore.getVoterWeVoteId(),
+      },
+    };
+
+    TagManager.dataLayer({ dataLayer: dataLayerObj });
   }
 
   render () {
@@ -43,6 +76,7 @@ export default class FAQBody extends Component {
             url="https://help.wevote.us/hc/en-us/articles/360034261733-How-were-the-Values-within-We-Vote-chosen-"
             target="_blank"
             body="issues you care about"
+            trackingOn
           />
         </Suspense>
         , and people you trust. Through our nonpartisan, open source platform,
@@ -63,6 +97,7 @@ export default class FAQBody extends Component {
             url="https://help.wevote.us/hc/en-us/articles/360034261733-How-were-the-Values-within-We-Vote-chosen-"
             target="_blank"
             body="values"
+            trackingOn
           />
         </Suspense>
         .
@@ -85,6 +120,7 @@ export default class FAQBody extends Component {
             url="https://www.WeVoteEducation.org"
             target="_blank"
             body="www.WeVoteEducation.org"
+            trackingOn
           />
         </Suspense>
         - 501(c)(3) FEIN 47-2691544 and&nbsp;
@@ -101,6 +137,7 @@ export default class FAQBody extends Component {
                 url="https://www.WeVoteUSA.org"
                 target="_blank"
                 body="WeVoteUSA.org"
+                trackingOn
               />
             </Suspense>
             - 501(c)(4) FEIN 81-1052585,&nbsp;
@@ -122,6 +159,7 @@ export default class FAQBody extends Component {
             url="https://wevote.applytojob.com/apply"
             target="_blank"
             body="volunteer openings here"
+            trackingOn
           />
         </Suspense>
         , and join us! We use our engineering, design, marketing, and other
@@ -135,18 +173,18 @@ export default class FAQBody extends Component {
             url="https://github.com/WeVote"
             target="_blank"
             body="100+ contributors on GitHub."
+            trackingOn
           />
         </Suspense>
         We also have
         {' '}
-        <Suspense fallback={<></>}>
-          <OpenExternalWebSite
-            linkIdAttribute="weVoteAboutUsPage"
-            url={`${webAppConfig.WE_VOTE_URL_PROTOCOL + webAppConfig.WE_VOTE_HOSTNAME}/more/about`}
-            target="_blank"
-            body="volunteer board members"
-          />
-        </Suspense>
+        <Link
+          to="/more/about"
+          className="u-cursor--pointer u-link-color"
+          onClick={() => this.pushDataLayer('/more/about', 'faq-more-about')}
+        >
+          volunteer board members
+        </Link>
         .
         <br />
         <br />
@@ -160,6 +198,7 @@ export default class FAQBody extends Component {
             url="https://help.wevote.us/hc/en-us/requests/new"
             target="_blank"
             body="Contact Us form"
+            trackingOn
           />
         </Suspense>
         .
@@ -192,6 +231,7 @@ export default class FAQBody extends Component {
             url="https://apps.apple.com/us/app/we-vote-voter-guide/id1347335726"
             target="_blank"
             body="iPhone"
+            trackingOn
           />
         </Suspense>
         and
@@ -201,6 +241,7 @@ export default class FAQBody extends Component {
             url="https://play.google.com/store/apps/details?id=org.wevote.cordova&hl=en_US"
             target="_blank"
             body="Android"
+            trackingOn
           />
         </Suspense>
         apps.
@@ -212,6 +253,7 @@ export default class FAQBody extends Component {
             url="https://github.com/WeVote"
             target="_blank"
             body="https://github.com/WeVote"
+            trackingOn
           />
         </Suspense>
         <br />
@@ -257,7 +299,7 @@ export default class FAQBody extends Component {
           <>
             If you like WeVote,
             {' '}
-            <Link to="/donate" className="u-cursor--pointer u-link-color">
+            <Link to="/donate" className="u-cursor--pointer u-link-color" onClick={() => this.pushDataLayer('/donate', 'faq-donate')}>
               please donate monthly
             </Link>
             {' '}
@@ -297,6 +339,7 @@ export default class FAQBody extends Component {
             url="https://help.wevote.us/hc/en-us/articles/360034261733-How-were-the-Values-within-We-Vote-chosen-"
             target="_blank"
             body="values"
+            trackingOn
           />
         </Suspense>
         .
@@ -322,18 +365,19 @@ export default class FAQBody extends Component {
             target="_blank"
             className="open-web-site open-web-site__no-right-padding"
             body="sign up to volunteer"
+            trackingOn
           />
         </Suspense>
         {' '}
         and
         {' '}
-        <Link to="/donate" className="u-cursor--pointer u-link-color">
+        <Link to="/donate" className="u-cursor--pointer u-link-color" onClick={() => this.pushDataLayer('/donate', 'faq-donate-monthly')}>
           donate $5 monthly
         </Link>
         .
         <br />
         <br />
-        <Link to="/" className="u-cursor--pointer u-link-color">
+        <Link to="/" className="u-cursor--pointer u-link-color" onClick={() => this.pushDataLayer('/', 'faq-home')}>
           Let&apos;s get started!
         </Link>
         <br />

@@ -7,6 +7,14 @@ import { isPoliticianSEOFriendlyURL } from '../common/utils/isSEOFriendlyURL';
 import lookupPageNameAndPageTypeDict from './lookupPageNameAndPageTypeDict';
 
 const pageNameAndTypeSimpleDictForExternalUrls = {
+  'https://apps.apple.com/us/app/we-vote-voter-guide/id1347335726': {
+    pageName: 'AppStoreiPhone',
+    pageType: 'appStore',
+  },
+  'https://github.com/WeVote': {
+    pageName: 'WeVoteGitHub',
+    pageType: 'github',
+  },
   'https://google.com': {
     pageName: 'GoogleSearch',
     pageType: 'search',
@@ -15,9 +23,29 @@ const pageNameAndTypeSimpleDictForExternalUrls = {
     pageName: 'WeVoteSupport',
     pageType: 'support',
   },
+  'https://help.wevote.us/hc/en-us/articles/360034261733-How-were-the-Values-within-We-Vote-chosen-': {
+    pageName: 'WeVoteValues',
+    pageType: 'support',
+  },
+  'https://help.wevote.us/hc/en-us/requests/new': {
+    pageName: 'HelpContact',
+    pageType: 'help',
+  },
+  'https://play.google.com/store/apps/details?id=org.wevote.cordova&hl=en_US': {
+    pageName: 'AppStoreAndroid',
+    pageType: 'appStore',
+  },
   'https://wevote.applytojob.com/apply': {
     pageName: 'WeVoteVolunteer',
     pageType: 'career',
+  },
+  'https://www.WeVoteEducation.org': {
+    pageName: 'WeVoteEducation',
+    pageType: 'organization',
+  },
+  'https://www.WeVoteUSA.org': {
+    pageName: 'WeVoteUSA',
+    pageType: 'organization',
   },
 };
 
