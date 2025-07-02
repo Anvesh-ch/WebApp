@@ -131,7 +131,8 @@ class Ready extends Component {
         TagManager.dataLayer({
           dataLayer: {
             actionDetails:{
-              
+              actionType: 'landing',
+              componentName: 'readyPageReturnVisit',
             },
             event: 'landing',
             pageDetails: {

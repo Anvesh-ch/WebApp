@@ -82,6 +82,10 @@ class ReadyLight extends Component {
 
         TagManager.dataLayer({
           dataLayer: {
+            actionDetails:{
+              actionType: 'landing',
+              componentName: 'readyPageFirstEntrance',
+            },
             event: 'landing',
             pageDetails: {
               pageName: currentPage.pageName,
