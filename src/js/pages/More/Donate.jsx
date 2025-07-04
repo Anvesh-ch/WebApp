@@ -268,6 +268,7 @@ class Donate extends Component {
           linkIdAttribute="annualBudget"
           url={isC4Donation ? 'https://projects.propublica.org/nonprofits/organizations/811052585' : 'https://projects.propublica.org/nonprofits/organizations/472691544'}
           target="_blank"
+          trackingOn
           body={(
             <span id="budgets_small">
               Questions about donating?

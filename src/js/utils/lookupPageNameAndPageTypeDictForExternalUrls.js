@@ -19,6 +19,14 @@ const pageNameAndTypeSimpleDictForExternalUrls = {
     pageName: 'WeVoteVolunteer',
     pageType: 'career',
   },
+  'https://projects.propublica.org/nonprofits/organizations/472691544': {
+    pageName: 'WeVoteBudget',
+    pageType: 'donation',
+  },
+  'https://projects.propublica.org/nonprofits/organizations/811052585': {
+    pageName: 'WeVoteBudget',
+    pageType: 'donation',
+  },
 };
 
 // TODO Update to recognize social sites, and other regular places we send people
@@ -55,6 +63,9 @@ function calculatePageNameAndPageTypeDictForExternalUrls (path) {
   } else if (path.startsWith('https://x.com')) {
     pageName = 'InstagramProfile';
     pageType = 'socialMedia';
+  } else if (path.includes('projects.propublica.org/nonprofits/organizations')) {
+    pageName = 'WeVoteBudget';
+    pageType = 'donation';
   }
   return {
     pageName,
