@@ -18,6 +18,14 @@ const pageNameAndTypeSimpleDictForExternalUrls = {
     pageName: 'WeVoteVolunteer',
     pageType: 'career',
   },
+  'https://projects.propublica.org/nonprofits/organizations/472691544': {
+    pageName: 'WeVoteBudget',
+    pageType: 'donation',
+  },
+  'https://projects.propublica.org/nonprofits/organizations/811052585': {
+    pageName: 'WeVoteBudget',
+    pageType: 'donation',
+  },
 };
 
 /**
@@ -100,6 +108,9 @@ function calculatePageNameAndPageTypeDictForExternalUrls (pathOrURL) {
     } else if (pathOrURL.startsWith('https://www.google.com/search')) {
       pageName = 'GoogleSearchResults';
       pageType = 'searchEngine';
+    } else if (pathOrURL.includes('projects.propublica.org/nonprofits/organizations')) {
+      pageName = 'WeVoteBudget';
+      pageType = 'donation';
     }
   }
 
