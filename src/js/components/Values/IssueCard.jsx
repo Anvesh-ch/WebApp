@@ -254,7 +254,7 @@ class IssueCard extends Component {
       );
     }
 
-    const issueTooltip = isMobileScreenSize() ? (<span />) : (
+    const issueTooltip = isMobileScreenSize() ? (<></>) : (
       <Tooltip className="u-z-index-9020" id="issueTooltip">
         <div id="topicToolTipMsg">
           Follow
@@ -268,7 +268,7 @@ class IssueCard extends Component {
     let linkedOrganizationsTooltip = <></>;
     let linkedOrganizationNameCount = 0;
     if (linkedOrganizationPreviewList) {
-      linkedOrganizationsTooltip = isMobileScreenSize() ? (<span />) : (
+      linkedOrganizationsTooltip = isMobileScreenSize() ? (<></>) : (
         <Tooltip className="u-z-index-9020" id="linkedOrganizationsTooltip">
           <div>
             See endorsements from
@@ -311,7 +311,7 @@ class IssueCard extends Component {
       );
     }
 
-    const followersTooltip = isMobileScreenSize() ? (<span />) : (
+    const followersTooltip = isMobileScreenSize() ? (<></>) : (
       <Tooltip className="u-z-index-9020" id="followersToolTip">
         <div>
           {numberAbbreviate(adjustedFollowersCount)}

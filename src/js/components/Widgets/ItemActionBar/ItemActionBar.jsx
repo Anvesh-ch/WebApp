@@ -849,25 +849,25 @@ class ItemActionBar extends PureComponent {
       opposeButtonUnselectedPopOverText += '.';
     }
 
-    const helpDefeatButtonPopoverTooltip = isMobileScreenSize() ? (<span />) : (
+    const helpDefeatButtonPopoverTooltip = isMobileScreenSize() ? (<></>) : (
       <Tooltip className="u-z-index-9020" id="helpDefeatButtonTooltip">
         {helpDefeatButtonPopOverText}
       </Tooltip>
     );
 
-    const helpWinButtonPopoverTooltip = isMobileScreenSize() ? (<span />) : (
+    const helpWinButtonPopoverTooltip = isMobileScreenSize() ? (<></>) : (
       <Tooltip className="u-z-index-9020" id="helpWinButtonTooltip">
         {helpWinButtonPopOverText}
       </Tooltip>
     );
 
-    const supportButtonPopoverTooltip = isMobileScreenSize() ? (<span />) : (
+    const supportButtonPopoverTooltip = isMobileScreenSize() ? (<></>) : (
       <Tooltip className="u-z-index-9020" id="supportButtonTooltip">
         {this.isSupportCalculated() ? supportButtonUnselectedPopOverText : supportButtonSelectedPopOverText }
       </Tooltip>
     );
 
-    const opposeButtonPopoverTooltip = isMobileScreenSize() ? (<span />) : (
+    const opposeButtonPopoverTooltip = isMobileScreenSize() ? (<></>) : (
       <Tooltip className="u-z-index-9020" id="opposeButtonTooltip">
         {this.isOpposeCalculated() ? opposeButtonUnselectedPopOverText : opposeButtonSelectedPopOverText}
       </Tooltip>
