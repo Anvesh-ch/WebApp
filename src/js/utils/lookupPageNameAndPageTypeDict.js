@@ -89,7 +89,10 @@ function calculatePageNameAndPageTypeDict (path) {
   let settingsPageName = 'notSet'; // Per our naming convention for pageName, this would normally be 'NotSet' but I think the value of having settingsPageName being identical to settingsPageType will save us grief in the future.
   let settingsPageType = 'notSet';
 
-  if (path.startsWith('/ballot')) {
+  if (path.includes('/-/')) {
+    settingsPageName = 'OpinionSource';
+    settingsPageType = 'reference';
+  } else if (path.startsWith('/ballot')) {
     settingsPageName = 'Ballot';
     settingsPageType = 'ballot';
   } else if (path.startsWith('/candidate/')) {
@@ -133,7 +136,7 @@ function calculatePageNameAndPageTypeDict (path) {
     settingsPageType = 'politician';
   } else if (/^\/[^/\s]+$/.test(path)) {
     settingsPageName = 'TwitterHandleLanding';
-    settingsPageType = 'twitterHandleLanding';
+    settingsPageType = 'endorser';  // Changed from 'twitterHandleLanding' to 'endorser'
   }
 
   return {

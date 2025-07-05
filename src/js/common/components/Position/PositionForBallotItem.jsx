@@ -12,8 +12,9 @@ import speakerDisplayNameToInitials from '../../utils/speakerDisplayNameToInitia
 import {
   getDateFromUltimateElectionDate, getTodayAsInteger, timeFromDate,
 } from '../../utils/dateFormat';
-import AppObservableStore from '../../stores/AppObservableStore';
+// import AppObservableStore from '../../stores/AppObservableStore';
 import stringContains from '../../utils/stringContains';
+import lookupPageNameAndPageTypeDict from '../../../utils/lookupPageNameAndPageTypeDict';
 
 const OpenExternalWebSite = React.lazy(() => import(/* webpackChunkName: 'OpenExternalWebSite' */ '../Widgets/OpenExternalWebSite'));
 const ReadMore = React.lazy(() => import(/* webpackChunkName: 'ReadMore' */ '../Widgets/ReadMore'));
@@ -74,8 +75,8 @@ function PositionForBallotItem ({ classes, linksOpenExternalWebsite, position })
   }
   const voterGuideWeVoteIdLink = `/voterguide/${organizationWeVoteId}`;
   const speakerLink = speakerTwitterHandle ? `/${speakerTwitterHandle}` : voterGuideWeVoteIdLink;
-  const hostnameAndPort = AppObservableStore.getWeVoteRootURL();
-  const speakerLinkExternal = `${hostnameAndPort}${speakerLink}`;
+  // const hostnameAndPort = AppObservableStore.getWeVoteRootURL();
+  // const speakerLinkExternal = `${hostnameAndPort}${speakerLink}`;
   // console.log('PositionForBallotItem organizationWeVoteId:', organizationWeVoteId, ', campaignXWeVoteId:', campaignXWeVoteId);
 
   const speakerImageJsx = (
@@ -89,13 +90,15 @@ function PositionForBallotItem ({ classes, linksOpenExternalWebsite, position })
   );
   return (
     <PositionForBallotItemWrapper>
-      {(linksOpenExternalWebsite && speakerLinkExternal) ? (
+      {linksOpenExternalWebsite ? (
         <Suspense fallback={<></>}>
           <OpenExternalWebSite
-            body={<>{speakerImageJsx}</>}
+            body={speakerImageJsx}
+            url={speakerLink}
             target="_blank"
             trackingOn
-            url={speakerLinkExternal}
+            destinationPageName={lookupPageNameAndPageTypeDict(speakerLink).pageName}
+            destinationPageType={lookupPageNameAndPageTypeDict(speakerLink).pageType}
           />
         </Suspense>
       ) : (
@@ -103,13 +106,15 @@ function PositionForBallotItem ({ classes, linksOpenExternalWebsite, position })
       )}
       <SpeakerInfoWrapper>
         <SpeakerInfoNameFavoritesWrapper>
-          {(linksOpenExternalWebsite && speakerLinkExternal) ? (
+          {linksOpenExternalWebsite ? (
             <Suspense fallback={<></>}>
               <OpenExternalWebSite
                 body={<SpeakerName>{speakerDisplayName}</SpeakerName>}
+                url={speakerLink}
                 target="_blank"
                 trackingOn
-                url={speakerLinkExternal}
+                destinationPageName={lookupPageNameAndPageTypeDict(speakerLink).pageName}
+                destinationPageType={lookupPageNameAndPageTypeDict(speakerLink).pageType}
               />
             </Suspense>
           ) : (
@@ -208,6 +213,8 @@ function PositionForBallotItem ({ classes, linksOpenExternalWebsite, position })
                       target="_blank"
                       trackingOn
                       url={moreInfoUrl}
+                      destinationPageName={lookupPageNameAndPageTypeDict(moreInfoUrl).pageName}
+                      destinationPageType={lookupPageNameAndPageTypeDict(moreInfoUrl).pageType}
                     />
                   </Suspense>
                 </Popover>

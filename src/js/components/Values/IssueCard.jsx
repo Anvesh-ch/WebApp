@@ -148,12 +148,13 @@ class IssueCard extends Component {
     const { issue } = this.state;
     const { pageName, pageType } = lookupPageNameAndPageTypeDict(currentPathname);
     const destinationPathname = this.getIssueLink();
-    const { destinationPageName, destinationPageType } = lookupPageNameAndPageTypeDict(destinationPathname);
+    const { pageName: destinationPageName, pageType: destinationPageType } = lookupPageNameAndPageTypeDict(destinationPathname);
 
     TagManager.dataLayer({
       dataLayer: {
         actionDetails: {
           buttonId: 'valueListLink',
+          actionType: 'navigate', // By AnujaL
         },
         event: 'action',
         pageDetails: {
@@ -466,6 +467,7 @@ class IssueCard extends Component {
               {includeLinkToIssue ? (
                 <Link id="issueAdvocatesLink"
                       to={this.getIssueLink}
+                      onClick={this.handleIssueClick} // By AnujaL
                 >
                   {issueAdvocates}
                 </Link>
