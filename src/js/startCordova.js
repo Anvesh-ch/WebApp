@@ -111,7 +111,7 @@ export function initializationForCordova (startReact) {
     if (isAndroid()) {
       // July 2025, Android "backbutton" is not handled since pushHistory is only keeping the previous location, so pressing "backbutton" twice would be a mess
       // Also it was originally noted as a bug in the How it Works dialog, which would be a special case that would not use pushHistory
-      document.addEventListener("backbutton", () => {}, false);
+      document.addEventListener('backbutton', () => {}, false);
     }
     initializejQuery(() => {
       const { $ } = window;

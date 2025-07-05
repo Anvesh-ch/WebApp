@@ -26,6 +26,7 @@ import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageType
 import DesignTokenColors from '../../common/components/Style/DesignTokenColors';
 import Donation from '../../../img/global/photos/Donate_Screenshot.png';
 
+/* global $ */
 
 // const stripePromise = loadStripe(webAppConfig.STRIPE_API_KEY);
 
@@ -156,7 +157,7 @@ class Donate extends Component {
     const { isC4Donation } = this.state;
     if (isC4Donation) {
       // console.log('------------ onVerifyCaptcha: ', token);
-      $ajax({
+      $.ajax({
         endpoint: 'googleRecaptchaVerify',
         data: { token },
         success: (res) => {
@@ -173,7 +174,7 @@ class Donate extends Component {
               isSignedin,
             });
             if (!allowedToDonate) {
-              $ajax({
+              $.ajax({
                 endpoint: 'logToCloudWatch',
                 data: { message: `reCAPTCHA FAILED verification signedIn ${isSignedin}, results ${JSON.stringify(res)}` },
               });
@@ -193,8 +194,8 @@ class Donate extends Component {
   preDonateDescription = () => (
     <span id="first_paragraph">
       Thank you for being a voter! For every $10 donated, you help 50 Americans be voters too.
-      {/*When people feel prepared to vote, they’re more likely to cast a ballot — especially in local and primary elections, where participation is lowest. At*/}
-      {/*WeVote our mission is to close the confidence gap that keeps so many voters on the sidelines.*/}
+      {/* When people feel prepared to vote, they’re more likely to cast a ballot — especially in local and primary elections, where participation is lowest. At */}
+      {/* WeVote our mission is to close the confidence gap that keeps so many voters on the sidelines. */}
     </span>
   );
 
@@ -301,7 +302,7 @@ class Donate extends Component {
   render () {
     renderLog('Donate');  // Set LOG_RENDER_EVENTS to log all renders
     const { classes } = this.props;
-    const { isC4Donation, isSignedin, joining, showWaiting, value, isMonthly, preDonation, okToDonateWithoutAuth, windowWidth } = this.state;
+    const { isC4Donation, isSignedin, joining, value, isMonthly, preDonation, okToDonateWithoutAuth, windowWidth } = this.state;
 
     // Default donation goes to c3, unless we specify a donation to the c4
     let c3DonationHtml = '';
@@ -317,15 +318,15 @@ class Donate extends Component {
               {/* eslint-disable-next-line react/no-unknown-property */}
               <script src="https://donorbox.org/widget.js" paypalExpress="true" defer />
             </Helmet>
-            {/*<ContentTitle id="want_to_vote">*/}
-            {/*  Want more Americans to vote?*/}
-            {/*</ContentTitle>*/}
+            {/* <ContentTitle id="want_to_vote"> */}
+            {/*  Want more Americans to vote? */}
+            {/* </ContentTitle> */}
             <CenteredText className="u-show-mobile">
               <Section noTopMargin>
                 <DonateDescriptionContainer>
-                  {/*{this.preDonateDescription()}*/}
-                  {/*{' '}*/}
-                  {/*{this.preDonateDescriptionBottom(isC4Donation)}*/}
+                  {/* {this.preDonateDescription()} */}
+                  {/* {' '} */}
+                  {/* {this.preDonateDescriptionBottom(isC4Donation)} */}
                   {this.donationDescriptionReadMore(this.state.readMore, isC4Donation)}
                 </DonateDescriptionContainer>
                 <InnerWrapper>
@@ -340,9 +341,9 @@ class Donate extends Component {
             {windowWidth > 532 && (
               <TwoColumns>
                 <TextAndDonorboxColumn className="u-show-desktop-tablet">
-                  {/*{this.preDonateDescription()}*/}
-                  {/*{' '}*/}
-                  {/*{this.preDonateDescriptionBottom(isC4Donation)}*/}
+                  {/* {this.preDonateDescription()} */}
+                  {/* {' '} */}
+                  {/* {this.preDonateDescriptionBottom(isC4Donation)} */}
                   {this.donationDescriptionReadMore(this.state.readMore, isC4Donation)}
                   <InnerWrapper>
                     <DonorboxWrapper>
@@ -353,13 +354,13 @@ class Donate extends Component {
                   </InnerWrapper>
                 </TextAndDonorboxColumn>
                 <DonationImageContainer>
-                  {/*<InnerWrapper>*/}
-                  {/*  <DonorboxWrapper>*/}
-                  {/*    <Suspense fallback={<div>Loading...</div>}>*/}
-                  {/*      <DonorboxEmbed />*/}
-                  {/*    </Suspense>*/}
-                  {/*  </DonorboxWrapper>*/}
-                  {/*</InnerWrapper>*/}
+                  {/* <InnerWrapper> */}
+                  {/*  <DonorboxWrapper> */}
+                  {/*    <Suspense fallback={<div>Loading...</div>}> */}
+                  {/*      <DonorboxEmbed /> */}
+                  {/*    </Suspense> */}
+                  {/*  </DonorboxWrapper> */}
+                  {/* </InnerWrapper> */}
                   <DonationImage
                     src={Donation}
                   />
