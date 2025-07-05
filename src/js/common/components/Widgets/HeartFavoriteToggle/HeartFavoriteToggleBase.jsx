@@ -186,6 +186,7 @@ class HeartFavoriteToggleBase extends Component {
         popoverText,
       });
     } else {
+      // console.log('handleActionClick support: ', support, ', oppose: ', oppose, ', stopSupporting: ', stopSupporting, ', stopOpposing: ', stopOpposing);
       this.setState({
         voterSupportsLocal: support,
         voterOpposesLocal: oppose,
@@ -222,6 +223,7 @@ class HeartFavoriteToggleBase extends Component {
             });
           }
         } else if (stopSupporting) {
+          // console.log('handleActionClick stopSupporting voterSupportsLocalPrevious:', voterSupportsLocalPrevious, ', supportersCountLocalPrevious:', supportersCountLocalPrevious);
           if (voterSupportsLocalPrevious) {
             this.setState({
               supportersCountLocal: Math.max(0, supportersCountLocalPrevious - 1),
@@ -396,13 +398,15 @@ class HeartFavoriteToggleBase extends Component {
     return (
       <HeartFavoriteToggleContainer>
         <OverlayTrigger overlay={supportToolTip} placement="top">
-          <LikeContainer onClick={(event) => {
-            if (voterSupportsLocal) {
-              return this.handleStopSupportingClick(event);
-            } else {
-              return this.handleSupportClick(event);
-            }
-          }}
+          <LikeContainer
+            alt="Follow"
+            onClick={(event) => {
+              if (voterSupportsLocal) {
+                return this.handleStopSupportingClick(event);
+              } else {
+                return this.handleSupportClick(event);
+              }
+            }}
           >
             <HeartFavoriteToggleIcon
               isFavorite
@@ -417,13 +421,15 @@ class HeartFavoriteToggleBase extends Component {
         </OverlayTrigger>
         <LikeDislikeSeperator>&nbsp;</LikeDislikeSeperator>
         <OverlayTrigger overlay={opposeToolTip} placement="top">
-          <DislikeContainer onClick={(event) => {
-            if (voterOpposesLocal) {
-              return this.handleStopOpposingClick(event);
-            } else {
-              return this.handleOpposeClick(event);
-            }
-          }}
+          <DislikeContainer
+            alt="Dislike"
+            onClick={(event) => {
+              if (voterOpposesLocal) {
+                return this.handleStopOpposingClick(event);
+              } else {
+                return this.handleOpposeClick(event);
+              }
+            }}
           >
             <HeartFavoriteToggleIcon
               isDislike

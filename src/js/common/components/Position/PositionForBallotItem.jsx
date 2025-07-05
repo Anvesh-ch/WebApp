@@ -320,9 +320,10 @@ const SpeakerInfoNameFavoritesWrapper = styled('div')`
 
 const SpeakerInfoWrapper = styled('div')`
   display: flex;
-  flex-direction: column;
-  width: 500px;
+  margin-bottom: 12px;
   margin-left: 15px;
+  flex-direction: column;
+  // width: 500px;
 `;
 
 const SpeakerName = styled('h3')`
@@ -342,12 +343,13 @@ const SpeakerPositionWrapper = styled('div')`
   display: flex;
 `;
 
-const SpeakerStatement = styled('p')`
+const SpeakerStatement = styled('div')`
   color: ${DesignTokenColors.neutral900};
+  margin-bottom: 5px;
 `;
 
 const SpeakerStatementWrapper = styled('div')`
-  max-width: 415px;
+  // max-width: 415px;
 `;
 
 const ThumbsUpAndSourceWrapper = styled('div')`

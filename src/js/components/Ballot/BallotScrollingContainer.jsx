@@ -27,6 +27,7 @@ import PositionRowListCompressed from './PositionRowListCompressed';
 import BallotMatchIndicator2024 from '../BallotItem/BallotMatchIndicator2024';
 import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
 import VoterStore from '../../stores/VoterStore';
+import webAppConfig from '../../config';
 
 // const DelayedLoad = React.lazy(() => import(/* webpackChunkName: 'DelayedLoad' */ '../../common/components/Widgets/DelayedLoad'));
 const ImageHandler = React.lazy(() => import(/* webpackChunkName: 'ImageHandler' */ '../ImageHandler'));
@@ -35,6 +36,8 @@ const ItemActionBar = React.lazy(() => import(/* webpackChunkName: 'ItemActionBa
 
 const hideItemActionBar = false;
 const hideCandidateDetails = false; // supportedCandidatesList.length;
+const futureFeaturesDisabled = true;
+const nextReleaseFeaturesEnabled = webAppConfig.ENABLE_NEXT_RELEASE_FEATURES === undefined ? false : webAppConfig.ENABLE_NEXT_RELEASE_FEATURES;
 
 class BallotScrollingContainer extends Component {
   constructor (props) {
@@ -114,7 +117,7 @@ class BallotScrollingContainer extends Component {
         voterWeVoteId: VoterStore.getVoterWeVoteId(),
       },
     };
-    console.log('Pushing to dataLayer:', dataLayerObject);
+    // console.log('Pushing to dataLayer:', dataLayerObject);
     TagManager.dataLayer({ dataLayer: dataLayerObject });
     AppObservableStore.setOrganizationModalBallotItemWeVoteId(candidateWeVoteId);
     AppObservableStore.setShowOrganizationModal(true);
@@ -146,7 +149,10 @@ class BallotScrollingContainer extends Component {
   }
 
   render () {
-    const { oneCandidate, externalUniqueId, isFirstBallotItem, candidateCount, limitNumberOfCandidatesShownToThisNumber } = this.props;
+    const {
+      candidateCount, externalUniqueId, isFirstBallotItem,
+      limitNumberOfCandidatesShownToThisNumber, oneCandidate, useHelpDefeatOrHelpWin,
+    } = this.props;
     const candidatePartyText = oneCandidate.party && oneCandidate.party.length ? `${oneCandidate.party}` : '';
     const avatarCompressed = 'card-main__avatar-compressed';
     const avatarBackgroundImage = normalizedImagePath('../img/global/svg-icons/avatar-generic.svg');
@@ -243,11 +249,13 @@ class BallotScrollingContainer extends Component {
                           ballotItemWeVoteId={oneCandidate.we_vote_id}
                           ballotItemDisplayName={oneCandidate.ballot_item_display_name}
                           commentButtonHide
+                          // commentButtonHide={!futureFeaturesDisabled && nextReleaseFeaturesEnabled}
                           externalUniqueId={`OfficeItemCompressed-ItemActionBar-${oneCandidate.we_vote_id}-${externalUniqueId}`}
-                          hidePositionPublicToggle
+                          hidePositionPublicToggle={!futureFeaturesDisabled && nextReleaseFeaturesEnabled}
+                          politicianWeVoteId={oneCandidate.politician_we_vote_id}
                           positionPublicToggleWrapAllowed
                           shareButtonHide
-                          useHelpDefeatOrHelpWin
+                          useHelpDefeatOrHelpWin={useHelpDefeatOrHelpWin}
                         />
                       </Suspense>
                     </ItemActionBarOutsideWrapper>
@@ -296,11 +304,12 @@ class BallotScrollingContainer extends Component {
   }
 }
 BallotScrollingContainer.propTypes = {
-  oneCandidate: PropTypes.object,
   externalUniqueId: PropTypes.string,
   isFirstBallotItem: PropTypes.bool,
   candidateCount: PropTypes.number,
   limitNumberOfCandidatesShownToThisNumber: PropTypes.number,
+  oneCandidate: PropTypes.object,
+  useHelpDefeatOrHelpWin: PropTypes.bool,
 };
 
 const HeartFavoriteToggleLocalWrapper = styled('div')`
