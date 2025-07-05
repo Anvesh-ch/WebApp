@@ -186,7 +186,7 @@ class HeartFavoriteToggleBase extends Component {
         popoverText,
       });
     } else {
-      console.log('handleActionClick support: ', support, ', oppose: ', oppose, ', stopSupporting: ', stopSupporting, ', stopOpposing: ', stopOpposing);
+      // console.log('handleActionClick support: ', support, ', oppose: ', oppose, ', stopSupporting: ', stopSupporting, ', stopOpposing: ', stopOpposing);
       this.setState({
         voterSupportsLocal: support,
         voterOpposesLocal: oppose,
@@ -223,7 +223,7 @@ class HeartFavoriteToggleBase extends Component {
             });
           }
         } else if (stopSupporting) {
-          console.log('handleActionClick stopSupporting voterSupportsLocalPrevious:', voterSupportsLocalPrevious, ', supportersCountLocalPrevious:', supportersCountLocalPrevious);
+          // console.log('handleActionClick stopSupporting voterSupportsLocalPrevious:', voterSupportsLocalPrevious, ', supportersCountLocalPrevious:', supportersCountLocalPrevious);
           if (voterSupportsLocalPrevious) {
             this.setState({
               supportersCountLocal: Math.max(0, supportersCountLocalPrevious - 1),

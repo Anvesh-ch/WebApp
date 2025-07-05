@@ -47,9 +47,9 @@ const ActivityPostPublicDropdown = (props) => {
 };
 
 ActivityPostPublicDropdown.propTypes = {
-  visibilityIsPublic: PropTypes.bool,
-  onVisibilityChange: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
+  onVisibilityChange: PropTypes.func.isRequired,
+  visibilityIsPublic: PropTypes.bool,
 };
 
 const styles = (theme) => ({

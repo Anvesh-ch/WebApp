@@ -123,7 +123,7 @@ class PositionPublicToggle extends Component {
     });
 
     // console.log("PositionPublicToggle-showItemToFriendsOnly, this.props.ballotItemType:", this.props.ballotItemType);
-    SupportActions.voterPositionVisibilitySave(ballotItemWeVoteId, ballotItemType, 'FRIENDS_ONLY', politicianWeVoteId);
+    SupportActions.voterPositionVisibilitySave(ballotItemWeVoteId, ballotItemType, politicianWeVoteId, 'FRIENDS_ONLY');
     openSnackbar({ message: 'Endorsement now visible to WeVote friends only!' });
   }
 
@@ -141,7 +141,7 @@ class PositionPublicToggle extends Component {
       this.setState({
         voterPositionIsPublic: true,
       });
-      SupportActions.voterPositionVisibilitySave(ballotItemWeVoteId, ballotItemType, 'SHOW_PUBLIC', politicianWeVoteId);
+      SupportActions.voterPositionVisibilitySave(ballotItemWeVoteId, ballotItemType, politicianWeVoteId, 'SHOW_PUBLIC');
       // TODO DALE: const positionPublicToggleModalHasBeenShown = VoterStore.getInterfaceFlagState(VoterConstants.POSITION_PUBLIC_MODAL_SHOWN);
       const positionPublicToggleModalHasBeenShown = false;
       if (!positionPublicToggleModalHasBeenShown) {

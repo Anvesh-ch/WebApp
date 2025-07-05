@@ -41,7 +41,7 @@ export default {
     Dispatcher.loadEndpoint('voterPositionCommentSave', dataDictionary);
   },
 
-  voterPositionVisibilitySave (weVoteId, type, visibilitySetting, politicianWeVoteId = '') {
+  voterPositionVisibilitySave (weVoteId, type, politicianWeVoteId = '', visibilitySetting) {
     Dispatcher.loadEndpoint('voterPositionVisibilitySave', {
       ballot_item_we_vote_id: weVoteId,
       kind_of_ballot_item: type,

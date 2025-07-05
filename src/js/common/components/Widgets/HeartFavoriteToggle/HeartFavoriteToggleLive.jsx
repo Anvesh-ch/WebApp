@@ -318,7 +318,7 @@ class HeartFavoriteToggleLive extends React.Component {
     const support = false;
     const stopOpposing = false;
     const stopSupporting = true;
-    console.log('submitStopSupportingClick');
+    // console.log('submitStopSupportingClick');
     this.setState({
       supportersCount: supportersCount - 1,
       // supportersCountNextGoal: supportersCountNextGoalWithFloor,
