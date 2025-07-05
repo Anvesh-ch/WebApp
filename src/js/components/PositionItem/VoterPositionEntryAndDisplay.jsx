@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { Button, InputBase, Radio, FormControlLabel, RadioGroup, Tooltip } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import { Edit as EditIcon } from '@mui/icons-material';
 import SupportActions from '../../actions/SupportActions';
 import { prepareForCordovaKeyboard } from '../../common/utils/cordovaUtils';
@@ -20,7 +21,6 @@ import ModalDisplayTemplateB, {
 } from '../Widgets/ModalDisplayTemplateB';
 import ActivityPostPublicDropdown from '../Activity/ActivityPostPublicDropdown';
 import VoterPositionEditNameAndPhotoModal from './VoterPositionEditNameAndPhotoModal';
-import styled from 'styled-components';
 
 const ItemActionBar = React.lazy(() => import(/* webpackChunkName: 'ItemActionBar' */ '../Widgets/ItemActionBar/ItemActionBar'));
 
@@ -130,9 +130,11 @@ const VoterPositionEntryAndDisplay = (props) => {
 
   const savePosition = (e) => {
     e.preventDefault();
+    // TEMP
+    const ballotItemWeVoteId = '';
     const visibilitySetting = visibilityIsPublic ? 'SHOW_PUBLIC' : 'FRIENDS_ONLY';
     const kindOfBallotItem = 'CANDIDATE';
-    SupportActions.voterPositionCommentSave(politicianWeVoteId, kindOfBallotItem, statementText, selectedStance, visibilitySetting);
+    SupportActions.voterPositionCommentSave(ballotItemWeVoteId, kindOfBallotItem, politicianWeVoteId, statementText, selectedStance, visibilitySetting);
     toggleModalLocal();
   };
 

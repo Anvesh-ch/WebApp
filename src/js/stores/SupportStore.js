@@ -54,7 +54,7 @@ class SupportStore extends ReduceStore {
       voterSupportsBallotItem: this.voterSupportsList[ballotItemWeVoteId] || this.voterSupportsList[politicianWeVoteId] || false,
       voterOpposesBallotItem: this.voterOpposesList[ballotItemWeVoteId] || this.voterOpposesList[politicianWeVoteId] || false,
       voterPositionIsPublic: this.isForPublicList[ballotItemWeVoteId] || this.isForPublicList[politicianWeVoteId] || false, // Default to friends only
-      voterTextStatement: this.statementList[ballotItemWeVoteId] || '',
+      voterTextStatement: this.statementList[ballotItemWeVoteId] || this.statementList[politicianWeVoteId] || '',
       numberOfSupportPositionsForScore: numberOfSupportPositionsForScore || 0,
       numberOfOpposePositionsForScore: numberOfOpposePositionsForScore || 0,
       numberOfInfoOnlyPositionsForScore: numberOfInfoOnlyPositionsForScore || 0,
@@ -114,10 +114,6 @@ class SupportStore extends ReduceStore {
     return this.getState().voter_statement_text;
   }
 
-  statementListWithChanges (statement_list, ballotItemWeVoteId, new_voter_statement_text) { // eslint-disable-line
-    return assign({}, statement_list, { [ballotItemWeVoteId]: new_voter_statement_text });
-  }
-
   isForPublicListWithChanges (is_public_position_list, ballotItemWeVoteId, is_public_position) { // eslint-disable-line
     return assign({}, is_public_position_list, { [ballotItemWeVoteId]: is_public_position });
   }
@@ -150,7 +146,8 @@ class SupportStore extends ReduceStore {
     if (action.res.politician_we_vote_id) {
       politicianWeVoteId = action.res.politician_we_vote_id;
     }
-
+    let clearOpposes = false;
+    let clearSupports = false;
     let isCandidate = false;
     let isMeasure = false;
     let revisedState;
@@ -243,6 +240,7 @@ class SupportStore extends ReduceStore {
         };
 
       case 'voterStopSupportingSave':
+        // console.log('voterStopSupportingSave action.res:', action.res);
         ({ voter_supports: voterSupports } = state);
         if (!voterSupports) {
           voterSupports = {};
@@ -259,7 +257,74 @@ class SupportStore extends ReduceStore {
         };
 
       case 'voterPositionCommentSave':
-        // Add the comment to the list in memory
+        clearOpposes = false;
+        clearSupports = false;
+        revisedState = state;
+        ({
+          voter_opposes: voterOpposes,
+          voter_supports: voterSupports,
+        } = state);
+        if (!voterOpposes) {
+          voterOpposes = {};
+        }
+        if (!voterSupports) {
+          voterSupports = {};
+        }
+        if (action.res.stance === 'OPPOSE') {
+          clearSupports = true;
+          if (ballotItemWeVoteId) {
+            voterOpposes[ballotItemWeVoteId] = true;
+          }
+          if (politicianWeVoteId) {
+            voterOpposes[politicianWeVoteId] = true;
+          }
+        } else if (action.res.stance === 'SUPPORT') {
+          clearOpposes = true;
+          if (ballotItemWeVoteId) {
+            voterSupports[ballotItemWeVoteId] = true;
+          }
+          if (politicianWeVoteId) {
+            voterSupports[politicianWeVoteId] = true;
+          }
+        } else if (action.res.stance === 'INFO_ONLY') {
+          clearOpposes = true;
+          clearSupports = true;
+        }
+        if (clearOpposes) {
+          if (ballotItemWeVoteId && voterOpposes[ballotItemWeVoteId] !== undefined) {
+            delete voterOpposes[ballotItemWeVoteId];
+          }
+          if (politicianWeVoteId && voterOpposes[politicianWeVoteId] !== undefined) {
+            delete voterOpposes[politicianWeVoteId];
+          }
+        }
+        if (clearSupports) {
+          if (ballotItemWeVoteId && voterSupports[ballotItemWeVoteId] !== undefined) {
+            delete voterSupports[ballotItemWeVoteId];
+          }
+          if (politicianWeVoteId && voterSupports[politicianWeVoteId] !== undefined) {
+            delete voterSupports[politicianWeVoteId];
+          }
+        }
+        if (action.res.statement_text) {
+          if (ballotItemWeVoteId) {
+            revisedState = {
+              ...revisedState,
+              voter_statement_text: assign({}, revisedState.voter_statement_text, { [ballotItemWeVoteId]: action.res.statement_text }),
+            };
+          }
+          if (politicianWeVoteId) {
+            revisedState = {
+              ...revisedState,
+              voter_statement_text: assign({}, revisedState.voter_statement_text, { [politicianWeVoteId]: action.res.statement_text }),
+            };
+          }
+        }
+        revisedState = { ...revisedState,
+          voter_opposes: voterOpposes,
+          voter_supports: voterSupports,
+        };
+        // After storing it locally, refresh the whole list of positions
         isCandidate = stringContains('cand', ballotItemWeVoteId);
         isMeasure = stringContains('meas', ballotItemWeVoteId);
         if (isCandidate) {
@@ -267,17 +332,29 @@ class SupportStore extends ReduceStore {
         } else if (isMeasure) {
           MeasureActions.positionListForBallotItemFromFriends(ballotItemWeVoteId);
         }
-        return {
-          ...state,
-          voter_statement_text: this.statementListWithChanges(state.voter_statement_text, ballotItemWeVoteId, action.res.statement_text),
-        };
+        return revisedState;
 
       case 'voterPositionVisibilitySave':
         // Add the visibility to the list in memory
-        return {
-          ...state,
-          is_public_position: this.isForPublicListWithChanges(state.is_public_position, ballotItemWeVoteId, action.res.is_public_position),
-        };
+        revisedState = state;
+        console.log('voterPositionVisibilitySave: ', action.res);
+        if (action.res.is_public_position === undefined) {
+          // Do not update
+        } else {
+          if (ballotItemWeVoteId) {
+            revisedState = {
+              ...revisedState,
+              is_public_position: assign({}, revisedState.is_public_position, { [ballotItemWeVoteId]: action.res.is_public_position }),
+            };
+          }
+          if (politicianWeVoteId) {
+            revisedState = {
+              ...revisedState,
+              is_public_position: assign({}, revisedState.is_public_position, { [politicianWeVoteId]: action.res.is_public_position }),
+            };
+          }
+        }
+        return revisedState;
 
       case 'voterSignOut':
         // console.log('resetting SupportStore');

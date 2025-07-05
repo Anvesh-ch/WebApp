@@ -21,7 +21,7 @@ export default {
     Dispatcher.loadEndpoint('voterStopSupportingSave', { ballot_item_we_vote_id: weVoteId, kind_of_ballot_item: type, politician_we_vote_id: politicianWeVoteId });
   },
 
-  voterPositionCommentSave (weVoteId, type, statementText, stance = 'false', visibilitySetting = 'false', politicianWeVoteId = '') {
+  voterPositionCommentSave (weVoteId, type, politicianWeVoteId = '', statementText, stance = 'false', visibilitySetting = 'false') {
     const dataDictionary = {
       ballot_item_we_vote_id: weVoteId,
       kind_of_ballot_item: type,

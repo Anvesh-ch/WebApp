@@ -275,12 +275,13 @@ function CardForListBody (props) {
                 <Suspense fallback={<></>}>
                   {(finalElectionDateInPast || usePoliticianWeVoteIdForBallotItem) ? (
                     <ItemActionBar
-                      ballotItemWeVoteId={politicianWeVoteId}
+                      ballotItemWeVoteId={candidateWeVoteId}
                       ballotItemDisplayName={ballotItemDisplayName}
                       commentButtonHide
                       // externalUniqueId={`${idBaseName}ForList-ItemActionBar-${politicianWeVoteId}-${externalUniqueId}`}
                       hidePositionPublicToggle
                       inCard
+                      politicianWeVoteId={politicianWeVoteId}
                       positionPublicToggleWrapAllowed
                       shareButtonHide
                       useHelpDefeatOrHelpWin
@@ -294,6 +295,7 @@ function CardForListBody (props) {
                       // externalUniqueId={`${idBaseName}ForList-ItemActionBar-${politicianWeVoteId}-${externalUniqueId}`}
                       hidePositionPublicToggle
                       inCard
+                      politicianWeVoteId={politicianWeVoteId}
                       positionPublicToggleWrapAllowed
                       shareButtonHide
                       useHelpDefeatOrHelpWin
