@@ -150,6 +150,7 @@ class Ready extends Component {
     }
   }
 
+
   componentDidCatch (error, info) {
     console.log('!!!Ready.jsx caught: ', error, info.componentStack);
   }

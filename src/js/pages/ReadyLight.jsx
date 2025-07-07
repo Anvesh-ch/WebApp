@@ -102,6 +102,7 @@ class ReadyLight extends Component {
     }
   }
 
+
   componentDidCatch (error, info) {
     console.log('ReadyLight.jsx caught: ', error, info.componentStack);
   }
