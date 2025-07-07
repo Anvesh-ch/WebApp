@@ -6,6 +6,14 @@
 import { isChallengeSEOFriendlyURL, isPoliticianSEOFriendlyURL } from '../common/utils/isSEOFriendlyURL';
 
 const pageNameAndTypeSimpleDictForExternalUrls = {
+  'https://apps.apple.com/us/app/we-vote-voter-guide/id1347335726': {
+    pageName: 'AppStoreiPhone',
+    pageType: 'appStore',
+  },
+  'https://github.com/WeVote': {
+    pageName: 'WeVoteGitHub',
+    pageType: 'github',
+  },
   'https://google.com': {
     pageName: 'GoogleSearch',
     pageType: 'search',
@@ -13,6 +21,18 @@ const pageNameAndTypeSimpleDictForExternalUrls = {
   'https://help.wevote.us/hc/en-us': {
     pageName: 'WeVoteSupport',
     pageType: 'support',
+  },
+  'https://help.wevote.us/hc/en-us/articles/360034261733-How-were-the-Values-within-We-Vote-chosen-': {
+    pageName: 'WeVoteValues',
+    pageType: 'support',
+  },
+  'https://help.wevote.us/hc/en-us/requests/new': {
+    pageName: 'HelpContact',
+    pageType: 'help',
+  },
+  'https://play.google.com/store/apps/details?id=org.wevote.cordova&hl=en_US': {
+    pageName: 'AppStoreAndroid',
+    pageType: 'appStore',
   },
   'https://wevote.applytojob.com/apply': {
     pageName: 'WeVoteVolunteer',
@@ -25,6 +45,14 @@ const pageNameAndTypeSimpleDictForExternalUrls = {
   'https://projects.propublica.org/nonprofits/organizations/811052585': {
     pageName: 'WeVoteBudget',
     pageType: 'donation',
+  },
+  'https://www.WeVoteEducation.org': {
+    pageName: 'WeVoteEducation',
+    pageType: 'organization',
+  },
+  'https://www.WeVoteUSA.org': {
+    pageName: 'WeVoteUSA',
+    pageType: 'organization',
   },
 };
 
@@ -81,6 +109,10 @@ function calculatePageNameAndPageTypeDictForExternalUrls (pathOrURL) {
   } else if (pathOrURL.startsWith('/value/')) {
     pageName = 'IssuePage';
     pageType = 'issue';
+  } else if (isPoliticianSEOFriendlyURL(pathOrURL)) {
+    // We need to add more complex logic here because there are many paths in /src/App.jsx that use "/-/" in the path
+    pageName = 'PoliticianDetailsPage';
+    pageType = 'politician';
   } else if (/^\/[^/\s]+$/.test(pathOrURL)) {
     pageName = 'TwitterHandleLanding';
     pageType = 'endorser';  // Changed from 'twitterHandleLanding' to 'endorser'
@@ -88,25 +120,25 @@ function calculatePageNameAndPageTypeDictForExternalUrls (pathOrURL) {
 
   if (pathOrURL.startsWith('https//') || pathOrURL.startsWith('http://')) {
     if (pathOrURL.startsWith('https://instagram.com')) {
-      pageName = 'Instagram';
+      pageName = 'InstagramProfile';
       pageType = 'socialMedia';
     } else if (pathOrURL.startsWith('https://x.com') || pathOrURL.startsWith('https://twitter.com')) { // Includes old Twitter domains
-      pageName = 'XTwitter'; // Corrected name for X/Twitter
+      pageName = 'XTwitterProfile'; // Corrected name for X/Twitter
       pageType = 'socialMedia';
     } else if (pathOrURL.startsWith('https://www.youtube.com')) {
-      pageName = 'YouTube';
+      pageName = 'YouTubeChannel';
       pageType = 'videoPlatform';
     } else if (pathOrURL.startsWith('https://www.wikipedia.org')) {
-      pageName = 'Wikipedia';
+      pageName = 'WikipediaPage';
       pageType = 'encyclopedia';
     } else if (pathOrURL.startsWith('https://www.bing.com/search')) {
-      pageName = 'BingSearch';
+      pageName = 'BingSearchResults';
       pageType = 'searchEngine';
     } else if (pathOrURL.startsWith('https://www.google.com/search')) {
-      pageName = 'GoogleSearch';
+      pageName = 'GoogleSearchResults';
       pageType = 'searchEngine';
     } else if (pathOrURL.includes('projects.propublica.org/nonprofits/organizations')) {
-      pageName = 'Propublica';
+      pageName = 'WeVoteBudget';
       pageType = 'donation';
     }
   }
