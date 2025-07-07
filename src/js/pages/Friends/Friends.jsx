@@ -525,7 +525,7 @@ class Friends extends Component {
                         <SectionTitle>
                           Invite Friends
                           <>
-                            {isMobileScreenSize() ? (<span />) : (
+                            {isMobileScreenSize() ? (<></>) : (
                               <TooltipIcon title="These friends will see what you support and oppose." />
                             )}
                           </>
