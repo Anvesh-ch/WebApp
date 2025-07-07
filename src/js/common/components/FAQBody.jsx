@@ -8,6 +8,7 @@ import ToolBar from './Widgets/ToolBar';
 import { Video, PlayerContainer } from './Style/VideoStyles';
 import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
 import VoterStore from '../../stores/VoterStore';
+import historyPush from '../utils/historyPush';
 
 
 const OpenExternalWebSite = React.lazy(() => import(/* webpackChunkName: 'OpenExternalWebSite' */ './Widgets/OpenExternalWebSite'));
@@ -46,6 +47,26 @@ export default class FAQBody extends Component {
     };
 
     TagManager.dataLayer({ dataLayer: dataLayerObj });
+  }
+
+  routeToAbout () {
+    this.pushDataLayer('/more/about', 'faq-more-about');
+    historyPush('/more/about');
+  }
+
+  routeToDonate () {
+    this.pushDataLayer('/donate', 'faq-donate');
+    historyPush('/donate');
+  }
+
+  routeToDonateMonthly () {
+    this.pushDataLayer('/donate', 'faq-donate-monthly');
+    historyPush('/donate');
+  }
+
+  routeToHome () {
+    this.pushDataLayer('/', 'faq-home');
+    historyPush('/');
   }
 
   render () {
@@ -178,13 +199,12 @@ export default class FAQBody extends Component {
         </Suspense>
         We also have
         {' '}
-        <Link
-          to="/more/about"
+        <span
           className="u-cursor--pointer u-link-color"
-          onClick={() => this.pushDataLayer('/more/about', 'faq-more-about')}
+          onClick={() => this.routeToAbout()}
         >
           volunteer board members
-        </Link>
+        </span>
         .
         <br />
         <br />
@@ -299,9 +319,12 @@ export default class FAQBody extends Component {
           <>
             If you like WeVote,
             {' '}
-            <Link to="/donate" className="u-cursor--pointer u-link-color" onClick={() => this.pushDataLayer('/donate', 'faq-donate')}>
+            <span
+              className="u-cursor--pointer u-link-color"
+              onClick={() => this.routeToDonate()}
+            >
               please donate monthly
-            </Link>
+            </span>
             {' '}
             so we can help more voters.
           </>
@@ -363,7 +386,6 @@ export default class FAQBody extends Component {
             linkIdAttribute="idealistOpenPositions"
             url="https://wevote.applytojob.com/apply"
             target="_blank"
-            className="open-web-site open-web-site__no-right-padding"
             body="sign up to volunteer"
             trackingOn
           />
@@ -371,15 +393,21 @@ export default class FAQBody extends Component {
         {' '}
         and
         {' '}
-        <Link to="/donate" className="u-cursor--pointer u-link-color" onClick={() => this.pushDataLayer('/donate', 'faq-donate-monthly')}>
+        <span
+          className="u-cursor--pointer u-link-color"
+          onClick={() => this.routeToDonateMonthly()}
+        >
           donate $5 monthly
-        </Link>
+        </span>
         .
         <br />
         <br />
-        <Link to="/" className="u-cursor--pointer u-link-color" onClick={() => this.pushDataLayer('/', 'faq-home')}>
+        <span
+          className="u-cursor--pointer u-link-color"
+          onClick={() => this.routeToHome()}
+        >
           Let&apos;s get started!
-        </Link>
+        </span>
         <br />
         <br />
         <br />
