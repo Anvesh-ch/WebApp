@@ -42,10 +42,9 @@ class ReadyLight extends Component {
     this.state = {
       chosenReadyIntroductionText: '',
       chosenReadyIntroductionTitle: '',
-      dataLayerFired: false, // Terry - tracking whether dataLayer was fired, default set to false
+      dataLayerFired: false,
       voterIsSignedIn: false,
     };
-    
   }
 
   componentDidMount () {
@@ -70,19 +69,16 @@ class ReadyLight extends Component {
     window.scrollTo(0, 0);
   }
 
-  // Terry - Changes made for WV-1448 adding landing datalayers
   componentDidUpdate () {
     const { dataLayerFired } = this.state;
-    // Terry - only fire datalayer when voter data is ready
-    // Terry - set condition to have datalayer fire when voter data was retrieved & this.dataLayerFired == False
-    if (!dataLayerFired){ 
+    if (!dataLayerFired) {
       if (VoterStore.voterFirstRetrieveCompleted()) {
         const { location: { pathname: currentPathname } } = window;
         const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
 
         TagManager.dataLayer({
           dataLayer: {
-            actionDetails:{
+            actionDetails: {
               actionType: 'landing',
               componentName: 'readyPageFirstEntrance',
             },
@@ -100,7 +96,7 @@ class ReadyLight extends Component {
           },
         });
         this.setState({
-          dataLayerFired: true
+          dataLayerFired: true,
         });
       }
     }
