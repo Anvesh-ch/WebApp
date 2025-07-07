@@ -145,8 +145,8 @@ export default class SettingsPersonalSideBar extends Component {
                     destinationPath: '/settings/contacts',
                   })}
                 >
-                  <ImportContactsIcon isActive={String(editMode) === 'contacts'} />
-                  <LinkSpan isActive={String(editMode) === 'contacts'}>
+                  <ImportContactsIcon $isActive={String(editMode) === 'contacts'} />
+                  <LinkSpan $isActive={String(editMode) === 'contacts'}>
                     Import Contacts
                   </LinkSpan>
                 </Link>
@@ -159,7 +159,7 @@ export default class SettingsPersonalSideBar extends Component {
           //   'SettingsItem__summary__item-container SettingsItem__summary__item-container--selected' :
           //   'SettingsItem__summary__item-container '}
           // >
-          <LinkContainer isActive={String(editMode) === 'profile'}>
+          <LinkContainer $isActive={String(editMode) === 'profile'}>
             <div id="personalSettingsPhoto">
               <Link
                 to="/settings/profile"
@@ -169,8 +169,8 @@ export default class SettingsPersonalSideBar extends Component {
                   destinationPath: '/settings/profile',
                 })}
               >
-                <ProfileIcon isActive={String(editMode) === 'profile'} />
-                <LinkSpan isActive={String(editMode) === 'profile'}>
+                <ProfileIcon $isActive={String(editMode) === 'profile'} />
+                <LinkSpan $isActive={String(editMode) === 'profile'}>
                   Name &amp; Photo
                 </LinkSpan>
               </Link>
@@ -178,7 +178,7 @@ export default class SettingsPersonalSideBar extends Component {
           </LinkContainer>
           )}
 
-          <LinkContainer isActive={String(editMode) === 'account'}>
+          <LinkContainer $isActive={String(editMode) === 'account'}>
             <div id="personalSettingsSecurity">
               <Link
                 to="/settings/securityAndSignIn"
@@ -188,8 +188,8 @@ export default class SettingsPersonalSideBar extends Component {
                   destinationPath: '/settings/securityAndSignIn',
                 })}
               >
-                <SecurityIcon isActive={String(editMode) === 'account'} />
-                <LinkSpan isActive={String(editMode) === 'account'}>
+                <SecurityIcon $isActive={String(editMode) === 'account'} />
+                <LinkSpan $isActive={String(editMode) === 'account'}>
                   {isSignedIn ? (
                     <span>Security & Sign In</span>
                   ) : (
@@ -201,7 +201,7 @@ export default class SettingsPersonalSideBar extends Component {
           </LinkContainer>
 
           {(isSignedIn) && (
-            <LinkContainer isActive={String(editMode) === 'yourdata'}>
+            <LinkContainer $isActive={String(editMode) === 'yourdata'}>
               <div id="personalSettingsPrivacy">
                 <Link
                   to="/settings/yourdata"
@@ -211,15 +211,15 @@ export default class SettingsPersonalSideBar extends Component {
                     destinationPath: '/settings/yourdata',
                   })}
                 >
-                  <PrivacyIcon isActive={String(editMode) === 'yourdata'} />
-                  <LinkSpan isActive={String(editMode) === 'yourdata'}>
+                  <PrivacyIcon $isActive={String(editMode) === 'yourdata'} />
+                  <LinkSpan $isActive={String(editMode) === 'yourdata'}>
                     Privacy &amp; Data
                   </LinkSpan>
                 </Link>
               </div>
             </LinkContainer>
           )}
-          <LinkContainer isActive={String(editMode) === 'notifications'}>
+          <LinkContainer $isActive={String(editMode) === 'notifications'}>
             <div id="personalSettingsNotifs">
               <Link
                   to="/settings/notifications"
@@ -229,8 +229,8 @@ export default class SettingsPersonalSideBar extends Component {
                     destinationPath: '/settings/notifications',
                   })}
               >
-                <NotificationsIcon isActive={String(editMode) === 'notifications'} />
-                <LinkSpan isActive={String(editMode) === 'notifications'}>
+                <NotificationsIcon $isActive={String(editMode) === 'notifications'} />
+                <LinkSpan $isActive={String(editMode) === 'notifications'}>
                   Notifications
                 </LinkSpan>
               </Link>
@@ -238,7 +238,7 @@ export default class SettingsPersonalSideBar extends Component {
           </LinkContainer>
 
           {alwaysTrue && (/* {!isOnPartnerUrl && ( */
-            <LinkContainer isActive={String(editMode) === 'friends'}>
+            <LinkContainer $isActive={String(editMode) === 'friends'}>
               <div id="personalSettingsFriends">
                 <Link
                   to="/friends"
@@ -248,8 +248,8 @@ export default class SettingsPersonalSideBar extends Component {
                     destinationPath: '/friends',
                   })}
                 >
-                  <FriendsIcon isActive={String(editMode) === 'friends'} />
-                  <LinkSpan isActive={String(editMode) === 'friends'}>
+                  <FriendsIcon $isActive={String(editMode) === 'friends'} />
+                  <LinkSpan $isActive={String(editMode) === 'friends'}>
                     Friends
                   </LinkSpan>
                 </Link>
@@ -258,7 +258,7 @@ export default class SettingsPersonalSideBar extends Component {
           )}
 
           {(isSignedIn && alwaysTrue/* && !isOnPartnerUrl */) && (
-            <LinkContainer isActive={String(editMode) === 'discuss'}>
+            <LinkContainer $isActive={String(editMode) === 'discuss'}>
               <div id="personalSettingsDiscuss">
                 <Link
                   to="/news"
@@ -268,8 +268,8 @@ export default class SettingsPersonalSideBar extends Component {
                     destinationPath: '/news',
                   })}
                 >
-                  <DiscussIcon isActive={String(editMode) === 'discuss'} />
-                  <LinkSpan isActive={String(editMode) === 'discuss'}>
+                  <DiscussIcon $isActive={String(editMode) === 'discuss'} />
+                  <LinkSpan $isActive={String(editMode) === 'discuss'}>
                     Discuss
                   </LinkSpan>
                 </Link>
