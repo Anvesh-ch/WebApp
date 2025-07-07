@@ -1,5 +1,4 @@
 import React, { Component, Suspense } from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import TagManager from 'react-gtm-module';
 import { isCordova, isWebApp } from '../utils/isCordovaOrWebApp';
