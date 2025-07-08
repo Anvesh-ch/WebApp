@@ -72,9 +72,7 @@ export default class SettingsPersonalSideBar extends Component {
   }
 
   // helper functions
-  fireSettingsGTMEvent = ({ buttonId, destinationPath = '', actionType = 'navigate', voterWeVoteId = null , destinationPage = {},}) => {
-    const { isSignedIn } = this.state;
-
+  fireSettingsGTMEvent = ({ buttonId, destinationPath = '', actionType = 'navigate', voterWeVoteId = null, destinationPage = {} }) => {
     TagManager.dataLayer({
       dataLayer: {
         event: 'action',
