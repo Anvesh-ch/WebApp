@@ -1,11 +1,12 @@
+import React, { Component } from 'react';
 import { LockOutlined } from '@mui/icons-material';
+import TagManager from 'react-gtm-module';
 import { Button, InputAdornment, TextField } from '@mui/material';
 import { styled as muiStyled } from '@mui/styles';
 import withStyles from '@mui/styles/withStyles';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import styled from 'styled-components';
 import DonationListForm from '../Donation/DonationListForm';
 import InjectedCheckoutForm from '../Donation/InjectedCheckoutForm';
@@ -23,6 +24,8 @@ import CampaignStore from '../../stores/CampaignStore';
 import { getCampaignXValuesFromIdentifiers, retrieveCampaignXFromIdentifiersIfNeeded } from '../../utils/campaignUtils';
 import initializejQuery from '../../utils/initializejQuery';
 import SplitIconButton from '../Widgets/SplitIconButton';
+import lookupPageNameAndPageTypeDict from '../../../utils/lookupPageNameAndPageTypeDict';
+import VoterStore from '../../../stores/VoterStore';
 
 const stripePromise = loadStripe(webAppConfig.STRIPE_API_KEY);
 
@@ -174,7 +177,37 @@ class PayToPromoteProcess extends Component {
     this.setState({
       preDonation: false,
     });
-  }
+
+    // Get current pathname from window
+    const { pathname: currentPathname, search: searchString } = window.location;
+
+    // Get page details using your utility
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+
+    // Prepare dataLayer object
+    const dataLayerObject = {
+      actionDetails: {
+        actionType: 'navigate',
+        buttonId: 'stripeCheckOutForm',
+      },
+      event: 'action',
+      userDetails: VoterStore.getAnalyticsUserDetails(),
+      pageDetails: {
+        pageType: currentPage.pageType,
+        pageName: currentPage.pageName,
+        pathname: currentPathname,
+      },
+      destinationDetails: {
+        destinationPageName: currentPage.destinationPageName,
+        destinationPageType: currentPage.destinationPageType,
+        destinationPathname: currentPage.destinationPathname,
+      },
+      searchString,
+    };
+
+    // Push to Google Tag Manager
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
+  };
 
   goToIWillShare = () => {
     const pathForNextStep = `${this.getCampaignXBasePath()}share-campaign`;
