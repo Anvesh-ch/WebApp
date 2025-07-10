@@ -265,9 +265,27 @@ class Donate extends Component {
         If you believe every voter deserves to feel confident and prepared, please give now.
         {!readMore && (
           <ReadMoreButton
-            onClick={() => this.setState({
-              readMore: true,
-            })}
+            onClick={() => {
+              const { pathname: currentPathname } = window.location;
+              const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+              const dataLayerObject = {
+                event: 'action',
+                actionDetails: {
+                  actionType: 'showMore',
+                  buttonId: 'readMoreButton',
+                },
+                pageDetails: {
+                  pageName: currentPage.pageName,
+                  pageType: currentPage.pageType,
+                  pathname: currentPathname,
+                },
+                userDetails: VoterStore.getAnalyticsUserDetails(),
+              };
+
+              TagManager.dataLayer({ dataLayer: dataLayerObject });
+
+              this.setState({ readMore: true });
+            }}
           >
             Read more...
           </ReadMoreButton>
