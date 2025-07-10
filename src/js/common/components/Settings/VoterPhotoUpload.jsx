@@ -86,6 +86,25 @@ class VoterPhotoUpload extends Component {
   submitDeleteYourPhoto = () => {
     VoterActions.voterPhotoDelete();
     VoterActions.voterPhotoQueuedToSave(undefined);
+          // Adding event data to dataLayer for Google Tag Manager
+    const page = lookupPageNameAndPageTypeDict(window.location.pathname);
+      TagManager.dataLayer({
+        dataLayer: {
+          event: 'remove_profile_photo',
+          actionDetails: {
+            actionType: 'remove',
+            buttonId: 'removePhotoLink',
+          },
+          userDetails: {
+            voterWeVoteId: VoterStore.getVoterWeVoteId(),
+          },
+          pageDetails: {
+            pageName: page.pageName,
+            pageType: page.pageType,
+            pathname: window.location.pathname,
+            },
+          },
+        });
   }
 
   render () {

@@ -1,5 +1,6 @@
 import { Button, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 import styled from 'styled-components';
+import TagManager from 'react-gtm-module';
 import withStyles from '@mui/styles/withStyles';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -50,6 +51,26 @@ class SettingsProfilePicture extends Component {
     if (voterPhotoQueuedToSaveSet || profileImageTypeCurrentlyActive) {
       VoterActions.voterPhotoSave(voterPhotoQueuedToSave, voterPhotoQueuedToSaveSet, profileImageTypeCurrentlyActive);
       VoterActions.voterPhotoQueuedToSave(undefined);
+
+          // Adding event data to dataLayer for Google Tag Manager
+    const page = lookupPageNameAndPageTypeDict(currentPathname);
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'save_profile_photo',
+        actionDetails: {
+          actionType: 'save',
+          buttonId: 'saveEditYourPhotoBottom',
+        },
+        userDetails: {
+          voterWeVoteId: VoterStore.getVoterWeVoteId(),
+        },
+        pageDetails: {
+          pageName: page.pageName,
+          pageType: page.pageType,
+          pathname: currentPathname,
+        },
+      },
+    });
     }
     this.setState({
       voterPhotoQueuedToSaveSet: false,
