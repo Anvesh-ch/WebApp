@@ -260,19 +260,13 @@ class Donate extends Component {
         {!readMore && (
           <ReadMoreButton
             onClick={() => {
-              const { pathname: currentPathname } = window.location;
-              const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
               const dataLayerObject = {
                 event: 'action',
                 actionDetails: {
                   actionType: 'showMore',
                   buttonId: 'readMoreButton',
                 },
-                pageDetails: {
-                  pageName: currentPage.pageName,
-                  pageType: currentPage.pageType,
-                  pathname: currentPathname,
-                },
+                pageDetails: getPageDetails(),
                 userDetails: VoterStore.getAnalyticsUserDetails(),
               };
 
