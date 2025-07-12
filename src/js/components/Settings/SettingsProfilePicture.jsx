@@ -13,8 +13,10 @@ class SettingsProfilePicture extends Component {
     super(props);
     this.state = {
       profileImageTypeCurrentlyActive: 'UPLOADED',
+      uploadedFileStaged: false,
     };
     this.changeProfileImageTypeCurrentlyActive = this.changeProfileImageTypeCurrentlyActive.bind(this);
+    this.setProfileImageTypeCurrentlyActive = this.setProfileImageTypeCurrentlyActive.bind(this);
   }
 
   componentDidMount () {
@@ -27,9 +29,10 @@ class SettingsProfilePicture extends Component {
   }
 
   onVoterStoreChange = () => {
+    const { uploadedFileStaged } = this.state;
     const voter = VoterStore.getVoter();
     let profileImageTypeCurrentlyActive = 'UPLOADED';
-    if (voter.profile_image_type_currently_active) {
+    if (voter.profile_image_type_currently_active && !uploadedFileStaged) {
       if (voter.profile_image_type_currently_active !== 'UNKNOWN') {
         profileImageTypeCurrentlyActive = voter.profile_image_type_currently_active;
       }
@@ -53,14 +56,33 @@ class SettingsProfilePicture extends Component {
     this.setState({
       voterPhotoQueuedToSaveSet: false,
       profileImageTypeCurrentlyActiveSet: false,
+      uploadedFileStaged: false,
     });
   }
 
   changeProfileImageTypeCurrentlyActive (e) {
-    // console.log(e.target.value);
+    // console.log('changeProfileImageTypeCurrentlyActive:', e);
     this.setState({
       profileImageTypeCurrentlyActive: e.target.value,
       profileImageTypeCurrentlyActiveSet: true,
+    });
+  }
+
+  setProfileImageTypeCurrentlyActive (type) {
+    const { uploadedFileStaged } = this.state;
+    const isStaged = type === 'UPLOADED' ? 'true' : uploadedFileStaged;
+    this.setState({
+      profileImageTypeCurrentlyActive: type,
+      profileImageTypeCurrentlyActiveSet: true,
+      uploadedFileStaged: isStaged,
+    });
+  }
+
+  facebookClicked () {
+    this.setState({
+      profileImageTypeCurrentlyActive: "FACEBOOK",
+      profileImageTypeCurrentlyActiveSet: true,
+      uploadedFileStaged: false,
     });
   }
 
@@ -80,11 +102,12 @@ class SettingsProfilePicture extends Component {
               <ProfilePictureOption>
                 <FormControlLabel
                   value="UPLOADED"
-                  control={<Radio color="primary" />}
+                  control={<Radio color="primary" checked={profileImageTypeCurrentlyActive === 'UPLOADED'} />}
                   label="Custom photo"
+                  checked={profileImageTypeCurrentlyActive === 'UPLOADED'}
                 />
                 <Separator />
-                <VoterPhotoUpload limitPhotoHeight maxWidth={100} />
+                <VoterPhotoUpload limitPhotoHeight maxWidth={100} onUpload={this.setProfileImageTypeCurrentlyActive} />
               </ProfilePictureOption>
             </CustomColumns>
             {voterFacebookImageUrlLarge && (
@@ -92,7 +115,7 @@ class SettingsProfilePicture extends Component {
                 <ProfilePictureOption>
                   <FormControlLabel
                     value="FACEBOOK"
-                    control={<Radio color="primary" />}
+                    control={<Radio color="primary" checked={profileImageTypeCurrentlyActive === 'FACEBOOK'} onClick={this.facebookClicked} />}
                     label="Facebook photo"
                   />
                   <Separator />
@@ -109,6 +132,7 @@ class SettingsProfilePicture extends Component {
                     value="TWITTER"
                     control={<Radio color="primary" />}
                     label="Twitter photo"
+                    checked={profileImageTypeCurrentlyActive === 'TWITTER'}
                   />
                   <Separator />
                   <ProfilePictureWrapper>
