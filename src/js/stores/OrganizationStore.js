@@ -1364,6 +1364,7 @@ class OrganizationStore extends ReduceStore {
                   } else if (action.type === 'voterStopSupportingSave') {
                     modifiedPosition = this.modifyPositionObject(modifiedPosition, false, true, false, false, true, false);
                   } else if (action.type === 'voterPositionCommentSave') {
+                    modifiedPosition.is_public_position = isPublicPosition;
                     modifiedPosition.statement_text = statementText;
                   } else if (action.type === 'voterPositionVisibilitySave') {
                     modifiedPosition.is_public_position = isPublicPosition;
@@ -1391,6 +1392,7 @@ class OrganizationStore extends ReduceStore {
             } else if (action.type === 'voterStopSupportingSave') {
               modifiedPosition = this.modifyPositionObject(modifiedPosition, false, true, false, false, true, false);
             } else if (action.type === 'voterPositionCommentSave') {
+              modifiedPosition.is_public_position = isPublicPosition;
               modifiedPosition.statement_text = statementText;
             } else if (action.type === 'voterPositionVisibilitySave') {
               modifiedPosition.is_public_position = isPublicPosition;
@@ -1412,6 +1414,7 @@ class OrganizationStore extends ReduceStore {
               } else if (action.type === 'voterStopSupportingSave') {
                 modifiedPosition = this.modifyPositionObject(modifiedPosition, false, true, false, false, true, false);
               } else if (action.type === 'voterPositionCommentSave') {
+                modifiedPosition.is_public_position = isPublicPosition;
                 modifiedPosition.statement_text = statementText;
               } else if (action.type === 'voterPositionVisibilitySave') {
                 modifiedPosition.is_public_position = isPublicPosition;

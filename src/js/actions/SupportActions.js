@@ -33,7 +33,8 @@ export default {
     } else {
       dataDictionary.stance = false;
     }
-    if (visibilitySetting !== 'false' && visibilitySetting in ['PUBLIC', 'FRIENDS_ONLY']) {
+    // console.log('visibilitySetting: ', visibilitySetting);
+    if (['SHOW_PUBLIC', 'FRIENDS_ONLY'].includes(visibilitySetting)) {
       dataDictionary.visibility_setting = visibilitySetting;
     } else {
       dataDictionary.visibility_setting = false;

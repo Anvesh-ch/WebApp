@@ -31,7 +31,7 @@ const CustomTooltip = muiStyled(({ className, ...props }) => (
 function UpdatePoliticianInformation (props) {
   const { politicianName } = props;
   const [tooltipOpen, setTooltipOpen] = useState(false);
-  const newDesign2025 = true;
+  const newDesign2025 = false;
   const voterCanEditCandidate = true; // This should be determined by the actual application logic
   const voterCanEditCandidateHighlight = false;
 

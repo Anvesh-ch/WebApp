@@ -4,10 +4,11 @@ import withTheme from '@mui/styles/withTheme';
 import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
 // import styled from 'styled-components';
-import ModalDisplayTemplateA, {
+import {
   PostSaveButton, templateAStyles, TextFieldDiv,
   TextFieldForm, TextFieldWrapper, VoterAvatarImg,
 } from './ModalDisplayTemplateA';
+import ModalDisplayTemplateB from './ModalDisplayTemplateB';
 import SupportActions from '../../actions/SupportActions';
 import { restoreStylesAfterCordovaKeyboard } from '../../common/utils/cordovaUtils';
 import { isAndroid } from '../../common/utils/isCordovaOrWebApp';
@@ -295,7 +296,7 @@ class PositionStatementModal extends Component {
     );
 
     return (
-      <ModalDisplayTemplateA
+      <ModalDisplayTemplateB
         dialogTitleJSX={<>{dialogTitleText}</>}
         show={show}
         textFieldJSX={textFieldJSX}

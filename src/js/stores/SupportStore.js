@@ -41,7 +41,6 @@ class SupportStore extends ReduceStore {
     } else if (isMeasure) {
       allCachedPositions = MeasureStore.getAllCachedPositionsByMeasureWeVoteId(ballotItemWeVoteId);
     } else if (isPolitician) {
-      // TODO Reality check this
       allCachedPositions = CandidateStore.getAllCachedPositionsByPoliticianWeVoteId(politicianWeVoteId);
     }
     // if (politicianWeVoteId === 'wv87pol49070' || ballotItemWeVoteId === 'wv87cand3133998') { // Adam Schiff
@@ -49,7 +48,11 @@ class SupportStore extends ReduceStore {
     // }
     const results = extractScoreFromNetworkFromPositionList(allCachedPositions);
     const { numberOfSupportPositionsForScore, numberOfOpposePositionsForScore, numberOfInfoOnlyPositionsForScore } = results;
-    // console.log('getBallotItemStatSheet ballotItemWeVoteId:', ballotItemWeVoteId, ', this.voterSupportsList:', this.voterSupportsList);
+    // if (politicianWeVoteId === 'wv87pol95272') {
+    //   console.log('getBallotItemStatSheet ballotItemWeVoteId:', ballotItemWeVoteId, ', politicianWeVoteId: ', politicianWeVoteId, ', this.isForPublicList:', this.isForPublicList);
+    //   console.log('voterPositionIsPublic PARTS:', this.isForPublicList[ballotItemWeVoteId], this.isForPublicList[politicianWeVoteId]);
+    //   console.log('voterPositionIsPublic:', this.isForPublicList[ballotItemWeVoteId] || this.isForPublicList[politicianWeVoteId] || false);
+    // }
     return {
       voterSupportsBallotItem: this.voterSupportsList[ballotItemWeVoteId] || this.voterSupportsList[politicianWeVoteId] || false,
       voterOpposesBallotItem: this.voterOpposesList[ballotItemWeVoteId] || this.voterOpposesList[politicianWeVoteId] || false,
@@ -163,6 +166,7 @@ class SupportStore extends ReduceStore {
       case 'voterAllPositionsRetrieve':
         // is_support is a property coming from 'position_list' in the incoming response
         // state.voter_supports is an updated hash with the contents of position list['is_support']
+        // console.log('SupportStore from voterAllPositionsRetrieve is_public_position: ', this.extractValueByPropertyAndStoreListInDictionaryByWeVoteId('is_public_position', action.res.position_list));
         return {
           ...state,
           voter_supports: this.extractValueByPropertyAndStoreListInDictionaryByWeVoteId('is_support', action.res.position_list),
@@ -324,6 +328,20 @@ class SupportStore extends ReduceStore {
           voter_opposes: voterOpposes,
           voter_supports: voterSupports,
         };
+        if (action.res.is_public_position !== undefined) {
+          if (ballotItemWeVoteId) {
+            revisedState = {
+              ...revisedState,
+              is_public_position: assign({}, revisedState.is_public_position, { [ballotItemWeVoteId]: action.res.is_public_position }),
+            };
+          }
+          if (politicianWeVoteId) {
+            revisedState = {
+              ...revisedState,
+              is_public_position: assign({}, revisedState.is_public_position, { [politicianWeVoteId]: action.res.is_public_position }),
+            };
+          }
+        }
         // After storing it locally, refresh the whole list of positions
         isCandidate = stringContains('cand', ballotItemWeVoteId);
         isMeasure = stringContains('meas', ballotItemWeVoteId);
