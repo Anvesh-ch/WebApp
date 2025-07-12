@@ -8,7 +8,6 @@ import SupportActions from '../../actions/SupportActions';
 import { prepareForCordovaKeyboard } from '../../common/utils/cordovaUtils';
 import { isAndroid } from '../../common/utils/isCordovaOrWebApp';
 import { renderLog } from '../../common/utils/logging';
-import ActivityStore from '../../stores/ActivityStore';
 import AppObservableStore from '../../common/stores/AppObservableStore';
 import PoliticianStore from '../../common/stores/PoliticianStore';
 import SupportStore from '../../stores/SupportStore';
@@ -26,6 +25,8 @@ const ItemActionBar = React.lazy(() => import(/* webpackChunkName: 'ItemActionBa
 
 const VoterPositionEntryAndDisplay = (props) => {
   const { classes, externalUniqueId, politicianWeVoteId } = props;
+  const supportStoreGetState = SupportStore.getState();
+  const voterStoreGetState = VoterStore.getState();
   const { allCachedPoliticians } = PoliticianStore.getState();
 
   const [initialFocusSet, setInitialFocusSet] = useState(false);
@@ -69,6 +70,7 @@ const VoterPositionEntryAndDisplay = (props) => {
     let voterPositionIsPublic = false;
     let voterTextStatement = '';
     const ballotItemStatSheet = SupportStore.getBallotItemStatSheet('', politicianWeVoteId);
+    // console.log('VoterPositionEntryAndDisplay onSupportStoreChange, ballotItemStatSheet: ', ballotItemStatSheet);
     if (ballotItemStatSheet) {
       ({ voterPositionIsPublic, voterTextStatement } = ballotItemStatSheet);
       const { voterOpposesBallotItem, voterSupportsBallotItem } = ballotItemStatSheet;
@@ -77,6 +79,9 @@ const VoterPositionEntryAndDisplay = (props) => {
         stanceTemp = 'SUPPORT';
       } else if (voterOpposesBallotItem) {
         stanceTemp = 'OPPOSE';
+      }
+      if (voterOpposesBallotItem || voterPositionIsPublic || voterSupportsBallotItem || voterTextStatement) {
+        setPositionExists(true);
       }
       setSelectedStance(stanceTemp);
       setStatementText(voterTextStatement);
@@ -113,15 +118,16 @@ const VoterPositionEntryAndDisplay = (props) => {
   }, [initialFocusSet]);
 
   useEffect(() => {
-    const activityStoreListener = ActivityStore.addListener(onSupportStoreChange);
-    const voterStoreListener = VoterStore.addListener(onVoterStoreChange);
+    onSupportStoreChange();
+  }, [supportStoreGetState]);
+
+  useEffect(() => {
+    onVoterStoreChange();
+  }, [voterStoreGetState]);
+
+  useEffect(() => {
     onSupportStoreChange();
     onVoterStoreChange();
-
-    return () => {
-      activityStoreListener.remove();
-      voterStoreListener.remove();
-    };
   }, []);
 
   const onFocusInput = () => {
@@ -130,10 +136,10 @@ const VoterPositionEntryAndDisplay = (props) => {
 
   const savePosition = (e) => {
     e.preventDefault();
-    // TEMP
     const ballotItemWeVoteId = '';
     const visibilitySetting = visibilityIsPublic ? 'SHOW_PUBLIC' : 'FRIENDS_ONLY';
     const kindOfBallotItem = 'CANDIDATE';
+    // console.log('savePosition, selectedStance: ', selectedStance, ', visibilitySetting: ', visibilitySetting);
     SupportActions.voterPositionCommentSave(ballotItemWeVoteId, kindOfBallotItem, politicianWeVoteId, statementText, selectedStance, visibilitySetting);
     toggleModalLocal();
   };

@@ -189,13 +189,18 @@ function PositionForBallotItem ({ classes, linksOpenExternalWebsite, position })
               )}
               {moreInfoUrl && (
                 <Popover
-                  id={id}
-                  open={open}
                   anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                  id={id}
+                  // marginThreshold={6}
                   onClose={handlePopoverClose}
+                  open={open}
                   transformOrigin={{
                     vertical: 'top',
-                    horizontal: 'left',
+                    horizontal: 'right',
                   }}
                   classes={{ root: classes.popoverRoot }}
                 >
@@ -238,7 +243,7 @@ const styles = () => ({
   popoverRoot: {
     borderRadius: 2,
     border: `1px solid ${DesignTokenColors.neutral100}`,
-    marginTop: '3px',
+    marginTop: '4px',
   },
 });
 

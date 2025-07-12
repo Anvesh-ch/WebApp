@@ -11,7 +11,7 @@ import lookupPageNameAndPageTypeDict, { getPageDetails } from '../../utils/looku
 
 const SignInModal = React.lazy(() => import(/* webpackChunkName: 'SignInModal' */ '../../common/components/SignIn/SignInModal'));
 
-class CompleteYourProfile2024 extends Component {
+class CompleteYourProfileOnBallot extends Component {
   constructor (props) {
     super(props);
     this.state = {
@@ -365,4 +365,4 @@ class CompleteYourProfile2024 extends Component {
   }
 }
 
-export default CompleteYourProfile2024;
+export default CompleteYourProfileOnBallot;

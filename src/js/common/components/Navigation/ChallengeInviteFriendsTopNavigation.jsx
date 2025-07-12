@@ -71,7 +71,7 @@ const ChallengeInviteFriendsTopNavigation = ({ challengeSEOFriendlyPath, challen
       // console.log('Render ChallengeInviteFriendsTopNavigation, initial value set to 3');
       setValue(3);
     }
-  } else if (stringContains('/+/', pathname)) {
+  } else if (stringContains('/+/', pathname) || stringContains('/++/', pathname)) {
     // console.log('Render ChallengeInviteFriendsTopNavigation, initial value set to 0');
     if (hideAboutTab) {
       if (value !== 2) {
@@ -90,9 +90,9 @@ const ChallengeInviteFriendsTopNavigation = ({ challengeSEOFriendlyPath, challen
     leaderboardUrl = `/${challengeSEOFriendlyPath}/+/leaderboard`;
     friendsUrl = `/${challengeSEOFriendlyPath}/+/friends`;
   } else {
-    aboutUrl = `/+/${challengeWeVoteId}`;
-    leaderboardUrl = `/+/${challengeWeVoteId}/leaderboard`;
-    friendsUrl = `/+/${challengeWeVoteId}/friends`;
+    aboutUrl = `/++/${challengeWeVoteId}`;
+    leaderboardUrl = `/++/${challengeWeVoteId}/leaderboard`;
+    friendsUrl = `/++/${challengeWeVoteId}/friends`;
   }
 
   // console.log('ChallengeInviteFriendsTopNavigation, aboutUrl:', aboutUrl);
