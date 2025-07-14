@@ -61,9 +61,7 @@ class SettingsProfilePicture extends Component {
             actionType: 'save',
             buttonId: 'saveEditYourPhotoBottom',
           },
-          userDetails: {
-            voterWeVoteId: VoterStore.getVoterWeVoteId(),
-          },
+          userDetails: VoterStore.getAnalyticsUserDetails(),
           pageDetails: {
             pageName: page.pageName,
             pageType: page.pageType,
