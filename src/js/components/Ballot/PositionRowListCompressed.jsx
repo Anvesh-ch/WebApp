@@ -289,7 +289,7 @@ class PositionRowListCompressed extends Component {
   };
 
   onPositionListUpdate = (allCachedPositionsForThisBallotItem) => {
-    const { showInfoOnly, showOppose, showSupport } = this.props;
+    const { showInfoOnly, showOppose, showSupport, checkCandidateHasEndorsements } = this.props;
     const organizationsVoterIsFollowing = OrganizationStore.getOrganizationsVoterIsFollowing();
     // eslint-disable-next-line arrow-body-style
     let filteredPositionList = allCachedPositionsForThisBallotItem.map((position) => {
@@ -344,6 +344,10 @@ class PositionRowListCompressed extends Component {
       filteredPositionList,
       // filteredPositionListLength: filteredPositionList.length,
     });
+
+    if (filteredPositionList.length > 0) {
+      checkCandidateHasEndorsements(true);
+    }
   }
 
   orderByCurrentFriendsFirst = (firstGuide, secondGuide) => {

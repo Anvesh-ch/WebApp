@@ -44,6 +44,7 @@ class BallotScrollingContainer extends Component {
     this.state = {
       hideLeftArrow: true,
       hideRightArrow: true,
+      hasEndorsements: false,
     };
 
     this.onClickShowOrganizationModalWithBallotItemInfo = this.onClickShowOrganizationModalWithBallotItemInfo.bind(this);
@@ -145,6 +146,12 @@ class BallotScrollingContainer extends Component {
     }
   }
 
+  checkCandidateHasEndorsements = (value) => {
+    this.setState({
+      hasEndorsements: value,
+    });
+  }
+
   render () {
     const { oneCandidate, externalUniqueId, isFirstBallotItem, candidateCount, limitNumberOfCandidatesShownToThisNumber } = this.props;
     const candidatePartyText = oneCandidate.party && oneCandidate.party.length ? `${oneCandidate.party}` : '';
@@ -176,6 +183,7 @@ class BallotScrollingContainer extends Component {
           showLeftGradient={!this.state.hideLeftArrow}
           showRightGradient={!this.state.hideRightArrow}
           onClick={(e) => this.handleContainerClick(e, oneCandidate.we_vote_id, oneCandidate)}
+          hasEndorsements={this.state.hasEndorsements}
         >
           <CandidateContainer
             data-modal-trigger
@@ -267,6 +275,7 @@ class BallotScrollingContainer extends Component {
                     ballotItemWeVoteId={oneCandidate.we_vote_id}
                     showSupport
                     firstInstance={isFirstBallotItem}
+                    checkCandidateHasEndorsements={this.checkCandidateHasEndorsements}
                   />
                 </PositionRowListOneWrapper>
                 <PositionRowListOneWrapper>
@@ -274,6 +283,7 @@ class BallotScrollingContainer extends Component {
                     ballotItemWeVoteId={oneCandidate.we_vote_id}
                     showOppose
                     firstInstance={isFirstBallotItem}
+                    checkCandidateHasEndorsements={this.checkCandidateHasEndorsements}
                   />
                 </PositionRowListOneWrapper>
               </PositionRowListInnerWrapper>
