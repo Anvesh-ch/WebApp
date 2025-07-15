@@ -1,11 +1,12 @@
 import { Button } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import PropTypes from 'prop-types';
-import TagManager from 'react-gtm-module';
 import React, { Component, Suspense } from 'react';
+import TagManager from 'react-gtm-module';
 import { Helmet } from 'react-helmet-async';
 import styled from 'styled-components';
 import VoterActions from '../actions/VoterActions';
+import AppObservableStore from '../common/stores/AppObservableStore';
 import { isCordova } from '../common/utils/isCordovaOrWebApp';
 import { renderLog } from '../common/utils/logging';
 import Header, { Container, Title } from '../components/Welcome/howItWorksHeaderStyles';
@@ -13,10 +14,9 @@ import AnnotatedSlideshow from '../components/Widgets/AnnotatedSlideshow';
 import HeaderSwitch from '../components/Widgets/HeaderSwitch';
 import StepsChips from '../components/Widgets/StepsChips';
 import VoterConstants from '../constants/VoterConstants';
-import AppObservableStore from '../common/stores/AppObservableStore';
 import VoterStore from '../stores/VoterStore';
 import cordovaScrollablePaneTopPadding from '../utils/cordovaScrollablePaneTopPadding';
-import lookupPageNameAndPageTypeDict from '../utils/lookupPageNameAndPageTypeDict';
+import { getPageDetails } from '../utils/lookupPageNameAndPageTypeDict';
 
 const WelcomeAppbar = React.lazy(() => import(/* webpackChunkName: 'WelcomeAppbar' */ '../components/Navigation/WelcomeAppbar'));
 const WelcomeFooter = React.lazy(() => import(/* webpackChunkName: 'WelcomeFooter' */ '../components/Welcome/WelcomeFooter'));
@@ -274,6 +274,31 @@ class HowItWorks extends Component {
     this.setState({ selectedStepIndex: selectedStepIndex - 1 });
   };
 
+  getTitleIdFromIndex (stepIndex) {
+    const {
+      selectedCategoryIndex,
+      forVoterSteps,
+      forOrganizationsSteps,
+      forCampaignsSteps,
+    } = this.state;
+
+    let steps = {};
+    if (selectedCategoryIndex === 0) {
+      steps = forVoterSteps;
+    } else if (selectedCategoryIndex === 1) {
+      steps = forOrganizationsSteps;
+    } else if (selectedCategoryIndex === 2) {
+      steps = forCampaignsSteps;
+    }
+
+    const step = Object.values(steps).find((stepObj) => stepObj.index === stepIndex);
+    if (step && step.titleId) {
+      return step.titleId;
+    } else {
+      return '';
+    }
+  }
+
   switchToDifferentCategoryFunction = (selectedCategoryIndex) => {
     let getStartedMode = 'getStartedForVoters';
     // let getStartedUrl = '/ballot';
@@ -293,27 +318,17 @@ class HowItWorks extends Component {
   };
 
   sendHowItWorksSlideEvent (stepIndex) {
-    const { location: { pathname: currentPathname } } = window;
-    const { pageName, pageType } = lookupPageNameAndPageTypeDict(currentPathname);
-    TagManager.dataLayer({
-      dataLayer: {
-        event: 'action',
-        pageDetails: {
-          pageName,
-          pageType,
-          pathname: currentPathname,
-        },
-        actionDetails: {
-          eventType: 'slideChange',
-          stepIndex,
-        },
-        userDetails: {
-          stateCode: VoterStore.getVoterStateCode(),
-          userCohort: VoterStore.getAnalyticsUserCohort(),
-          voterWeVoteId: VoterStore.getVoterWeVoteId(),
-        },
+    const titleId = this.getTitleIdFromIndex(stepIndex);
+    const dataLayerObject = {
+      actionDetails: {
+        actionType: 'slideChange',
+        buttonId: titleId,
       },
-    });
+      event: 'action',
+      pageDetails: getPageDetails(),
+      userDetails: VoterStore.getAnalyticsUserDetails(),
+    };
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
   }
 
   howItWorksGetStarted () {

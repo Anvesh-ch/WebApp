@@ -13,7 +13,7 @@ import { renderLog } from '../../common/utils/logging';
 import stringContains from '../../common/utils/stringContains';
 import AppObservableStore, { messageService } from '../../common/stores/AppObservableStore';
 import VoterStore from '../../stores/VoterStore';
-import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import lookupPageNameAndPageTypeDict, { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
 
 class ShareButtonDesktopTablet extends Component {
   constructor (props) {
@@ -56,9 +56,9 @@ class ShareButtonDesktopTablet extends Component {
     let whatAndHowMuchToShare;
 
     // Add debug logging
-    console.log('Share button clicked');
-    console.log('Current pathname:', window.location.pathname);
-    console.log('VoterWeVoteId:', VoterStore.getVoterWeVoteId());
+    // console.log('Share button clicked');
+    // console.log('Current pathname:', window.location.pathname);
+    // console.log('VoterWeVoteId:', VoterStore.getVoterWeVoteId());
 
     if (candidateShare) {
       kindOfShare = 'CANDIDATE';
@@ -122,10 +122,8 @@ class ShareButtonDesktopTablet extends Component {
     }
 
     // Add dataLayer tracking after kindOfShare and whatAndHowMuchToShare are calculated
-    const { location: { pathname: currentPathname } } = window;
-    const page = lookupPageNameAndPageTypeDict(currentPathname);
     const destinationPage = lookupPageNameAndPageTypeDict(pathnameWithModalShare);
-    
+
     // Determine buttonId based on kindOfShare
     let buttonId;
     switch (kindOfShare) {
@@ -147,12 +145,10 @@ class ShareButtonDesktopTablet extends Component {
       default:
         buttonId = 'ballotShareButtonDesktopTablet';
     }
-    
+
     const dataLayerObject = {
       event: 'action',
-      userDetails: {
-        voterWeVoteId: VoterStore.getVoterWeVoteId(),
-      },
+      userDetails: VoterStore.getAnalyticsUserDetails(),
       actionDetails: {
         actionType: 'openModal',
         buttonId,
@@ -162,22 +158,15 @@ class ShareButtonDesktopTablet extends Component {
         withOpinions: withOpinionsModified,
         whatAndHowMuchToShare,
       },
-      pageDetails: {
-        pageName: page.pageName,
-        pageType: page.pageType,
-        pathname: currentPathname,
-      },
+      pageDetails: getPageDetails(),
       destinationDetails: {
         destinationPageName: destinationPage.pageName,
         destinationPageType: destinationPage.pageType,
         destinationPathname: pathnameWithModalShare,
       },
     };
-    
-    console.log('Pushing to dataLayer:', dataLayerObject);
-    TagManager.dataLayer({
-      dataLayer: dataLayerObject,
-    });
+    // console.log('Pushing to dataLayer:', dataLayerObject);
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
 
     ShareActions.sharedItemSave(destinationFullUrl, kindOfShare, ballotItemWeVoteId, googleCivicElectionId, organizationWeVoteId);
     AppObservableStore.setShowShareModal(true);

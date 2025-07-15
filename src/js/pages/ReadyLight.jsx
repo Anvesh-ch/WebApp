@@ -2,6 +2,7 @@ import withStyles from '@mui/styles/withStyles';
 import withTheme from '@mui/styles/withTheme';
 import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
+import TagManager from 'react-gtm-module';
 import { Helmet } from 'react-helmet-async';
 import ActivityActions from '../actions/ActivityActions';
 import AnalyticsActions from '../actions/AnalyticsActions';
@@ -23,6 +24,7 @@ import webAppConfig from '../config';
 import VoterStore from '../stores/VoterStore';
 import { cordovaSimplePageContainerTopOffset } from '../utils/cordovaCalculatedOffsets';
 import lazyPreloadPages from '../utils/lazyPreloadPages';
+import { getPageDetails } from '../utils/lookupPageNameAndPageTypeDict';
 
 const DelayedLoad = React.lazy(() => import(/* webpackChunkName: 'DelayedLoad' */ '../common/components/Widgets/DelayedLoad'));
 const ElectionCountdown = React.lazy(() => import(/* webpackChunkName: 'ElectionCountdown' */ '../components/Ready/ElectionCountdown'));
@@ -40,6 +42,7 @@ class ReadyLight extends Component {
     this.state = {
       chosenReadyIntroductionText: '',
       chosenReadyIntroductionTitle: '',
+      dataLayerFired: false,
       voterIsSignedIn: false,
     };
   }
@@ -65,6 +68,29 @@ class ReadyLight extends Component {
     }, 8000);
     window.scrollTo(0, 0);
   }
+
+  componentDidUpdate () {
+    const { dataLayerFired } = this.state;
+    if (!dataLayerFired) {
+      if (VoterStore.voterFirstRetrieveCompleted()) {
+        const dataLayerObject = {
+          actionDetails: {
+            actionType: 'landing',
+          },
+          event: 'landing',
+          pageDetails: getPageDetails(),
+          userDetails: VoterStore.getAnalyticsUserDetails(),
+        };
+
+        TagManager.dataLayer({ dataLayer: dataLayerObject });
+
+        this.setState({
+          dataLayerFired: true,
+        });
+      }
+    }
+  }
+
 
   componentDidCatch (error, info) {
     console.log('ReadyLight.jsx caught: ', error, info.componentStack);

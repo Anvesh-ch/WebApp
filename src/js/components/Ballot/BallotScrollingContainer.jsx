@@ -8,7 +8,10 @@ import HeartFavoriteToggleLoader from '../../common/components/Widgets/HeartFavo
 import { handleHorizontalScroll } from '../../common/utils/leftRightArrowCalculation';
 import normalizedImagePath from '../../common/utils/normalizedImagePath';
 import AppObservableStore from '../../common/stores/AppObservableStore';
+import CandidateStore from '../../stores/CandidateStore';
+import PoliticianStore from '../../common/stores/PoliticianStore';
 import SupportStore from '../../stores/SupportStore';
+import VoterStore from '../../stores/VoterStore';
 import {
   Candidate,
   CandidateBottomRow,
@@ -25,8 +28,8 @@ import { PositionRowListInnerWrapper, PositionRowListOneWrapper, PositionRowList
 import BallotMatchIndicator from '../BallotItem/BallotMatchIndicator';
 import PositionRowListCompressed from './PositionRowListCompressed';
 import BallotMatchIndicator2024 from '../BallotItem/BallotMatchIndicator2024';
-import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
-import VoterStore from '../../stores/VoterStore';
+import lookupPageNameAndPageTypeDict, { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
+import webAppConfig from '../../config';
 
 // const DelayedLoad = React.lazy(() => import(/* webpackChunkName: 'DelayedLoad' */ '../../common/components/Widgets/DelayedLoad'));
 const ImageHandler = React.lazy(() => import(/* webpackChunkName: 'ImageHandler' */ '../ImageHandler'));
@@ -35,6 +38,8 @@ const ItemActionBar = React.lazy(() => import(/* webpackChunkName: 'ItemActionBa
 
 const hideItemActionBar = false;
 const hideCandidateDetails = false; // supportedCandidatesList.length;
+const futureFeaturesDisabled = true;
+const nextReleaseFeaturesEnabled = webAppConfig.ENABLE_NEXT_RELEASE_FEATURES === undefined ? false : webAppConfig.ENABLE_NEXT_RELEASE_FEATURES;
 
 class BallotScrollingContainer extends Component {
   constructor (props) {
@@ -81,41 +86,32 @@ class BallotScrollingContainer extends Component {
     AppObservableStore.setHideOrganizationModalBallotItemInfo(true);
   }
 
-  onClickShowOrganizationModalWithBallotItemInfoAndPositions (candidateWeVoteId, candidateData) {
+  onClickShowOrganizationModalWithBallotItemInfoAndPositions (candidateWeVoteId, buttonId) {
     const { location: { pathname: currentPathname } } = window;
     const currentPageDetails = lookupPageNameAndPageTypeDict(currentPathname);
+    const { oneCandidate } = this.props;
+    const politicianWeVoteId = oneCandidate ? oneCandidate.politician_we_vote_id : null;
     const dataLayerObject = {
       actionDetails: {
         actionType: 'openModal',
-        buttonId: `ballotItemScrollingArea-${candidateWeVoteId}`,
+        buttonId,
       },
       event: 'action',
-      candidateDetails: {
-        candidateWeVoteId: candidateData.we_vote_id,
-        candidateName: candidateData.ballot_item_display_name,
-        image: candidateData.candidate_photo_url_large,
-        officeName: candidateData.contest_office_name,
-        politicianWeVoteId: candidateData.politician_we_vote_id,
-        politicalParty: candidateData.party,
-        stateCode: candidateData.state_code,
-      },
-      pageDetails: {
-        pageName: currentPageDetails.pageName,
-        pageType: currentPageDetails.pageType,
-        pathname: currentPathname,
-      },
+      pageDetails: getPageDetails(),
       destinationDetails: {
         pageName: 'CandidateModal',
         pageType: currentPageDetails.pageType,
         pathname: currentPathname,
       },
-      userDetails: {
-        stateCode: VoterStore.getVoterStateCode(),
-        userCohort: VoterStore.getAnalyticsUserCohort(),
-        voterWeVoteId: VoterStore.getVoterWeVoteId(),
-      },
+      userDetails: VoterStore.getAnalyticsUserDetails(),
     };
-    console.log('Pushing to dataLayer:', dataLayerObject);
+    if (candidateWeVoteId) {
+      dataLayerObject.candidateDetails = CandidateStore.getAnalyticsCandidateDetails(candidateWeVoteId);
+    }
+    if (politicianWeVoteId) {
+      dataLayerObject.politicianDetails = PoliticianStore.getAnalyticsPoliticianDetails(politicianWeVoteId);
+    }
+    // console.log('Pushing to dataLayer:', dataLayerObject);
     TagManager.dataLayer({ dataLayer: dataLayerObject });
     AppObservableStore.setOrganizationModalBallotItemWeVoteId(candidateWeVoteId);
     AppObservableStore.setShowOrganizationModal(true);
@@ -139,10 +135,10 @@ class BallotScrollingContainer extends Component {
   };
 
   // Add data-modal-trigger attribute to elements that should be triggered
-  handleContainerClick = (e, weVoteId, candidateData) => {
+  handleContainerClick = (e, weVoteId, buttonId) => {
     const target = e.target;
     if (target.hasAttribute('data-modal-trigger')) {
-      this.onClickShowOrganizationModalWithBallotItemInfoAndPositions(weVoteId, candidateData);
+      this.onClickShowOrganizationModalWithBallotItemInfoAndPositions(weVoteId, buttonId);
     }
   }
 
@@ -153,7 +149,10 @@ class BallotScrollingContainer extends Component {
   }
 
   render () {
-    const { oneCandidate, externalUniqueId, isFirstBallotItem, candidateCount, limitNumberOfCandidatesShownToThisNumber } = this.props;
+    const {
+      candidateCount, externalUniqueId, isFirstBallotItem,
+      limitNumberOfCandidatesShownToThisNumber, oneCandidate, useHelpDefeatOrHelpWin,
+    } = this.props;
     const candidatePartyText = oneCandidate.party && oneCandidate.party.length ? `${oneCandidate.party}` : '';
     const avatarCompressed = 'card-main__avatar-compressed';
     const avatarBackgroundImage = normalizedImagePath('../img/global/svg-icons/avatar-generic.svg');
@@ -182,8 +181,8 @@ class BallotScrollingContainer extends Component {
           onScroll={this.checkArrowVisibility}
           showLeftGradient={!this.state.hideLeftArrow}
           showRightGradient={!this.state.hideRightArrow}
-          onClick={(e) => this.handleContainerClick(e, oneCandidate.we_vote_id, oneCandidate)}
           hasEndorsements={this.state.hasEndorsements}
+          onClick={(e) => this.handleContainerClick(e, oneCandidate.we_vote_id, `ballotItemScrollingArea-${oneCandidate.we_vote_id}`)}
         >
           <CandidateContainer
             data-modal-trigger
@@ -240,7 +239,7 @@ class BallotScrollingContainer extends Component {
                         ballotItemDisplayName={oneCandidate.ballot_item_display_name}
                         ballotItemWeVoteId={oneCandidate.we_vote_id}
                         externalUniqueId={`officeItemCompressed-${oneCandidate.we_vote_id}-${externalUniqueId}`}
-                        handleContainerClick={this.handleContainerClick}
+                        handleContainerClick={(e) => this.handleContainerClick(e, oneCandidate.we_vote_id, `officeItemCompressed-${oneCandidate.we_vote_id}-${externalUniqueId}`)}
                       />
                     </Suspense>
                   )}
@@ -251,11 +250,13 @@ class BallotScrollingContainer extends Component {
                           ballotItemWeVoteId={oneCandidate.we_vote_id}
                           ballotItemDisplayName={oneCandidate.ballot_item_display_name}
                           commentButtonHide
+                          // commentButtonHide={!futureFeaturesDisabled && nextReleaseFeaturesEnabled}
                           externalUniqueId={`OfficeItemCompressed-ItemActionBar-${oneCandidate.we_vote_id}-${externalUniqueId}`}
-                          hidePositionPublicToggle
+                          hidePositionPublicToggle={!futureFeaturesDisabled && nextReleaseFeaturesEnabled}
+                          politicianWeVoteId={oneCandidate.politician_we_vote_id}
                           positionPublicToggleWrapAllowed
                           shareButtonHide
-                          useHelpDefeatOrHelpWin
+                          useHelpDefeatOrHelpWin={useHelpDefeatOrHelpWin}
                         />
                       </Suspense>
                     </ItemActionBarOutsideWrapper>
@@ -306,11 +307,12 @@ class BallotScrollingContainer extends Component {
   }
 }
 BallotScrollingContainer.propTypes = {
-  oneCandidate: PropTypes.object,
   externalUniqueId: PropTypes.string,
   isFirstBallotItem: PropTypes.bool,
   candidateCount: PropTypes.number,
   limitNumberOfCandidatesShownToThisNumber: PropTypes.number,
+  oneCandidate: PropTypes.object,
+  useHelpDefeatOrHelpWin: PropTypes.bool,
 };
 
 const HeartFavoriteToggleLocalWrapper = styled('div')`

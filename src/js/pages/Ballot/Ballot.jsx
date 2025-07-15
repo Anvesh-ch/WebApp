@@ -52,8 +52,7 @@ import mapCategoryFilterType from '../../utils/map-category-filter-type';
 import showBallotDecisionsTabs from '../../utilsApi/showBallotDecisionsTabs';
 import { checkShouldUpdate, formatVoterBallotList } from './utils/ballotUtils';
 
-const CompleteYourProfile2024 = React.lazy(() => import(/* webpackChunkName: 'CompleteYourProfile' */ '../../components/CompleteYourProfile/CompleteYourProfile2024'));
-// const CompleteYourProfile = React.lazy(() => import(/* webpackChunkName: 'CompleteYourProfile' */ '../../components/CompleteYourProfile/CompleteYourProfile'));
+const CompleteYourProfileOnBallot = React.lazy(() => import(/* webpackChunkName: 'CompleteYourProfile' */ '../../components/CompleteYourProfile/CompleteYourProfileOnBallot'));
 const DelayedLoad = React.lazy(() => import(/* webpackChunkName: 'DelayedLoad' */ '../../common/components/Widgets/DelayedLoad'));
 const FilterBaseSearch = React.lazy(() => import(/* webpackChunkName: 'FilterBaseSearch' */ '../../components/Filter/FilterBaseSearch'));
 const OpenExternalWebSite = React.lazy(() => import(/* webpackChunkName: 'OpenExternalWebSite' */ '../../common/components/Widgets/OpenExternalWebSite'));
@@ -1566,8 +1565,7 @@ class Ballot extends Component {
                     {showCompleteYourProfile && (
                       <CompleteYourProfileWrapper>
                         <Suspense fallback={<></>}>
-                          {/* <CompleteYourProfile /> */}
-                          <CompleteYourProfile2024 />
+                          <CompleteYourProfileOnBallot />
                         </Suspense>
                       </CompleteYourProfileWrapper>
                     )}

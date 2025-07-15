@@ -1,36 +1,44 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { Button, InputBase, Radio, FormControlLabel, RadioGroup, Tooltip } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import { Edit as EditIcon } from '@mui/icons-material';
-import ActivityActions from '../../actions/ActivityActions';
+import SupportActions from '../../actions/SupportActions';
 import { prepareForCordovaKeyboard } from '../../common/utils/cordovaUtils';
 import { isAndroid } from '../../common/utils/isCordovaOrWebApp';
 import { renderLog } from '../../common/utils/logging';
-import ActivityStore from '../../stores/ActivityStore';
 import AppObservableStore from '../../common/stores/AppObservableStore';
+import PoliticianStore from '../../common/stores/PoliticianStore';
+import SupportStore from '../../stores/SupportStore';
 import VoterStore from '../../stores/VoterStore';
 import { avatarGeneric } from '../../utils/applicationUtils';
 import ModalDisplayTemplateB, {
   templateBStyles, TextFieldDiv,
   TextFieldForm, TextFieldWrapper, VoterAvatarImg,
-  UserInfoWrapper, UserInfoText, UserName, OptionBlockWrapper, CommentContainer, InputBox,
+  UserInfoWrapper, UserInfoText, UserName, PositionBlockWrapper, CommentContainer, InputBox,
 } from '../Widgets/ModalDisplayTemplateB';
-// import ActivityPostPublicToggle from '../Activity/ActivityPostPublicToggle';
 import ActivityPostPublicDropdown from '../Activity/ActivityPostPublicDropdown';
 import VoterPositionEditNameAndPhotoModal from './VoterPositionEditNameAndPhotoModal';
 
-const VoterPositionEntryAndDisplay = (props) => {
-  const { activityTidbitWeVoteId, classes, externalUniqueId, politicianName, politicianWeVoteId } = props;
+const ItemActionBar = React.lazy(() => import(/* webpackChunkName: 'ItemActionBar' */ '../Widgets/ItemActionBar/ItemActionBar'));
 
-  // useState used for state variables
-  const [visibilityIsPublic, setVisibilityIsPublic] = useState(false);
-  const [voterPhotoUrlMedium, setVoterPhotoUrlMedium] = useState('');
-  const [statementText, setStatementText] = useState('');
+const VoterPositionEntryAndDisplay = (props) => {
+  const { classes, externalUniqueId, politicianWeVoteId } = props;
+  const supportStoreGetState = SupportStore.getState();
+  const voterStoreGetState = VoterStore.getState();
+  const { allCachedPoliticians } = PoliticianStore.getState();
+
   const [initialFocusSet, setInitialFocusSet] = useState(false);
-  const [voterName, setVoterName] = useState('');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [politicianName, setPoliticianName] = useState('');
+  const [positionExists, setPositionExists] = useState(false);
+  const [selectedStance, setSelectedStance] = useState('SUPPORT');
   const [showModal, setShowModal] = useState(false);
+  const [statementText, setStatementText] = useState('');
+  const [visibilityIsPublic, setVisibilityIsPublic] = useState(false);
+  const [voterName, setVoterName] = useState('');
+  const [voterPhotoUrlMedium, setVoterPhotoUrlMedium] = useState('');
 
   const handleEditModalOpen = () => {
     if (VoterStore.getVoterIsSignedIn()) {
@@ -58,12 +66,26 @@ const VoterPositionEntryAndDisplay = (props) => {
   // useRef to reference the post input
   const activityPostInputRef = useRef(null);
 
-  const onActivityStoreChange = () => {
-    const activityPost = ActivityStore.getActivityTidbitByWeVoteId(activityTidbitWeVoteId);
-    if (activityPost) {
-      const { statement_text: newStatementText, visibility_is_public: newVisibilityIsPublic } = activityPost;
-      setVisibilityIsPublic(newVisibilityIsPublic);
-      setStatementText(newStatementText);
+  const onSupportStoreChange = () => {
+    let voterPositionIsPublic = false;
+    let voterTextStatement = '';
+    const ballotItemStatSheet = SupportStore.getBallotItemStatSheet('', politicianWeVoteId);
+    // console.log('VoterPositionEntryAndDisplay onSupportStoreChange, ballotItemStatSheet: ', ballotItemStatSheet);
+    if (ballotItemStatSheet) {
+      ({ voterPositionIsPublic, voterTextStatement } = ballotItemStatSheet);
+      const { voterOpposesBallotItem, voterSupportsBallotItem } = ballotItemStatSheet;
+      let stanceTemp = 'INFO_ONLY';
+      if (voterSupportsBallotItem) {
+        stanceTemp = 'SUPPORT';
+      } else if (voterOpposesBallotItem) {
+        stanceTemp = 'OPPOSE';
+      }
+      if (voterOpposesBallotItem || voterPositionIsPublic || voterSupportsBallotItem || voterTextStatement) {
+        setPositionExists(true);
+      }
+      setSelectedStance(stanceTemp);
+      setStatementText(voterTextStatement);
+      setVisibilityIsPublic(voterPositionIsPublic);
     }
   };
 
@@ -72,26 +94,19 @@ const VoterPositionEntryAndDisplay = (props) => {
     setVoterPhotoUrlMedium(voter.voter_photo_url_medium);
     setVoterName(voter.full_name || 'Anonymous');
   };
-  const [selectedOpinion, setSelectedOpinion] = useState('Neutral');
 
   const handleOpinionChange = (event) => {
-    setSelectedOpinion(event.target.value);
+    setSelectedStance(event.target.value);
   };
 
-  // useEffect replaces componentDidMount and componentWillUnmount
   useEffect(() => {
-    const activityStoreListener = ActivityStore.addListener(onActivityStoreChange);
-    const voterStoreListener = VoterStore.addListener(onVoterStoreChange);
-    onActivityStoreChange();
-    onVoterStoreChange();
+    if (politicianWeVoteId && allCachedPoliticians && allCachedPoliticians[politicianWeVoteId]) {
+      const { politician_name: politicianNameNew } = allCachedPoliticians[politicianWeVoteId];
+      setPoliticianName(politicianNameNew);
+      // console.log('VoterPositionEntryAndDisplay useEffect politicianName: ', politicianNameNew);
+    }
+  }, [politicianWeVoteId, allCachedPoliticians]);
 
-    return () => {
-      activityStoreListener.remove();
-      voterStoreListener.remove();
-    };
-  }, []);
-
-  // useEffect handles setting initial focus replacing componentDidUpdate
   useEffect(() => {
     if (activityPostInputRef.current && !initialFocusSet) {
       const input = activityPostInputRef.current;
@@ -102,23 +117,36 @@ const VoterPositionEntryAndDisplay = (props) => {
     }
   }, [initialFocusSet]);
 
+  useEffect(() => {
+    onSupportStoreChange();
+  }, [supportStoreGetState]);
+
+  useEffect(() => {
+    onVoterStoreChange();
+  }, [voterStoreGetState]);
+
+  useEffect(() => {
+    onSupportStoreChange();
+    onVoterStoreChange();
+  }, []);
+
   const onFocusInput = () => {
     prepareForCordovaKeyboard('VoterPositionEntryAndDisplay');
   };
 
-  const saveActivityPost = (e) => {
+  const savePosition = (e) => {
     e.preventDefault();
+    const ballotItemWeVoteId = '';
     const visibilitySetting = visibilityIsPublic ? 'SHOW_PUBLIC' : 'FRIENDS_ONLY';
-    ActivityActions.activityPostSave(activityTidbitWeVoteId, statementText, visibilitySetting);
-    // toggleModal(); toggleModal is undefined from PoliticianEndorsementList
+    const kindOfBallotItem = 'CANDIDATE';
+    // console.log('savePosition, selectedStance: ', selectedStance, ', visibilitySetting: ', visibilitySetting);
+    SupportActions.voterPositionCommentSave(ballotItemWeVoteId, kindOfBallotItem, politicianWeVoteId, statementText, selectedStance, visibilitySetting);
     toggleModalLocal();
   };
 
   const updateStatementTextToBeSaved = (e) => {
     setStatementText(e.target.value);
   };
-
-  const activityTidbitIdCheck = activityTidbitWeVoteId === '' || activityTidbitWeVoteId === undefined;
 
   renderLog('VoterPositionEntryAndDisplay'); // Set LOG_RENDER_EVENTS to log all renders
 
@@ -127,7 +155,7 @@ const VoterPositionEntryAndDisplay = (props) => {
   const rowsToShow = isAndroid() ? 4 : 6;
 
   const OpinionBlock = ({ onClick }) => (
-    <OptionBlockWrapper>
+    <PositionBlockWrapper>
       <UserInfoWrapper>
         <VoterAvatarImg
           alt=""
@@ -138,18 +166,36 @@ const VoterPositionEntryAndDisplay = (props) => {
           className={classes.styledEditIcon}
         />
       </UserInfoWrapper>
-      <CommentContainer>
-        {/* Open modal when input is clicked */}
-        <InputBox
-          type="text"
-          placeholder="What's your opinion?"
-          onClick={onClick}
-          readOnly
-        />
-      </CommentContainer>
-    </OptionBlockWrapper>
+      <CommentContainerWrapper>
+        <CommentContainer>
+          {/* Open modal when input is clicked */}
+          <InputBox
+            type="text"
+            placeholder="What's your opinion?"
+            onClick={onClick}
+            readOnly
+          />
+        </CommentContainer>
+        <ItemActionBarContainer>
+          <Suspense fallback={<></>}>
+            <ItemActionBar
+              ballotItemWeVoteId=""
+              // ballotItemDisplayName={oneCandidate.ballot_item_display_name}
+              commentButtonHide
+              // commentButtonHide={!futureFeaturesDisabled && nextReleaseFeaturesEnabled}
+              externalUniqueId={`VoterPositionEntryAndDisplay-ItemActionBar-${politicianWeVoteId}-${externalUniqueId}`}
+              // hidePositionPublicToggle={!futureFeaturesDisabled && nextReleaseFeaturesEnabled}
+              politicianWeVoteId={politicianWeVoteId}
+              positionPublicToggleWrapAllowed
+              shareButtonHide
+              useHelpDefeatOrHelpWin
+              useSupportWording
+            />
+          </Suspense>
+        </ItemActionBarContainer>
+      </CommentContainerWrapper>
+    </PositionBlockWrapper>
   );
-
   OpinionBlock.propTypes = {
     onClick: PropTypes.func.isRequired,
   };
@@ -174,7 +220,7 @@ const VoterPositionEntryAndDisplay = (props) => {
         className={classes.formStyles}
         // onBlur={onBlurInput}
         onFocus={onFocusInput}
-        onSubmit={saveActivityPost}
+        onSubmit={savePosition}
       >
         <UserInfoWrapper>
           <VoterAvatarImg
@@ -208,33 +254,33 @@ const VoterPositionEntryAndDisplay = (props) => {
         </UserInfoWrapper>
         <RadioGroup
           row
-          value={selectedOpinion}
+          value={selectedStance}
           onChange={handleOpinionChange}
           className={classes.radioGroup}
         >
           <FormControlLabel
-            value="Endorsing"
+            value="SUPPORT"
             control={<Radio color="primary" />}
             label="Endorsing"
             classes={{ root: classes.radioLabel }}
           />
           <FormControlLabel
-            value="Opposing"
+            value="OPPOSE"
             control={<Radio color="primary" />}
             label="Opposing"
             classes={{ root: classes.radioLabel }}
           />
           <FormControlLabel
-            value="Neutral"
+            value="INFO_ONLY"
             control={<Radio color="primary" />}
-            label="Neutral"
+            label="Info only"
             classes={{ root: classes.radioLabel }}
           />
         </RadioGroup>
         <TextFieldDiv>
           <InputBase
             classes={{ root: classes.inputStyles, inputMultiline: classes.inputMultiline }}
-            id={`activityPostModalStatementText-${activityTidbitWeVoteId}-${externalUniqueId}`}
+            id={`activityPostModalStatementText-${politicianWeVoteId}-${externalUniqueId}`}
             inputRef={activityPostInputRef}
             multiline
             name="statementText"
@@ -245,15 +291,15 @@ const VoterPositionEntryAndDisplay = (props) => {
           />
         </TextFieldDiv>
         <Button
-          id={`ActivityPostSave-${activityTidbitWeVoteId}-${externalUniqueId}`}
+          id={`positionEntrySave-${politicianWeVoteId}-${externalUniqueId}`}
           variant="contained"
           color="primary"
           classes={{ root: classes.saveButtonRoot }}
           type="submit"
           // disabled={!statementText} // Commented out to allow saving without statement
-          disabled={selectedOpinion === 'Neutral' && (!statementText || statementText.trim() === '')} // Disable if Neutral and no text
+          disabled={selectedStance === 'INFO_ONLY' && (!statementText || statementText.trim() === '')} // Disable if Neutral and no text
         >
-          {activityTidbitIdCheck ? 'Add opinion' : 'Save Changes'}
+          {positionExists ? 'Save Changes' : 'Add opinion' }
         </Button>
       </TextFieldForm>
     </TextFieldWrapper>
@@ -275,19 +321,26 @@ const VoterPositionEntryAndDisplay = (props) => {
       )}
       <OpinionBlock
         onClick={openPositionModal}
+        politicianWeVoteId={politicianWeVoteId}
         voterPhotoUrlMedium={voterPhotoUrlMedium}
         voterName={voterName}
       />
     </>
   );
 };
-
 VoterPositionEntryAndDisplay.propTypes = {
-  activityTidbitWeVoteId: PropTypes.string,
   classes: PropTypes.object,
   externalUniqueId: PropTypes.string,
-  politicianName: PropTypes.string,
   politicianWeVoteId: PropTypes.string,
 };
+
+const CommentContainerWrapper = styled('div')`
+  width: 100%;
+`;
+
+const ItemActionBarContainer = styled('div')`
+  display: inline-block;
+  margin-top: 6px;
+`;
 
 export default withStyles(templateBStyles)(VoterPositionEntryAndDisplay);

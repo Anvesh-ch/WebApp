@@ -186,26 +186,20 @@ class ShareModal extends Component {
   closeShareModal = (buttonId = '') => {
     const { location: { pathname: currentPathname } } = window;
     const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
-
-    TagManager.dataLayer({
-      dataLayer: {
-        actionDetails: {
-          actionType: 'close',
-          buttonId,
-        },
-        event: 'action',
-        pageDetails: {
-          pageName: 'ShareModal',
-          pageType: currentPage.pageType,
-          pathname: currentPathname,
-        },
-        userDetails: {
-          stateCode: VoterStore.getVoterStateCode(),
-          userCohort: VoterStore.getAnalyticsUserCohort(),
-          voterWeVoteId: VoterStore.getVoterWeVoteId(),
-        },
+    const dataLayerObject = {
+      actionDetails: {
+        actionType: 'closeModal',
+        buttonId,
       },
-    });
+      event: 'action',
+      pageDetails: {
+        pageName: 'ShareModal',
+        pageType: currentPage.pageType,
+        pathname: currentPathname,
+      },
+      userDetails: VoterStore.getAnalyticsUserDetails(),
+    };
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
 
     this.props.closeShareModal(currentPathname);
   }
@@ -221,9 +215,6 @@ class ShareModal extends Component {
     // node_modules/@mui/base/legacy/unstable_useModal/ModalManager.js handleContainer()
     //    container.style.paddingRight = "".concat(getPaddingRight(container) + scrollbarSize, "px");
     const bodyElement = document.querySelector('body');
-    bodyElement.style.removeProperty('overflow');       // 3/20/25 remove mysteriously added  'style="padding-right: 15px; overflow: hidden;"'
-    bodyElement.style.removeProperty('padding-right');
-
     const { location: { pathname } } = window;
     const { classes } = this.props;
     const {
@@ -256,6 +247,7 @@ class ShareModal extends Component {
           classes={{ paper: classes.dialogPaper }}
           open={this.props.show}
           onClose={() => { this.props.closeShareModal(pathname); }}
+          ModalProps={{ disableScrollLock: true }}
           sx={isIPad() ? { top: 24 } : {}}
         >
           <ModalTitleAreaMini>
@@ -308,6 +300,7 @@ class ShareModal extends Component {
           classes={{ paper: classes.dialogPaper }}
           open={this.props.show}
           onClose={() => { this.props.closeShareModal(pathname); }}
+          ModalProps={{ disableScrollLock: true }}
         >
           <ShareModalTitleArea
             firstSlide
@@ -347,6 +340,7 @@ class ShareModal extends Component {
           classes={{ paper: classes.dialogPaper }}
           open={this.props.show}
           onClose={() => { this.props.closeShareModal(pathname); }}
+          ModalProps={{ disableScrollLock: true }}
         >
           <ModalTitleAreaMini>
             <Button className={classes.backButton} color="primary">

@@ -12,7 +12,7 @@ import ChallengeParticipantActions from '../../actions/ChallengeParticipantActio
 import ReadyStore from '../../../stores/ReadyStore';
 import VoterStore from '../../../stores/VoterStore';
 import { getChallengeValuesFromIdentifiers } from '../../utils/challengeUtils';
-import lookupPageNameAndPageTypeDict from '../../../utils/lookupPageNameAndPageTypeDict';
+import lookupPageNameAndPageTypeDict, { getPageDetails } from '../../../utils/lookupPageNameAndPageTypeDict';
 
 class JoinChallengeButton extends React.Component {
   constructor (props) {
@@ -114,7 +114,7 @@ class JoinChallengeButton extends React.Component {
     if (challengeSEOFriendlyPath) {
       challengeBasePath = `/${challengeSEOFriendlyPath}/+/`;
     } else {
-      challengeBasePath = `/+/${challengeWeVoteId}/`;
+      challengeBasePath = `/++/${challengeWeVoteId}/`;
     }
     return challengeBasePath;
   }
@@ -128,35 +128,25 @@ class JoinChallengeButton extends React.Component {
     // console.log('goToInviteFriends currentPathname: ', currentPathname);
 
     // Adding event data to dataLayer for Google Tag Manager to fire the inviteFriendsToChallenge tag
-    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
     const destinationPage = lookupPageNameAndPageTypeDict(inviteFriendsPath);
-    TagManager.dataLayer({
-      dataLayer: {
-        actionDetails: {
-          actionType: 'invite',
-          buttonId: 'joinChallengeButton',
-        },
-        event: 'action',
-        userDetails: {
-          stateCode: VoterStore.getVoterStateCode(),
-          userCohort: VoterStore.getAnalyticsUserCohort(),
-          voterWeVoteId: VoterStore.getVoterWeVoteId(),
-        },
-        challengeDetails: {
-          challengeWeVoteId,
-        },
-        pageDetails: {
-          pageName: currentPage.pageName,
-          pageType: currentPage.pageType,
-          pathname: currentPathname,
-        },
-        destinationDetails: {
-          destinationPageName: destinationPage.pageName,
-          destinationPageType: destinationPage.pageType,
-          destinationPathname: inviteFriendsPath,
-        },
+    const dataLayerObject = {
+      actionDetails: {
+        actionType: 'invite',
+        buttonId: 'joinChallengeButton',
       },
-    });
+      event: 'action',
+      userDetails: VoterStore.getAnalyticsUserDetails(),
+      challengeDetails: {
+        challengeWeVoteId,
+      },
+      pageDetails: getPageDetails(),
+      destinationDetails: {
+        destinationPageName: destinationPage.pageName,
+        destinationPageType: destinationPage.pageType,
+        destinationPathname: inviteFriendsPath,
+      },
+    };
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
 
     AppObservableStore.setSetUpAccountBackLinkPath(currentPathname);
     AppObservableStore.setSetUpAccountEntryPath(inviteFriendsPath);
@@ -183,35 +173,25 @@ class JoinChallengeButton extends React.Component {
       AppObservableStore.setSetUpAccountEntryPath(joinChallengeNextStepPath);
       // console.log('goToJoinChallenge currentPathname: ', currentPathname);
       // Adding event data to dataLayer for Google Tag Manager to fire the inviteFriendsToChallenge tag
-      const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
       const destinationPage = lookupPageNameAndPageTypeDict(joinChallengeNextStepPath);
-      TagManager.dataLayer({
-        dataLayer: {
-          actionDetails: {
-            actionType: 'join',
-            buttonId: 'joinChallengeButton',
-          },
-          event: 'action',
-          userDetails: {
-            stateCode: VoterStore.getVoterStateCode(),
-            userCohort: VoterStore.getAnalyticsUserCohort(),
-            voterWeVoteId: VoterStore.getVoterWeVoteId(),
-          },
-          challengeDetails: {
-            challengeWeVoteId,
-          },
-          pageDetails: {
-            pageName: currentPage.pageName,
-            pageType: currentPage.pageType,
-            pathname: currentPathname,
-          },
-          destinationDetails: {
-            destinationPageName: destinationPage.pageName,
-            destinationPageType: destinationPage.pageType,
-            destinationPathname: joinChallengeNextStepPath,
-          },
+      const dataLayerObject = {
+        actionDetails: {
+          actionType: 'join',
+          buttonId: 'joinChallengeButton',
         },
-      });
+        event: 'action',
+        userDetails: VoterStore.getAnalyticsUserDetails(),
+        challengeDetails: {
+          challengeWeVoteId,
+        },
+        pageDetails: getPageDetails(),
+        destinationDetails: {
+          destinationPageName: destinationPage.pageName,
+          destinationPageType: destinationPage.pageType,
+          destinationPathname: joinChallengeNextStepPath,
+        },
+      };
+      TagManager.dataLayer({ dataLayer: dataLayerObject });
 
       if (itemsAreMissing) {
         historyPush(joinChallengeNextStepPath);

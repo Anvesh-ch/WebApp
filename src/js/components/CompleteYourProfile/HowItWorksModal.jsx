@@ -1,10 +1,10 @@
 import { Close } from '@mui/icons-material';
 import { Dialog, DialogContent, IconButton } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
-import TagManager from 'react-gtm-module';
 import withTheme from '@mui/styles/withTheme';
 import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
+import TagManager from 'react-gtm-module';
 import styled from 'styled-components';
 import VoterActions from '../../actions/VoterActions';
 import { hasIPhoneNotch } from '../../common/utils/cordovaUtils';
@@ -12,7 +12,7 @@ import isMobileScreenSize from '../../common/utils/isMobileScreenSize';
 import { renderLog } from '../../common/utils/logging';
 import VoterConstants from '../../constants/VoterConstants';
 import VoterStore from '../../stores/VoterStore';
-import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
 
 const HowItWorks = React.lazy(() => import(/* webpackChunkName: 'HowItWorks' */ '../../pages/HowItWorks'));
 
@@ -25,8 +25,8 @@ class HowItWorksModal extends Component {
     this.closeHowItWorksModal = this.closeHowItWorksModal.bind(this);
   }
 
-  closeHowItWorksModal () {
-    this.sendHowItWorksCloseEvent();
+  closeHowItWorksModal (buttonId) {
+    this.sendHowItWorksCloseEvent(buttonId);
     // const { howItWorksWatched } = this.state;
     // const minimumStepIndexForCompletion = 1; // Was 2, but even opening it should get rid of the tickler
     const alwaysMarkedWatched = true;
@@ -39,27 +39,17 @@ class HowItWorksModal extends Component {
     this.props.toggleFunction(pathname);
   }
 
-  sendHowItWorksCloseEvent () {
-    const { location: { pathname: currentPathname } } = window;
-    const { pageName, pageType } = lookupPageNameAndPageTypeDict(currentPathname);
-    TagManager.dataLayer({
-      dataLayer: {
-        event: 'action',
-        pageDetails: {
-          pageName,
-          pageType,
-          pathname: currentPathname,
-        },
-        actionDetails: {
-          buttonId: 'profileCloseHowItWorksModal',
-        },
-        userDetails: {
-          stateCode: VoterStore.getVoterStateCode(),
-          userCohort: VoterStore.getAnalyticsUserCohort(),
-          voterWeVoteId: VoterStore.getVoterWeVoteId(),
-        },
+  sendHowItWorksCloseEvent (buttonId) {
+    const dataLayerObject = {
+      actionDetails: {
+        actionType: 'closeModal',
+        buttonId,
       },
-    });
+      event: 'action',
+      pageDetails: getPageDetails(),
+      userDetails: VoterStore.getAnalyticsUserDetails(),
+    };
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
   }
 
   render () {
@@ -83,7 +73,7 @@ class HowItWorksModal extends Component {
           <IconButton
             aria-label="Close"
             className={classes.closeButton}
-            onClick={this.closeHowItWorksModal}
+            onClick={() => this.closeHowItWorksModal('profileCloseHowItWorksModal')}
             id="profileCloseHowItWorksModal"
             size="large"
           >

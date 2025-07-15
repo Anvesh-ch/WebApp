@@ -17,7 +17,7 @@ import ActivityStore from '../../stores/ActivityStore';
 import VoterStore from '../../stores/VoterStore';
 import { createDescriptionOfFriendPosts } from '../../utils/activityUtils';
 import DesignTokenColors from '../../common/components/Style/DesignTokenColors';
-import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import lookupPageNameAndPageTypeDict, { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
 
 const ImageHandler = React.lazy(() => import(/* webpackChunkName: 'ImageHandler' */ '../ImageHandler'));
 
@@ -98,34 +98,23 @@ class HeaderNotificationMenu extends Component {
 
 
 onSettingsClick = (buttonId) => {
-  const { location: { pathname: currentPathname } } = window;
-  const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
   const destinationPathname = '/settings/notifications';
   const destinationPage = lookupPageNameAndPageTypeDict(destinationPathname);
-  TagManager.dataLayer({
-    dataLayer: {
-      actionDetails: {
-        actionType: 'openModal', // We will be transitioning to a slide-out drawer soon
-        buttonId,
-      },
-      event: 'action',
-      pageDetails: {
-        pageName: currentPage.pageName,
-        pageType: currentPage.pageType,
-        pathname: currentPathname,
-      },
-      destinationDetails: {
-        destinationPageName: destinationPage.pageName,
-        destinationPageType: destinationPage.pageType,
-        destinationPathname,
-      },
-      userDetails: {
-        stateCode: VoterStore.getVoterStateCode(),
-        userCohort: VoterStore.getAnalyticsUserCohort(),
-        voterWeVoteId: VoterStore.getVoterWeVoteId(),
-      },
+  const dataLayerObject = {
+    actionDetails: {
+      actionType: 'openModal', // We will be transitioning to a slide-out drawer soon
+      buttonId,
     },
-  });
+    event: 'action',
+    pageDetails: getPageDetails(),
+    destinationDetails: {
+      destinationPageName: destinationPage.pageName,
+      destinationPageType: destinationPage.pageType,
+      destinationPathname,
+    },
+    userDetails: VoterStore.getAnalyticsUserDetails(),
+  };
+  TagManager.dataLayer({ dataLayer: dataLayerObject });
   this.handleClose();
   historyPush(destinationPathname);
 }
@@ -281,31 +270,21 @@ onSettingsClick = (buttonId) => {
 
     const { location: { pathname: currentPathname } } = window;
     const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
-
-    TagManager.dataLayer({
-      dataLayer: {
-        actionDetails: {
-          actionType: 'openModal',
-          buttonId: 'headerNotificationMenuIcon',
-        },
-        event: 'action',
-        pageDetails: {
-          pageName: currentPage.pageName,
-          pageType: currentPage.pageType,
-          pathname: currentPathname,
-        },
-        destinationDetails: {
-          destinationPageName: 'NotificationsModal',
-          destinationPageType: currentPage.pageType,
-          destinationPathname: currentPathname,
-        },
-        userDetails: {
-          voterWeVoteId: VoterStore.getVoterWeVoteId(),
-          stateCode: VoterStore.getVoterStateCode(),
-          userCohort: VoterStore.getAnalyticsUserCohort(),
-        },
+    const dataLayerObject = {
+      actionDetails: {
+        actionType: 'openModal',
+        buttonId: 'headerNotificationMenuIcon',
       },
-    });
+      event: 'action',
+      pageDetails: getPageDetails(),
+      destinationDetails: {
+        destinationPageName: 'NotificationsModal',
+        destinationPageType: currentPage.pageType,
+        destinationPathname: currentPathname,
+      },
+      userDetails: VoterStore.getAnalyticsUserDetails(),
+    };
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
 
     this.setState({
       anchorEl: event.currentTarget,

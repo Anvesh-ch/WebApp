@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import TruncateMarkup from 'react-truncate-markup';
 import TagManager from 'react-gtm-module';
+import TruncateMarkup from 'react-truncate-markup';
 import styled from 'styled-components';
-import { renderLog } from '../../utils/logging';
-import lookupPageNameAndPageTypeDict from '../../../utils/lookupPageNameAndPageTypeDict';
+import IssueStore from '../../../stores/IssueStore';
 import VoterStore from '../../../stores/VoterStore';
-import PoliticianStore from '../../../common/stores/PoliticianStore';
+import { getPageDetails } from '../../../utils/lookupPageNameAndPageTypeDict';
+import PoliticianStore from '../../stores/PoliticianStore';
+import { renderLog } from '../../utils/logging';
 
 export default class ReadMore extends Component {
   constructor (...args) {
@@ -32,39 +33,27 @@ export default class ReadMore extends Component {
     event.preventDefault();
     const { readMore } = this.state;
     const showMoreLabel = readMore ? 'showMore' : 'showLess';
-    const { location: { pathname: currentPathname } } = window;
-    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
     const { politicianWeVoteId } = this.props;
-    const { buttonId } = this.props;
-    const politician = PoliticianStore.getPoliticianByWeVoteId(politicianWeVoteId);
-    const politicianName = PoliticianStore.getPoliticianName(politicianWeVoteId);
+    const { buttonId, issueWeVoteId } = this.props;
 
-    console.log("Right here!", politicianWeVoteId, politicianName);
-
-    TagManager.dataLayer({
-    dataLayer: {
+    const dataLayerObject = {
       event: 'action',
       actionDetails: {
         actionType: showMoreLabel,
-        buttonId: buttonId
-        },
-      pageDetails: {
-        pageName: currentPage.pageName,
-        pageType: currentPage.pageType,
-        pathname: currentPathname,
+        buttonId,
       },
-      politicianDetails: {
-        politicianWeVoteId: politicianWeVoteId,
-        politicianName: politicianName,
-       },
-      userDetails: {
-        stateCode: VoterStore.getVoterStateCode(),
-        userCohort: VoterStore.getAnalyticsUserCohort(),
-        voterWeVoteId: VoterStore.getVoterWeVoteId(),
-      },
-    },
-    });
-    console.log("GTM dataLayer after push:", window.dataLayer);
+      pageDetails: getPageDetails(),
+      userDetails: VoterStore.getAnalyticsUserDetails(),
+    };
+    if (politicianWeVoteId) {
+      dataLayerObject.politicianDetails = PoliticianStore.getAnalyticsPoliticianDetails(politicianWeVoteId);
+    }
+    if (issueWeVoteId) {
+      dataLayerObject.topicDetails = IssueStore.getAnalyticsIssueDetails(issueWeVoteId);
+    }
+    // console.log('GTM dataLayer:', dataLayerObject);
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
+    // console.log('GTM dataLayer after push:', window.dataLayer);
 
     if (readMore && this.props.onShowMoreAlternateFunction) {
       this.props.onShowMoreAlternateFunction();
@@ -197,14 +186,13 @@ export default class ReadMore extends Component {
 ReadMore.propTypes = {
   className: PropTypes.string,
   collapseText: PropTypes.node,
+  issueWeVoteId: PropTypes.string,
   linkText: PropTypes.node,
   numberOfLines: PropTypes.number,
   onShowMoreAlternateFunction: PropTypes.func,
   textToDisplay: PropTypes.node.isRequired,
   buttonId: PropTypes.string,
-  id: PropTypes.string,
   politicianWeVoteId: PropTypes.string,
-  politicianState: PropTypes.string
 };
 
 const ReadMoreCollapsedWrapper = styled('span')`

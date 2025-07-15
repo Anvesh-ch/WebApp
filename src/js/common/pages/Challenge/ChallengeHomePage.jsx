@@ -355,7 +355,7 @@ class ChallengeHomePage extends Component {
       });
       pathToUseWhenProfileComplete = `/${challengeSEOFriendlyPath}/+/why-do-you-support`;
     } else if (challengeWeVoteId) {
-      pathToUseWhenProfileComplete = `/+/${challengeWeVoteId}/why-do-you-support`;
+      pathToUseWhenProfileComplete = `/++/${challengeWeVoteId}/why-do-you-support`;
     }
     if (challengeWeVoteId) {
       const voterCanEditThisChallenge = ChallengeStore.getVoterCanEditThisChallenge(challengeWeVoteId);
@@ -423,7 +423,7 @@ class ChallengeHomePage extends Component {
     if (challengeSEOFriendlyPath) {
       challengeBasePath = `/${challengeSEOFriendlyPath}/+/`;
     } else {
-      challengeBasePath = `/+/${challengeWeVoteId}/`;
+      challengeBasePath = `/++/${challengeWeVoteId}/`;
     }
 
     return challengeBasePath;
