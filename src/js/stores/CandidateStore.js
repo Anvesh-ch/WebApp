@@ -151,7 +151,7 @@ class CandidateStore extends ReduceStore {
       officeName: candidate ? candidate.contest_office_name : '',
       politicianWeVoteId: candidate ? candidate.politician_we_vote_id : '',
       politicalParty: candidate ? candidate.party : '',
-      stateCode: candidate ? candidate.state_code : '',
+      stateCode: candidate ? (candidate.state_code).toUpperCase() : '',
       twitterHandle: candidate ? candidate.candidate_twitter_handle : '',
     };
   }

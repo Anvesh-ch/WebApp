@@ -51,6 +51,7 @@ import saveCampaignSupportAndGoToNextPage from '../../utils/saveCampaignSupportA
 import extractPoliticianDetailsFromUrl from '../../utils/extractPoliticianDetailsFromUrl';
 import VoterStore from '../../../stores/VoterStore';
 import VoterPositionEntryAndDisplay from '../../../components/PositionItem/VoterPositionEntryAndDisplay';
+import {getPageDetails} from "../../../utils/lookupPageNameAndPageTypeDict";
 
 const CampaignRetrieveController = React.lazy(() => import(/* webpackChunkName: 'CampaignRetrieveController' */ '../../components/Campaign/CampaignRetrieveController'));
 const CampaignSupportThermometer = React.lazy(() => import(/* webpackChunkName: 'CampaignSupportThermometer' */ '../../components/CampaignSupport/CampaignSupportThermometer'));
@@ -308,23 +309,24 @@ class PoliticianDetailsPage extends Component {
       window.scrollTo(0, 0);
     }
     if (!this.state.dataLayerSent) {
-      // console.log('TagManager code executing...');
-      // console.log('Politician ID id exists? ', politician);
       if (politician && politician.politician_we_vote_id) {
-        // console.log('Politician Details retrieved, Adding DataLayer...');
-        const { location: { pathname: currentPathname } } = window;
         const dataLayerObject = {
           event: 'landing',
           userDetails: VoterStore.getAnalyticsUserDetails(),
-          pageDetails: {
-            pageName: this.constructor.name, // name of page from constructor itself
-            pageType: 'politician', // in which page we are currently
-            pathname: currentPathname,
+          pageDetails: getPageDetails(),
+          actionDetails: {
+            actionType: 'landing',
           },
         };
+        if (politician.candidate_we_vote_id) {
+          dataLayerObject.candidateDetails = CandidateStore.getAnalyticsCandidateDetails(politician.candidate_we_vote_id);
+        }
+
+        // Add politicianDetails if we have a politician ID
         if (politician.politician_we_vote_id) {
           dataLayerObject.politicianDetails = PoliticianStore.getAnalyticsPoliticianDetails(politician.politician_we_vote_id);
         }
+        // console.log('DataLayer object being sent:', dataLayerObject);
         TagManager.dataLayer({ dataLayer: dataLayerObject });
         // Set the flag to true so that it runs just once
         this.setState({
