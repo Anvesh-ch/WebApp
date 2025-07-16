@@ -318,11 +318,11 @@ class PoliticianDetailsPage extends Component {
           pageDetails: getPageDetails(),
           userDetails: VoterStore.getAnalyticsUserDetails(),
         };
-        if (politician.candidate_we_vote_id) {
-          dataLayerObject.candidateDetails = CandidateStore.getAnalyticsCandidateDetails(politician.candidate_we_vote_id);
+        const candidateWeVoteId = CandidateStore.getCandidateWeVoteIdRunningFromPoliticianWeVoteId(politician.politician_we_vote_id);
+        // console.log('candidateWeVoteId from getCandidateWeVoteIdRunningFromPoliticianWeVoteId:', candidateWeVoteId);
+        if (candidateWeVoteId) {
+          dataLayerObject.candidateDetails = CandidateStore.getAnalyticsCandidateDetails(candidateWeVoteId);
         }
-
-        // Add politicianDetails if we have a politician ID
         if (politician.politician_we_vote_id) {
           dataLayerObject.politicianDetails = PoliticianStore.getAnalyticsPoliticianDetails(politician.politician_we_vote_id);
         }
