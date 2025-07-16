@@ -51,6 +51,7 @@ import saveCampaignSupportAndGoToNextPage from '../../utils/saveCampaignSupportA
 import extractPoliticianDetailsFromUrl from '../../utils/extractPoliticianDetailsFromUrl';
 import VoterStore from '../../../stores/VoterStore';
 import VoterPositionEntryAndDisplay from '../../../components/PositionItem/VoterPositionEntryAndDisplay';
+import { getPageDetails } from '../../../utils/lookupPageNameAndPageTypeDict';
 
 const CampaignRetrieveController = React.lazy(() => import(/* webpackChunkName: 'CampaignRetrieveController' */ '../../components/Campaign/CampaignRetrieveController'));
 const CampaignSupportThermometer = React.lazy(() => import(/* webpackChunkName: 'CampaignSupportThermometer' */ '../../components/CampaignSupport/CampaignSupportThermometer'));
@@ -108,7 +109,7 @@ class PoliticianDetailsPage extends Component {
       finalElectionDateInPast: false,
       // inPrivateLabelMode: false,
       loadSlow: false,
-      officeHeldList: [],
+      // officeHeldList: [],
       opponentCandidateList: [],
       opponentCandidatesToShowCount: 5,
       payToPromoteStepCompleted: false,
@@ -124,7 +125,7 @@ class PoliticianDetailsPage extends Component {
       showMobileViewUpcomingBallot: false,
       stateText: '',
       step2Completed: false,
-      supporterEndorsementsWithText: [],
+      // supporterEndorsementsWithText: [],
       voterCanEditThisPolitician: false,
       wikipediaUrl: '',
       politicianStateParsedFromURLBeforeLoad: '',
@@ -308,23 +309,24 @@ class PoliticianDetailsPage extends Component {
       window.scrollTo(0, 0);
     }
     if (!this.state.dataLayerSent) {
-      // console.log('TagManager code executing...');
-      // console.log('Politician ID id exists? ', politician);
       if (politician && politician.politician_we_vote_id) {
-        // console.log('Politician Details retrieved, Adding DataLayer...');
-        const { location: { pathname: currentPathname } } = window;
         const dataLayerObject = {
-          event: 'landing',
-          userDetails: VoterStore.getAnalyticsUserDetails(),
-          pageDetails: {
-            pageName: this.constructor.name, // name of page from constructor itself
-            pageType: 'politician', // in which page we are currently
-            pathname: currentPathname,
+          actionDetails: {
+            actionType: 'landing',
           },
+          event: 'landing',
+          pageDetails: getPageDetails(),
+          userDetails: VoterStore.getAnalyticsUserDetails(),
         };
+        const candidateWeVoteId = CandidateStore.getCandidateWeVoteIdRunningFromPoliticianWeVoteId(politician.politician_we_vote_id);
+        // console.log('candidateWeVoteId from getCandidateWeVoteIdRunningFromPoliticianWeVoteId:', candidateWeVoteId);
+        if (candidateWeVoteId) {
+          dataLayerObject.candidateDetails = CandidateStore.getAnalyticsCandidateDetails(candidateWeVoteId);
+        }
         if (politician.politician_we_vote_id) {
           dataLayerObject.politicianDetails = PoliticianStore.getAnalyticsPoliticianDetails(politician.politician_we_vote_id);
         }
+        // console.log('DataLayer object being sent:', dataLayerObject);
         TagManager.dataLayer({ dataLayer: dataLayerObject });
         // Set the flag to true so that it runs just once
         this.setState({
@@ -377,13 +379,13 @@ class PoliticianDetailsPage extends Component {
 
   onCampaignSupporterStoreChange () {
     const { linkedCampaignXWeVoteId } = this.state;
-    const supporterEndorsementsWithText = CampaignSupporterStore.getLatestCampaignXSupportersWithTextList(linkedCampaignXWeVoteId);
+    // const supporterEndorsementsWithText = CampaignSupporterStore.getLatestCampaignXSupportersWithTextList(linkedCampaignXWeVoteId);
     const step2Completed = CampaignSupporterStore.voterSupporterEndorsementExists(linkedCampaignXWeVoteId);
     const payToPromoteStepCompleted = CampaignSupporterStore.voterChipInExists(linkedCampaignXWeVoteId);
     const sharingStepCompleted = false;
     // console.log('onCampaignSupporterStoreChange step2Completed: ', step2Completed, ', sharingStepCompleted: ', sharingStepCompleted, ', payToPromoteStepCompleted:', payToPromoteStepCompleted);
     this.setState({
-      supporterEndorsementsWithText,
+      // supporterEndorsementsWithText,
       sharingStepCompleted,
       step2Completed,
       payToPromoteStepCompleted,
@@ -427,7 +429,7 @@ class PoliticianDetailsPage extends Component {
       }
     }
     this.setState({
-      officeHeldList: officeHeldListFiltered,
+      // officeHeldList: officeHeldListFiltered,
       officeHeldNameForSearch,
     });
   }
