@@ -158,7 +158,7 @@ const GotItButton = styled(Button)`
   min-width: 0;
   white-space: nowrap;
 `;
-const CloseButton = styled(IconButton)`
+const CloseButton = muiStyled(IconButton)`
    align-self: flex-end;
    color: #fff;
    min-width: 0;
