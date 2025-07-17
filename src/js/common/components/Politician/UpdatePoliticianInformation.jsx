@@ -7,7 +7,6 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import styled from 'styled-components';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { styled as muiStyled } from '@mui/material/styles';
 import DesignTokenColors from '../Style/DesignTokenColors';
@@ -245,11 +244,11 @@ const UpdatePoliticianInformation =  (props) => {
                   </CandidateStaffAccessButton>
                   {verifyWithEmailModalOpen()}
                   {verifyOtherWaysModalOpen()}
+                  <CandidateAccessWrapper>
+                    Candidate staff access&nbsp;
+                    <Caret>⌄</Caret>
+                  </CandidateAccessWrapper>
                 </>
-                <CandidateAccessWrapper>
-                  Candidate staff access&nbsp;
-                  <Caret>⌄</Caret>
-                </CandidateAccessWrapper>
               )}
             </>
           ) : (
