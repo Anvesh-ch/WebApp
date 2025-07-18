@@ -11,7 +11,6 @@ import AnalyticsActions from '../../actions/AnalyticsActions';
 import DonateActions from '../../common/actions/DonateActions';
 import DonationListForm from '../../common/components/Donation/DonationListForm';
 import DonorboxCordova from '../../common/components/Donation/DonorboxCordova';
-import DonorboxEmbed from '../../common/components/Donation/DonorboxEmbed';
 import DesignTokenColors from '../../common/components/Style/DesignTokenColors';
 import standardBoxShadow from '../../common/components/Style/standardBoxShadow';
 import OpenExternalWebSite from '../../common/components/Widgets/OpenExternalWebSite';
@@ -25,15 +24,15 @@ import { PageContentContainer } from '../../components/Style/pageLayoutStyles';
 import { Section } from '../../components/Welcome/sectionStyles';
 import webAppConfig from '../../config';
 import VoterStore from '../../stores/VoterStore';
-import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
-import DonationPhoto from '../../../img/global/photos/woman-voting-donation-page.png';
 import { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
+
+const DonorboxEmbed = React.lazy(() => import(/* webpackChunkName: 'DonorboxEmbed' */ '../../common/components/Donation/DonorboxEmbed'));
 
 /* global $ */
 
 // const stripePromise = loadStripe(webAppConfig.STRIPE_API_KEY);
 
-const donationImage = normalizedImagePath('/img/global/photos/Donate_Screenshot.png');
+const donationPhoto = normalizedImagePath('/img/global/photos/woman-voting-donation-page.png');
 
 class Donate extends Component {
   static getProps () {
@@ -237,28 +236,39 @@ class Donate extends Component {
   donationDescriptionReadMore = (readMore, isC4Donation) => (
     <DonationDescriptionContainer>
       <DonationDescription id="donation_copy">
-        When people feel prepared to vote, they’re more likely to cast a ballot — especially in local and primary elections, where participation is lowest. At WeVote, our mission is to close the confidence gap that keeps so many voters on the sidelines.
+        When people feel prepared to vote, they’re more likely to cast a ballot — especially in local elections, where participation is lowest.
+        {' '}
+        At WeVote, our mission is to close the confidence gap so more voters bring their voices into our democracy.
       </DonationDescription>
       {readMore && (
         <>
           <p>
-            We don’t take sides. Instead, we provide trusted, nonpartisan tools that help people feel informed and ready to vote.
-            Because WeVote is 100% volunteer-run, your donation directly powers our work — helping us reach new voters, low-turnout communities, and busy people who care but aren’t sure where to start.
-            Our tools are free for voters, but not free to build, maintain, or scale. That’s why we’re asking for your support. A gift of $50, $100, or $250 will help us expand our reach, strengthen our platform, and bridge the information gap in our democracy.
+            We don’t take sides. Instead, we help people feel informed and ready to vote.
+            Because WeVote is 100% volunteer-run, your donation directly powers
+            our work.
+            Our tools are free for voters, but not free to build and maintain.
           </p>
           <p>
-            $50 - can bring 500 new voters to WeVote
+            $1 equips 1 voter with personalized, nonpartisan ballot
+            information
           </p>
           <p>
-            $100 - can match voters to their ballots for one month
+            $50 brings WeVote to 500 new voters
           </p>
           <p>
-            $250 - can provide our recruiting team with their software for one month, or cover our server fees for 10 days
+            $100 educates 1 college intern
+          </p>
+          <p>
+            $250 brings in top volunteers by fueling recruiting systems for 1 month
+          </p>
+          <p>
+            $500 powers our digital infrastructure for 1 week
           </p>
         </>
       )}
       <DonationDescription>
-        If you believe every voter deserves to feel confident and prepared, please give now.
+        Give now to help more Americans feel confident and prepared to vote.
+        <br />
         {!readMore && (
           <ReadMoreButton
             onClick={() => {
@@ -277,7 +287,7 @@ class Donate extends Component {
               this.setState({ readMore: true });
             }}
           >
-            Read more...
+            Read more
           </ReadMoreButton>
         )}
       </DonationDescription>
@@ -374,13 +384,8 @@ class Donate extends Component {
                   </InnerWrapper>
                 </TextAndDonorboxColumn>
                 <DonationImageContainer>
-                  {/*<DonorboxWrapper>*/}
-                  {/*  <Suspense fallback={<div>Loading...</div>}>*/}
-                  {/*    <DonorboxEmbed />*/}
-                  {/*  </Suspense>*/}
-                  {/*</DonorboxWrapper>*/}
                   <DonationImage
-                    src={DonationPhoto}
+                    src={donationPhoto}
                   />
                 </DonationImageContainer>
               </TwoColumns>

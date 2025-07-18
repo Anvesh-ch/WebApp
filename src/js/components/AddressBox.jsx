@@ -78,7 +78,7 @@ class AddressBox extends Component {
   }
 
   onVoterStoreChange () {
-// console.log('AddressBox, onVoterStoreChange, this.state:', this.state);
+    // console.log('AddressBox, onVoterStoreChange, this.state:', this.state);
     const { textForMapSearch, voterSavedAddress } = this.state;
 
     if (textForMapSearch && voterSavedAddress) {
@@ -107,9 +107,9 @@ class AddressBox extends Component {
     }
   }
 
-  voterAddressSaveSubmit = (event) => {
-    console.log('Save button clicked');
-//     console.log('Passed buttonId:', buttonId);
+  voterAddressSaveSubmit = (event, buttonId) => {
+    // console.log('Save button clicked');
+    // console.log('Passed buttonId:', buttonId);
     event.preventDefault();
     const { textForMapSearch } = this.state;
     // console.log('AddressBox voterAddressSaveSubmit, textForMapSearch:', textForMapSearch);
@@ -134,8 +134,7 @@ class AddressBox extends Component {
       }
     }
 
-    const { buttonId = 'addressBoxModalSaveButton' } = this.props;
-    console.log('Passed buttonId:', buttonId);
+    // console.log('Passed buttonId:', buttonId);
     const dataLayerObject = {
       actionDetails: {
         actionType: 'openModal',
@@ -160,7 +159,7 @@ class AddressBox extends Component {
         },
       },
     };
-    console.log('dataLayerObject:', dataLayerObject);
+    // console.log('dataLayerObject:', dataLayerObject);
     TagManager.dataLayer({ dataLayer: dataLayerObject });
 
     BallotActions.setBallotCaveat(ballotCaveat);
@@ -171,10 +170,11 @@ class AddressBox extends Component {
     this.setState({
       loading: true,
       voterSavedAddress: true,
-    } ,() => {
+    }, () => {
       if (this.props.onAddressSaveSuccess) {
         this.props.onAddressSaveSuccess();
-      }});
+      }
+    });
     // We want to leave the voter in the modal until we get a new ballot
     // this.returnNewTextForMapSearchLocal(textForMapSearch);
     // const { toggleSelectAddressModal } = this.props;
@@ -265,7 +265,7 @@ class AddressBox extends Component {
           <Button
             color="primary"
             id={externalUniqueId ? `addressBoxModalSaveButton-${externalUniqueId}` : 'addressBoxModalSaveButton'}
-            onClick={this.voterAddressSaveSubmit}
+            onClick={(event) => this.voterAddressSaveSubmit(event, externalUniqueId ? `addressBoxModalSaveButton-${externalUniqueId}` : 'addressBoxModalSaveButton')}
             variant="contained"
             classes={showCancelEditAddressButton ? { root: classes.saveButton } : { root: classes.fullWidthSaveButton }}
             fullWidth={!showCancelEditAddressButton}
