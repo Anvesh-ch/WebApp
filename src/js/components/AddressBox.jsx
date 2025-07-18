@@ -75,7 +75,7 @@ class AddressBox extends Component {
   }
 
   onVoterStoreChange () {
-// console.log('AddressBox, onVoterStoreChange, this.state:', this.state);
+    // console.log('AddressBox, onVoterStoreChange, this.state:', this.state);
     const { textForMapSearch, voterSavedAddress } = this.state;
 
     if (textForMapSearch && voterSavedAddress) {
@@ -104,7 +104,7 @@ class AddressBox extends Component {
     }
   }
 
-  voterAddressSaveSubmit = (event) => {
+  voterAddressSaveSubmit = (event, buttonId) => {
     event.preventDefault();
     const { textForMapSearch } = this.state;
     // console.log('AddressBox voterAddressSaveSubmit, textForMapSearch:', textForMapSearch);
@@ -120,10 +120,11 @@ class AddressBox extends Component {
     this.setState({
       loading: true,
       voterSavedAddress: true,
-    } ,() => {
+    }, () => {
       if (this.props.onAddressSaveSuccess) {
         this.props.onAddressSaveSuccess();
-      }});
+      }
+    });
     // We want to leave the voter in the modal until we get a new ballot
     // this.returnNewTextForMapSearchLocal(textForMapSearch);
     // const { toggleSelectAddressModal } = this.props;
@@ -214,7 +215,7 @@ class AddressBox extends Component {
           <Button
             color="primary"
             id={externalUniqueId ? `addressBoxModalSaveButton-${externalUniqueId}` : 'addressBoxModalSaveButton'}
-            onClick={this.voterAddressSaveSubmit}
+            onClick={(event) => this.voterAddressSaveSubmit(event, externalUniqueId ? `addressBoxModalSaveButton-${externalUniqueId}` : 'addressBoxModalSaveButton')}
             variant="contained"
             classes={showCancelEditAddressButton ? { root: classes.saveButton } : { root: classes.fullWidthSaveButton }}
             fullWidth={!showCancelEditAddressButton}

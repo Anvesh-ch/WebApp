@@ -21,8 +21,9 @@ import ModalDisplayTemplateB, {
 import ActivityPostPublicDropdown from '../Activity/ActivityPostPublicDropdown';
 import VoterPositionEditNameAndPhotoModal from './VoterPositionEditNameAndPhotoModal';
 import DesignTokenColors from '../../common/components/Style/DesignTokenColors';
-import { SpeakerInfoWrapper, SpeakerName, SpeakerStatement, SpeakerStatementWrapper } from '../../common/components/Style/PositionDisplayStyles';
+import { SpeakerName, SpeakerStatement, SpeakerStatementWrapper } from '../../common/components/Style/PositionDisplayStyles';
 import SpeakerEndorsedOrOpposedSnippet from '../../common/components/Position/SpeakerEndorsedOrOpposedSnippet';
+import VoterPositionEditTripleDot from '../../common/components/Position/VoterPositionEditTripleDot';
 
 const ItemActionBar = React.lazy(() => import(/* webpackChunkName: 'ItemActionBar' */ '../Widgets/ItemActionBar/ItemActionBar'));
 const ReadMore = React.lazy(() => import(/* webpackChunkName: 'ReadMore' */ '../../common/components/Widgets/ReadMore'));
@@ -40,6 +41,7 @@ const VoterPositionEntryAndDisplay = ({ classes, externalUniqueId, politicianWeV
   const [selectedStance, setSelectedStance] = useState('SUPPORT');
   const [showModal, setShowModal] = useState(false);
   const [statementText, setStatementText] = useState('');
+  const [supportOrOpposeStanceExists, setSupportOrOpposeStanceExists] = useState(false);
   const [visibilityIsPublic, setVisibilityIsPublic] = useState(false);
   const [voterFirstName, setVoterFirstName] = useState('');
   const [voterLastName, setVoterLastName] = useState('');
@@ -91,6 +93,7 @@ const VoterPositionEntryAndDisplay = ({ classes, externalUniqueId, politicianWeV
       if (positionWeVoteId || voterOpposesBallotItem || voterPositionIsPublic || voterSupportsBallotItem || voterTextStatement) {
         setPositionExists(true);
       }
+      setSupportOrOpposeStanceExists(voterOpposesBallotItem || voterSupportsBallotItem);
       setPosition(positionTemp);
       setSelectedStance(stanceTemp);
       setStatementText(voterTextStatement);
@@ -161,7 +164,7 @@ const VoterPositionEntryAndDisplay = ({ classes, externalUniqueId, politicianWeV
 
   renderLog('VoterPositionEntryAndDisplay'); // Set LOG_RENDER_EVENTS to log all renders
 
-  const dialogTitleText = politicianName ? `Create opinion about ${politicianName}`  : `Edit opinion about:  ${politicianName}`;
+  const dialogTitleText = positionExists ? `Edit opinion${politicianName && ` about ${politicianName}`}` : `Create opinion${politicianName && ` about ${politicianName}`}`;
   const statementPlaceholderText = 'What\'s on your mind?';
   const rowsToShow = isAndroid() ? 4 : 6;
 
@@ -196,7 +199,7 @@ const VoterPositionEntryAndDisplay = ({ classes, externalUniqueId, politicianWeV
       </VoterAvatarDisplayContainer>
       <CommentContainerWrapper>
         {statementText ? (
-          <SpeakerInfoWrapper>
+          <SpeakerInfoWrapperB>
             <SpeakerName>
               {voterName}
             </SpeakerName>
@@ -210,7 +213,7 @@ const VoterPositionEntryAndDisplay = ({ classes, externalUniqueId, politicianWeV
                 </Suspense>
               </SpeakerStatement>
             </SpeakerStatementWrapper>
-          </SpeakerInfoWrapper>
+          </SpeakerInfoWrapperB>
         ) : (
           <CommentContainer>
             {/* Open modal when input is clicked */}
@@ -222,26 +225,32 @@ const VoterPositionEntryAndDisplay = ({ classes, externalUniqueId, politicianWeV
             />
           </CommentContainer>
         )}
-        <ItemActionBarContainer>
-          <Suspense fallback={<></>}>
-            <ItemActionBar
-              ballotItemWeVoteId=""
-              // ballotItemDisplayName={oneCandidate.ballot_item_display_name}
-              commentButtonHide
-              // commentButtonHide={!futureFeaturesDisabled && nextReleaseFeaturesEnabled}
-              externalUniqueId={`VoterPositionEntryAndDisplay-ItemActionBar-${politicianWeVoteId}-${externalUniqueId}`}
-              // hidePositionPublicToggle={!futureFeaturesDisabled && nextReleaseFeaturesEnabled}
-              politicianWeVoteId={politicianWeVoteId}
-              positionPublicToggleWrapAllowed
-              shareButtonHide
-              useHelpDefeatOrHelpWin
-              useSupportWording
-            />
-          </Suspense>
-        </ItemActionBarContainer>
-        <SpeakerPositionLikesSourceWrapper>
-          <SpeakerEndorsedOrOpposedSnippet position={position} viewerIsPositionOwner />
-        </SpeakerPositionLikesSourceWrapper>
+        {!supportOrOpposeStanceExists && (
+          <ItemActionBarContainer>
+            <Suspense fallback={<></>}>
+              <ItemActionBar
+                ballotItemWeVoteId=""
+                // ballotItemDisplayName={oneCandidate.ballot_item_display_name}
+                commentButtonHide
+                // commentButtonHide={!futureFeaturesDisabled && nextReleaseFeaturesEnabled}
+                externalUniqueId={`VoterPositionEntryAndDisplay-ItemActionBar-${politicianWeVoteId}-${externalUniqueId}`}
+                hidePositionPublicToggle
+                // hidePositionPublicToggle={!futureFeaturesDisabled && nextReleaseFeaturesEnabled}
+                politicianWeVoteId={politicianWeVoteId}
+                positionPublicToggleWrapAllowed
+                shareButtonHide
+                useHelpDefeatOrHelpWin
+                useSupportWording
+              />
+            </Suspense>
+          </ItemActionBarContainer>
+        )}
+        {positionExists && (
+          <SpeakerPositionLikesSourceWrapper>
+            <SpeakerEndorsedOrOpposedSnippet position={position} viewerIsPositionOwner />
+            <VoterPositionEditTripleDot triggerEditOpinion={openPositionModal} />
+          </SpeakerPositionLikesSourceWrapper>
+        )}
       </CommentContainerWrapper>
     </VoterPositionContainer>
   );
@@ -307,7 +316,7 @@ const VoterPositionEntryAndDisplay = ({ classes, externalUniqueId, politicianWeV
           <FormControlLabel
             value="SUPPORT"
             control={<Radio color="primary" />}
-            label="Endorsing"
+            label="Supporting"
             classes={{ root: classes.radioLabel }}
           />
           <FormControlLabel
@@ -384,14 +393,20 @@ const CommentContainerWrapper = styled('div')`
   width: 100%;
 `;
 
+const ItemActionBarContainer = styled('div')`
+  display: inline-block;
+  margin-top: 6px;
+`;
+
 const SpeakerPositionLikesSourceWrapper = styled('div')`
+  align-items: center;
   display: flex;
   justify-content: space-between;
 `;
 
-const ItemActionBarContainer = styled('div')`
-  display: inline-block;
-  margin-top: 6px;
+const SpeakerInfoWrapperB = styled('div')`
+  display: flex;
+  flex-direction: column;
 `;
 
 const VoterAvatar = styled('div')`
@@ -429,7 +444,7 @@ export const VoterAvatarDisplayContainer = styled('div')`
   display: flex;
 `;
 
-export const VoterPositionContainer = styled.div`
+export const VoterPositionContainer = styled('div')`
   align-items: flex-start;
   background-color: ${DesignTokenColors.caution50};
   display: flex;

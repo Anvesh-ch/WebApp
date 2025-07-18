@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { BlockOutlined, CheckOutlined } from '@mui/icons-material';
 import { withStyles } from '@mui/styles';
 import DesignTokenColors from '../Style/DesignTokenColors';
-import { PositionText } from '../Style/PositionDisplayStyles';
+import { PositionText, VisibilityText } from '../Style/PositionDisplayStyles';
 import { getDateFromUltimateElectionDate, getTodayAsInteger, timeFromDate } from '../../utils/dateFormat';
 
 function SpeakerEndorsedOrOpposedSnippet ({ position, viewerIsPositionOwner }) {
@@ -16,13 +16,14 @@ function SpeakerEndorsedOrOpposedSnippet ({ position, viewerIsPositionOwner }) {
     date_entered: dateEntered,
     // is_oppose_or_negative_rating: isOpposeOrNegativeRating,
     is_oppose: isOpposeOrNegativeRating,
+    is_public_position: isPublicPosition,
     // is_support_or_positive_rating: isSupportOrPositiveRating,
     is_support: isSupportOrPositiveRating,
     position_ultimate_election_date: positionUltimateElectionDateAsInteger,
     position_year: positionYear,
     statement_text: statementText,
   } = position;
-  // console.log('dateEntered', dateEntered);
+  // console.log('SpeakerEndorsedOrOpposedSnippet position', position);
   let howLongAgoOrThisYear = '';
   const todayAsInteger = getTodayAsInteger(0);
   const currentYear = new Date().getFullYear();
@@ -86,6 +87,9 @@ function SpeakerEndorsedOrOpposedSnippet ({ position, viewerIsPositionOwner }) {
           </PositionText>
         </SpeakerPosition>
       )}
+      <VisibilityText>
+        {isPublicPosition ? '(visible to public)' : '(only visible to WeVote friends)'}
+      </VisibilityText>
     </SpeakerPositionWrapper>
   );
 }
@@ -116,6 +120,8 @@ const SpeakerPosition = styled('div')`
 
 const SpeakerPositionWrapper = styled('div')`
   display: flex;
+  flex-wrap: wrap;
+  width: 100%;
 `;
 
 export default withStyles(styles)(SpeakerEndorsedOrOpposedSnippet);

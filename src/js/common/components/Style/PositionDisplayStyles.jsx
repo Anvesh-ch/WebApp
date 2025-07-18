@@ -1,10 +1,13 @@
 import styled from 'styled-components';
 import DesignTokenColors from './DesignTokenColors';
 
-export const PositionText = styled('p')`
+export const PositionText = styled('div')`
+  align-items: center;
   color: ${DesignTokenColors.neutral700};
+  display: flex;
   font-weight: 400;
   font-size: 14px;
+  height: 100%;
   margin-left: 5px;
   white-space: nowrap;
 `;
@@ -28,4 +31,14 @@ export const SpeakerStatement = styled('div')`
 
 export const SpeakerStatementWrapper = styled('div')`
   // max-width: 415px;
+`;
+
+export const VisibilityText = styled('div')`
+  align-items: center;
+  color: ${DesignTokenColors.neutral700};
+  display: flex;
+  font-weight: 250;
+  font-size: 14px;
+  height: 100%;
+  margin-left: 5px;
 `;
