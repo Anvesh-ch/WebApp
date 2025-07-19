@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Edit as EditIcon } from '@mui/icons-material';
 import SupportActions from '../../actions/SupportActions';
-import { prepareForCordovaKeyboard } from '../../common/utils/cordovaUtils';
+import { prepareForCordovaKeyboard, restoreStylesAfterCordovaKeyboard } from '../../common/utils/cordovaUtils';
 import { isAndroid } from '../../common/utils/isCordovaOrWebApp';
 import { renderLog } from '../../common/utils/logging';
 import AppObservableStore from '../../common/stores/AppObservableStore';
@@ -55,12 +55,16 @@ const VoterPositionEntryAndDisplay = ({ classes, externalUniqueId, politicianWeV
       AppObservableStore.setShowSignInModal(true);
     }
   };
+
   const handleEditModalClose = () => {
     setIsEditModalOpen(false); // Close the modal
   };
 
   const toggleModalLocal = () => {
     setShowModal((prev) => !prev); // Toggle the modal
+    if (showModal) {
+      restoreStylesAfterCordovaKeyboard('VoterPositionEntryAndDisplay');
+    }
   };
 
   const openPositionModal = () => {
