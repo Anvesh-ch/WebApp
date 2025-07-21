@@ -113,31 +113,30 @@ class VoterPhotoUpload extends Component {
     }
   }
 
-  submitDeleteYourPhoto = () => {
+  submitDeleteYourPhoto = (buttonId) => {
     VoterActions.voterPhotoDelete();
     VoterActions.voterPhotoQueuedToSave(undefined);
     // Adding event data to dataLayer for Google Tag Manager
     const page = lookupPageNameAndPageTypeDict(window.location.pathname);
-    TagManager.dataLayer({
-      dataLayer: {
-        event: 'remove_profile_photo',
-        actionDetails: {
-          actionType: 'remove',
-          buttonId: 'removePhotoLink',
-        },
-        userDetails: VoterStore.getAnalyticsUserDetails(),
-        pageDetails: {
-          pageName: page.pageName,
-          pageType: page.pageType,
-          pathname: window.location.pathname,
-        },
+    const dataLayerObject = {
+      event: 'action',
+      actionDetails: {
+        actionType: 'delete',
+        buttonId,
       },
-    });
+      userDetails: VoterStore.getAnalyticsUserDetails(),
+      pageDetails: {
+        pageName: page.pageName,
+        pageType: page.pageType,
+        pathname: window.location.pathname,
+      },
+    };
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
 
     const image = document.getElementById('chosenImage');
     image.style.display = 'none';
     image.src = '';   // Clear the substitute image for Cordova
-  }
+  };
 
   insertBlobInDom (blobJpeg) {
     const fileReader = new FileReader();
@@ -206,8 +205,7 @@ class VoterPhotoUpload extends Component {
                   <DeleteLink
                     id="removePhotoLink"
                     className="u-link-color u-link-underline u-cursor--pointer"
-                    onClick={this.submitDeleteYourPhoto}
-                      id="removePhotoLink"
+                    onClick={() => this.submitDeleteYourPhoto('removePhotoLink')}
                   >
                     remove photo
                   </DeleteLink>

@@ -43,7 +43,7 @@ class SettingsProfilePicture extends Component {
     });
   };
 
-  submitVoterPhotoSave = () => {
+  submitVoterPhotoSave = (buttonId) => {
     const { profileImageTypeCurrentlyActive } = this.state;
     const voterPhotoQueuedToSave = VoterStore.getVoterPhotoQueuedToSave();
     const voterPhotoQueuedToSaveSet = VoterStore.getVoterPhotoQueuedToSaveSet();
@@ -52,24 +52,23 @@ class SettingsProfilePicture extends Component {
       VoterActions.voterPhotoQueuedToSave(undefined);
 
       // Adding event data to dataLayer for Google Tag Manager
-      const currentPathname = window.location.pathname;
-      const page = lookupPageNameAndPageTypeDict(currentPathname);
-      TagManager.dataLayer({
-        dataLayer: {
-          event: 'save_profile_photo',
-          actionDetails: {
-            actionType: 'save',
-            buttonId: 'saveEditYourPhotoBottom',
-          },
-          userDetails: VoterStore.getAnalyticsUserDetails(),
-          pageDetails: {
-            pageName: page.pageName,
-            pageType: page.pageType,
-            pathname: currentPathname,
-          },
+      const page = lookupPageNameAndPageTypeDict(window.location.pathname);
+      const dataLayerObject = {
+        event: 'action',
+        actionDetails: {
+          actionType: 'upload',
+          buttonId,
         },
-      });
+        userDetails: VoterStore.getAnalyticsUserDetails(),
+        pageDetails: {
+          pageName: page.pageName,
+          pageType: page.pageType,
+          pathname: currentPathname,
+        },
+      };
+      TagManager.dataLayer({ dataLayer: dataLayerObject });
     }
+
     this.setState({
       voterPhotoQueuedToSaveSet: false,
       profileImageTypeCurrentlyActiveSet: false,
@@ -146,7 +145,7 @@ class SettingsProfilePicture extends Component {
               color="primary"
               disabled={!voterPhotoQueuedToSaveSet && !profileImageTypeCurrentlyActiveSet}
               id="saveEditYourPhotoBottom"
-              onClick={this.submitVoterPhotoSave}
+              onClick={() => this.submitVoterPhotoSave('saveEditYourPhotoBottom')}
               variant="contained"
             >
               {(!voterPhotoQueuedToSaveSet && !profileImageTypeCurrentlyActiveSet) ? 'Photo saved' : 'Save photo'}
