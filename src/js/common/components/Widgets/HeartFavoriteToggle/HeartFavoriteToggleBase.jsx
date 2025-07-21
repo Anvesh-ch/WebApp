@@ -13,10 +13,10 @@ import DesignTokenColors from '../../Style/DesignTokenColors';
 import numberWithCommas from '../../../utils/numberWithCommas';
 import HeartFavoriteToggleIcon from './HeartFavoriteToggleIcon';
 import AppObservableStore from '../../../stores/AppObservableStore';
-// import PoliticianStore from '../../../stores/PoliticianStore';
 import CandidateStore from '../../../../stores/CandidateStore';
 import VoterStore from '../../../../stores/VoterStore';
 import { getPageDetails } from '../../../../utils/lookupPageNameAndPageTypeDict';
+
 
 // WV-399: Creating popover for sign in prompt using MUI Popover component.
 // Popover text passed into helper functions setting like/dislike text for handleActionClick.
