@@ -5,12 +5,13 @@ import { DropzoneArea } from 'mui-file-dropzone';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import TagManager from 'react-gtm-module';
 import VoterActions from '../../../actions/VoterActions';
 import VoterStore from '../../../stores/VoterStore';
 import { isCordova, isWebApp } from '../../utils/isCordovaOrWebApp';
 import isMobileScreenSize from '../../utils/isMobileScreenSize';
 import { renderLog } from '../../utils/logging';
-
+import lookupPageNameAndPageTypeDict from '../../../utils/lookupPageNameAndPageTypeDict';
 
 class VoterPhotoUpload extends Component {
   constructor (props) {
@@ -113,13 +114,30 @@ class VoterPhotoUpload extends Component {
     }
   }
 
-  submitDeleteYourPhoto = () => {
+  submitDeleteYourPhoto = (buttonId) => {
     VoterActions.voterPhotoDelete();
     VoterActions.voterPhotoQueuedToSave(undefined);
+    // Adding event data to dataLayer for Google Tag Manager
+    const page = lookupPageNameAndPageTypeDict(window.location.pathname);
+    const dataLayerObject = {
+      event: 'action',
+      actionDetails: {
+        actionType: 'delete',
+        buttonId,
+      },
+      userDetails: VoterStore.getAnalyticsUserDetails(),
+      pageDetails: {
+        pageName: page.pageName,
+        pageType: page.pageType,
+        pathname: window.location.pathname,
+      },
+    };
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
+
     const image = document.getElementById('chosenImage');
     image.style.display = 'none';
     image.src = '';   // Clear the substitute image for Cordova
-  }
+  };
 
   insertBlobInDom (blobJpeg) {
     const fileReader = new FileReader();
@@ -190,7 +208,7 @@ class VoterPhotoUpload extends Component {
                   <DeleteLink
                     id="removePhotoLink"
                     className="u-link-color u-link-underline u-cursor--pointer"
-                    onClick={this.submitDeleteYourPhoto}
+                    onClick={() => this.submitDeleteYourPhoto('removePhotoLink')}
                   >
                     remove photo
                   </DeleteLink>
