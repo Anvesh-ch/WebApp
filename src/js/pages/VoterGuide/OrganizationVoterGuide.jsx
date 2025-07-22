@@ -1,6 +1,7 @@
 import { Button } from '@mui/material';
 import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
+import TagManager from 'react-gtm-module';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -23,6 +24,7 @@ import OrganizationStore from '../../stores/OrganizationStore';
 import VoterGuideStore from '../../stores/VoterGuideStore';
 import VoterStore from '../../stores/VoterStore';
 import { isSpeakerTypePrivateCitizen } from '../../utils/organization-functions';
+import { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
 import EndorsementCard from '../../components/Widgets/EndorsementCard';
 import ThisIsMeAction from '../../components/Widgets/ThisIsMeAction';
 
@@ -39,6 +41,7 @@ export default class OrganizationVoterGuide extends Component {
     this.state = {
       activeRoute: '',
       autoFollowRedirectHappening: false,
+      dataLayerFired: false,
       // linkedOrganizationWeVoteId: '',
       organizationBannerUrl: '',
       organizationWeVoteId: '',
@@ -136,6 +139,30 @@ export default class OrganizationVoterGuide extends Component {
   }
 
   componentDidUpdate (prevProps) {
+    const { dataLayerFired } = this.state;
+    if (!dataLayerFired && VoterStore.voterFirstRetrieveCompleted()) {
+      const { location: { pathname } } = this.props;
+      const currentPage = getPageDetails();
+      
+      TagManager.dataLayer({
+        dataLayer: {
+          event: 'landing',
+          pageDetails: {
+            pageName: currentPage.pageName,
+            pageType: currentPage.pageType,
+            pathname,
+          },
+          userDetails: {
+            stateCode: VoterStore.getVoterStateCode(),
+            userCohort: VoterStore.getAnalyticsUserCohort(),
+            voterWeVoteId: VoterStore.getVoterWeVoteId(),
+          },
+        },
+      });
+      
+      this.setState({ dataLayerFired: true });
+    }
+    
     // When a new organization is passed in, update this component to show the new data
     if (prevProps.match.params !== this.props.match.params) {
       const nextParams = this.props.match.params;
