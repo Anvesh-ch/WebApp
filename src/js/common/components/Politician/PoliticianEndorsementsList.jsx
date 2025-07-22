@@ -2,8 +2,12 @@ import withStyles from '@mui/styles/withStyles';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import TagManager from 'react-gtm-module';
 import { renderLog } from '../../utils/logging';
 import CandidateStore from '../../../stores/CandidateStore';
+import VoterStore from '../../../stores/VoterStore';
+import PoliticianStore from '../../stores/PoliticianStore';
+import lookupPageNameAndPageTypeDict from '../../../utils/lookupPageNameAndPageTypeDict';
 import {
   limitToShowSupport,
   orderPositionByUltimateDate,
@@ -96,6 +100,24 @@ class PoliticianEndorsementsList extends Component {
     this.setState({
       numberOfPositionsToDisplay,
     });
+
+    //data layer
+    const { location: { pathname: currentPathname } } = window;
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+    const dataLayerObject = {
+      event: 'action',
+      actionDetails: {
+        actionType: 'showMore',
+        buttonId: 'LoadMoreItems-PoliticianEndorsementsList',
+      },
+      userDetails: VoterStore.getAnalyticsUserDetails(),
+      pageDetails: getPageDetails(),
+      numberOfPositionsToDisplay: numberOfPositionsToDisplay,
+    };
+    if (this.props.politicianWeVoteId) {
+      dataLayerObject.politicianDetails = PoliticianStore.getAnalyticsPoliticianDetails(this.props.politicianWeVoteId);
+    }
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
   }
 
   // When we have "likes" put endorsements with most likes at top
