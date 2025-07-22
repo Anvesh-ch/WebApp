@@ -101,7 +101,6 @@ class PoliticianEndorsementsList extends Component {
       numberOfPositionsToDisplay,
     });
 
-    //data layer
     const { location: { pathname: currentPathname } } = window;
     const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
     const dataLayerObject = {
@@ -111,8 +110,8 @@ class PoliticianEndorsementsList extends Component {
         buttonId: 'LoadMoreItems-PoliticianEndorsementsList',
       },
       userDetails: VoterStore.getAnalyticsUserDetails(),
-      pageDetails: getPageDetails(),
-      numberOfPositionsToDisplay: numberOfPositionsToDisplay,
+      pageDetails: currentPage,
+      numberOfPositionsToDisplay,
     };
     if (this.props.politicianWeVoteId) {
       dataLayerObject.politicianDetails = PoliticianStore.getAnalyticsPoliticianDetails(this.props.politicianWeVoteId);
