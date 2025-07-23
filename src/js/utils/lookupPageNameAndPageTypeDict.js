@@ -82,6 +82,10 @@ const pageNameAndTypeSimpleDict = {
     pageName: 'TermsOfService',
     pageType: 'termsOfService',
   },
+  '/more/credits': {
+    pageName: 'CreditsAndThanks', // Added
+    pageType: 'about',
+  },
 };
 
 function calculatePageNameAndPageTypeDict (path) {

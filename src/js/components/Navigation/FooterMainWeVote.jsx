@@ -165,14 +165,35 @@ class FooterMainWeVote extends Component {
                     className={classes.link}
                   />
                   <RowSpacer />
-                  <OpenExternalWebSite
-                    linkIdAttribute="footerLinkCredits"
-                    url={`${webAppConfig.WE_VOTE_URL_PROTOCOL + webAppConfig.WE_VOTE_HOSTNAME}/more/credits`}
-                    target="_blank"
-                    trackingOn
-                    body={(<span>Credits &amp; Thanks</span>)}
+                  <Link
+                    id="footerLinkCredits"
+                    to="/more/credits"
                     className={classes.link}
-                  />
+                    onClick={() => {
+                      const currentPathname = '/more/credits';
+                      const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+                      const dataLayerObject = {
+                        actionDetails: {
+                          buttonId: 'footerLinkCredits',
+                        },
+                        event: 'click',
+                        destinationDetails: {
+                          destinationPageName: currentPage.pageName,
+                          destinationPageType: currentPage.pageType,
+                          destinationPathname: currentPathname,
+                        },
+                        pageDetails: {
+                          pageName: currentPage.pageName,
+                          pageType: currentPage.pageType,
+                          pathname: window.location.pathname,
+                        },
+                        userDetails: VoterStore.getAnalyticsUserDetails(),
+                      };
+                      TagManager.dataLayer({ dataLayer: dataLayerObject });
+                    }}
+                  >
+                    <span>Credits &amp; Thanks</span>
+                  </Link>
                 </>
               ) : (
                 <>
