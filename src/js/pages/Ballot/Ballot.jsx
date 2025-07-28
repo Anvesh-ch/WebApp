@@ -30,6 +30,7 @@ import { cordovaOffsetLog, renderLog } from '../../common/utils/logging';
 import BallotItemCompressed from '../../components/Ballot/BallotItemCompressed';
 import BallotStatusMessage from '../../components/Ballot/BallotStatusMessage';
 import BallotTitleHeader from '../../components/Ballot/BallotTitleHeader';
+import BallotDecisionsTabs from '../../components/Navigation/BallotDecisionsTabs';
 import BallotShowAllItemsFooter from '../../components/Navigation/BallotShowAllItemsFooter';
 import { ballotWrapperBodyStyles } from '../../components/Style/BallotTitleHeaderStyles';
 import { DualHeaderContainer, HeaderContentContainer, HeaderContentOuterContainer, PageContentContainer } from '../../components/Style/pageLayoutStyles';
