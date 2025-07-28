@@ -213,7 +213,8 @@ class OrganizationDisplayForList extends Component {
       <OrganizationDisplayForListWrapper>
         <OrganizationDetailsWrapper>
           <OrganizationLogoWrapper>
-            <Link id="organizationDisplayLogo"
+            <Link
+              id="organizationDisplayLogo"
               to={voterGuideLink}
               className="u-no-underline"
               onClick={() => this.sendEndorserClickEvent('organizationDisplayLogo', voterGuideLink, organizationName)}
