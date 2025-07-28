@@ -173,34 +173,19 @@ class PayToPromoteProcess extends Component {
     });
   }
 
-  onDonationTempSubmit = () => {
+  onDonationTempSubmit = (buttonId) => {
     this.setState({
       preDonation: false,
     });
-
-    // Get current pathname from window
-    const { pathname: currentPathname, search: searchString } = window.location;
-
-    // Get page details using your utility
-    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
-
-    // Prepare dataLayer object
     const dataLayerObject = {
       actionDetails: {
-        actionType: 'navigate',
-        buttonId: 'stripeCheckOutForm',
+        actionType: 'chipIn',
+        buttonId,
       },
       event: 'action',
       userDetails: VoterStore.getAnalyticsUserDetails(),
       pageDetails: getPageDetails(),
-      destinationDetails: {
-        destinationPageName: currentPage.destinationPageName,
-        destinationPageType: currentPage.destinationPageType,
-        destinationPathname: currentPage.destinationPathname,
-      },
-      searchString,
     };
-
     // Push to Google Tag Manager
     TagManager.dataLayer({ dataLayer: dataLayerObject });
   };
@@ -399,7 +384,7 @@ class PayToPromoteProcess extends Component {
                     externalUniqueId="becomeAMember"
                     icon={<LockStyled />}
                     id="stripeCheckOutForm"
-                    onClick={this.onDonationTempSubmit}
+                    onClick={() => this.onDonationTempSubmit('stripeCheckOutForm')}
                   />
                 ) : (
                   <div>
