@@ -70,11 +70,11 @@ class PayToPromoteProcess extends Component {
       if (chipInPaymentValueDefault) {
         this.setState({ chipInPaymentValue: chipInPaymentValueDefault });
       }
-      const {
-        campaignSEOFriendlyPath,
-        campaignTitle,
-      } = getCampaignXValuesFromIdentifiers('', campaignXWeVoteId);
       if (campaignXWeVoteId) {
+        const {
+          campaignSEOFriendlyPath,
+          campaignTitle,
+        } = getCampaignXValuesFromIdentifiers('', campaignXWeVoteId);
         this.setState({
           campaignTitle,
         });
@@ -115,19 +115,19 @@ class PayToPromoteProcess extends Component {
 
   onCampaignStoreChange () {
     const { campaignXWeVoteId } = this.props;
-    const {
-      campaignSEOFriendlyPath,
-      campaignTitle,
-    } = getCampaignXValuesFromIdentifiers('', campaignXWeVoteId);
-    this.setState({
-      campaignTitle,
-    });
-    if (campaignSEOFriendlyPath) {
-      this.setState({
-        campaignSEOFriendlyPath,
-      });
-    }
     if (campaignXWeVoteId) {
+      const {
+        campaignSEOFriendlyPath,
+        campaignTitle,
+      } = getCampaignXValuesFromIdentifiers('', campaignXWeVoteId);
+      this.setState({
+        campaignTitle,
+      });
+      if (campaignSEOFriendlyPath) {
+        this.setState({
+          campaignSEOFriendlyPath,
+        });
+      }
       this.setState({
         campaignXWeVoteId,
       });
@@ -242,12 +242,13 @@ class PayToPromoteProcess extends Component {
       campaignTitle, chipInPaymentValue, chipInPaymentOtherValue,
       loaded, showWaiting, campaignXWeVoteId, preDonation,
     } = this.state;
-    if (campaignXWeVoteId === undefined || campaignXWeVoteId === '') {
-      // console.error('Must have a campaignXWeVoteId defined in PayToPromoteProcess to make a "chip in"');
-      return (
-        <LoadingWheelComp />
-      );
-    }
+    // Commented out for now, since we aren't actually completing the chip-in process yet
+    // if (campaignXWeVoteId === undefined || campaignXWeVoteId === '') {
+    //   // console.error('Must have a campaignXWeVoteId defined in PayToPromoteProcess to make a "chip in"');
+    //   return (
+    //     <LoadingWheelComp />
+    //   );
+    // }
     if (!loaded) {
       return (
         <LoadingWheelComp message="Waiting..." />
@@ -461,7 +462,6 @@ const ButtonInsideWrapper = styled('div')`
   display: flex;
   justify-content: space-between;
   width: 100%;
-  align-items: center;
 `;
 
 const ContributeGridWrapper = styled('div', {
