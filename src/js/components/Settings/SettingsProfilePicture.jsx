@@ -99,7 +99,7 @@ class SettingsProfilePicture extends Component {
 
   facebookClicked () {
     this.setState({
-      profileImageTypeCurrentlyActive: "FACEBOOK",
+      profileImageTypeCurrentlyActive: 'FACEBOOK',
       profileImageTypeCurrentlyActiveSet: true,
       uploadedFileStaged: false,
     });
