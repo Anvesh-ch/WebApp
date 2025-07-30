@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import VoterActions from '../../actions/VoterActions';
 import VoterPhotoUpload from '../../common/components/Settings/VoterPhotoUpload';
 import VoterStore from '../../stores/VoterStore';
-import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
 
 class SettingsProfilePicture extends Component {
   constructor (props) {
@@ -55,7 +55,6 @@ class SettingsProfilePicture extends Component {
       VoterActions.voterPhotoQueuedToSave(undefined);
 
       // Adding event data to dataLayer for Google Tag Manager
-      const page = lookupPageNameAndPageTypeDict(window.location.pathname);
       const dataLayerObject = {
         event: 'action',
         actionDetails: {
@@ -63,11 +62,7 @@ class SettingsProfilePicture extends Component {
           buttonId,
         },
         userDetails: VoterStore.getAnalyticsUserDetails(),
-        pageDetails: {
-          pageName: page.pageName,
-          pageType: page.pageType,
-          pathname: currentPathname,
-        },
+        pageDetails: getPageDetails(),
       };
       TagManager.dataLayer({ dataLayer: dataLayerObject });
     }

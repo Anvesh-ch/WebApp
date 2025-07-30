@@ -11,7 +11,7 @@ import VoterStore from '../../../stores/VoterStore';
 import { isCordova, isWebApp } from '../../utils/isCordovaOrWebApp';
 import isMobileScreenSize from '../../utils/isMobileScreenSize';
 import { renderLog } from '../../utils/logging';
-import lookupPageNameAndPageTypeDict from '../../../utils/lookupPageNameAndPageTypeDict';
+import { getPageDetails } from '../../../utils/lookupPageNameAndPageTypeDict';
 
 class VoterPhotoUpload extends Component {
   constructor (props) {
@@ -118,7 +118,6 @@ class VoterPhotoUpload extends Component {
     VoterActions.voterPhotoDelete();
     VoterActions.voterPhotoQueuedToSave(undefined);
     // Adding event data to dataLayer for Google Tag Manager
-    const page = lookupPageNameAndPageTypeDict(window.location.pathname);
     const dataLayerObject = {
       event: 'action',
       actionDetails: {
@@ -126,11 +125,7 @@ class VoterPhotoUpload extends Component {
         buttonId,
       },
       userDetails: VoterStore.getAnalyticsUserDetails(),
-      pageDetails: {
-        pageName: page.pageName,
-        pageType: page.pageType,
-        pathname: window.location.pathname,
-      },
+      pageDetails: getPageDetails(),
     };
     TagManager.dataLayer({ dataLayer: dataLayerObject });
 
