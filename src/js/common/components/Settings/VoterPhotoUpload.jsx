@@ -51,7 +51,7 @@ class VoterPhotoUpload extends Component {
   async handleWebAppDrop (files) {
     const { voterProfileUploadedImageUrlLarge } = this.state;
     if (files && files[0]) {
-      this.props.onUpload("UPLOADED");
+      this.props.onUpload('UPLOADED');
       const fileFromDropzone = files[0];
       if (!fileFromDropzone) return;
       if (await isHeic(fileFromDropzone)) {
@@ -167,7 +167,7 @@ class VoterPhotoUpload extends Component {
 
   async saveTheBlob (imageBlob) {
     const reader = new FileReader();   // HTML5 FileReader
-    this.props.onUpload("UPLOADED");
+    this.props.onUpload('UPLOADED');
     reader.onload = (evt) => {
       const fileString = evt.target.result;
       // data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIA...
@@ -188,7 +188,7 @@ class VoterPhotoUpload extends Component {
     const response = await fetch(pictureUrl);   // Response stream
     const imageBlob = await response.blob();    // Get the blob
     await this.saveTheBlob(imageBlob);
-    this.props.onUpload("UPLOADED");
+    this.props.onUpload('UPLOADED');
   }
 
   render () {
