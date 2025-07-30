@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
 import styled from 'styled-components';
+import TagManager from 'react-gtm-module';
 import ActivityActions from '../../actions/ActivityActions';
 import AnalyticsActions from '../../actions/AnalyticsActions';
 import BallotActions from '../../actions/BallotActions';
@@ -54,6 +55,7 @@ import lazyPreloadPages from '../../utils/lazyPreloadPages';
 import mapCategoryFilterType from '../../utils/map-category-filter-type';
 import showBallotDecisionsTabs from '../../utilsApi/showBallotDecisionsTabs';
 import { checkShouldUpdate, formatVoterBallotList } from './utils/ballotUtils';
+import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
 
 const CompleteYourProfileOnBallot = React.lazy(() => import(/* webpackChunkName: 'CompleteYourProfile' */ '../../components/CompleteYourProfile/CompleteYourProfileOnBallot'));
 const DelayedLoad = React.lazy(() => import(/* webpackChunkName: 'DelayedLoad' */ '../../common/components/Widgets/DelayedLoad'));
@@ -361,6 +363,17 @@ class Ballot extends Component {
       navigator.serviceWorker.register('/sw.js');
       window.serviceWorkerLoaded = true;
     }
+    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+    const dataLayerObject = {
+      event: 'landing',
+      pageDetails: {
+        pageName: currentPage.pageName,
+        pageType: currentPage.pageType,
+        pathname: currentPathname,
+      },
+      userDetails: VoterStore.getAnalyticsUserDetails(),
+    };
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
   }  // end of componentDidMount
 
   // eslint-disable-next-line camelcase,react/sort-comp
