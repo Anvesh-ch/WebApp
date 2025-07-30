@@ -109,7 +109,17 @@ class BallotScrollingContainer extends Component {
       dataLayerObject.candidateDetails = CandidateStore.getAnalyticsCandidateDetails(candidateWeVoteId);
     }
     if (politicianWeVoteId) {
-      dataLayerObject.politicianDetails = PoliticianStore.getAnalyticsPoliticianDetails(politicianWeVoteId);
+      const politicianDetails = PoliticianStore.getAnalyticsPoliticianDetails(politicianWeVoteId);
+      // Only include fields that have valid values
+      const filteredPoliticianDetails = {};
+      Object.entries(politicianDetails).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          filteredPoliticianDetails[key] = value;
+        }
+      });
+      if (Object.keys(filteredPoliticianDetails).length > 0) {
+        dataLayerObject.politicianDetails = filteredPoliticianDetails;
+      }
     }
     // console.log('Pushing to dataLayer:', dataLayerObject);
     TagManager.dataLayer({ dataLayer: dataLayerObject });
