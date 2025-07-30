@@ -660,7 +660,9 @@ const EditBanner = styled.div`
   flex-wrap: wrap;
   font-size: 14px;
   justify-content: space-between;
+  max-width: 960px;
   padding: 12px 16px;
+  width: 100%;
 `;
 const EditButton = styled.button`
   background: ${DesignTokenColors.whiteUI};
@@ -681,7 +683,9 @@ const EditButton = styled.button`
   }
 `;
 const EditBannerWrapper = styled.div`
-  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
 `;
 
 const TipsLink = styled.a`
