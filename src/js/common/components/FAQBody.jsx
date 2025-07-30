@@ -32,11 +32,7 @@ export default class FAQBody extends Component {
         destinationPageName: destinationPage.pageName,
         destinationPathname: destinationPath,
       },
-      userDetails: {
-        stateCode: VoterStore.getVoterStateCode(),
-        userCohort: VoterStore.getAnalyticsUserCohort(),
-        voterWeVoteId: VoterStore.getVoterWeVoteId(),
-      },
+      userDetails: VoterStore.getAnalyticsUserDetails(),
     };
 
     TagManager.dataLayer({ dataLayer: dataLayerObj });
