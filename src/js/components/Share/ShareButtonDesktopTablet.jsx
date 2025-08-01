@@ -12,6 +12,7 @@ import { isWebApp } from '../../common/utils/isCordovaOrWebApp';
 import { renderLog } from '../../common/utils/logging';
 import stringContains from '../../common/utils/stringContains';
 import AppObservableStore, { messageService } from '../../common/stores/AppObservableStore';
+import BallotStore from '../../stores/BallotStore';
 import VoterStore from '../../stores/VoterStore';
 import lookupPageNameAndPageTypeDict, { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
 
@@ -165,6 +166,10 @@ class ShareButtonDesktopTablet extends Component {
         destinationPathname: pathnameWithModalShare,
       },
     };
+    const electionDetails = BallotStore.getAnalyticsElectionDetails();
+    if (electionDetails) {
+      dataLayerObject.electionDetails = electionDetails;
+    }
     // console.log('Pushing to dataLayer:', dataLayerObject);
     TagManager.dataLayer({ dataLayer: dataLayerObject });
 

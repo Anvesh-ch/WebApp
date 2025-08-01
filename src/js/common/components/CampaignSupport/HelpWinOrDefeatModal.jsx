@@ -204,7 +204,7 @@ class HelpWinOrDefeatModal extends Component {
   }
 }
 HelpWinOrDefeatModal.propTypes = {
-  ballotItemWeVoteId: PropTypes.string.isRequired,
+  ballotItemWeVoteId: PropTypes.string,
   politicianWeVoteId: PropTypes.string,
   show: PropTypes.bool,
   toggleModal: PropTypes.func.isRequired,
