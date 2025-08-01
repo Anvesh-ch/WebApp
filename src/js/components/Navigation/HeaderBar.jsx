@@ -4,7 +4,7 @@ import withStyles from '@mui/styles/withStyles';
 import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
 import styled from 'styled-components';
-import TagManager from 'react-gtm-module';
+// import TagManager from 'react-gtm-module';
 import OrganizationActions from '../../actions/OrganizationActions';
 import VoterActions from '../../actions/VoterActions';
 import VoterGuideActions from '../../actions/VoterGuideActions';
@@ -32,7 +32,7 @@ import HeaderBarLogo from './HeaderBarLogo';
 import HeaderBarModals from './HeaderBarModals';
 import TabWithPushHistory from './TabWithPushHistory';
 import webAppConfig from '../../config';
-import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+// import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
 
 
 const HeaderNotificationMenu = React.lazy(() => import(/* webpackChunkName: 'HeaderNotificationMenu' */ './HeaderNotificationMenu'));
@@ -158,7 +158,7 @@ class HeaderBar extends Component {
   handleTabChange (newValue) {
     this.customHighlightSelector();
     // console.log('handleTabChange ', newValue);
-    if (newValue === 4) {  // Check if the tab change is for challenges
+    /* if (newValue === 4) {  // Check if the tab change is for challenges
       const currentPathname = window.location.pathname;
       const destinationPathname = '/challenges';
       const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
@@ -181,7 +181,7 @@ class HeaderBar extends Component {
           userDetails: VoterStore.getAnalyticsUserDetails(),
         },
       });
-    }
+    } */
     this.setState({ tabsValue: newValue });
   }
 
