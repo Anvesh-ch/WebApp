@@ -62,7 +62,7 @@ const nonFluxState = {
   showAskFriendsModal: false,
   showChooseOrOpposeIntroModal: false,
   showCompleteYourProfileModal: false,
-  showEditCandidateBar: true,
+  showEditCandidateBar: false,  // Turned on for WV-1161
   showEditAddressButton: false,
   showElectionsWithOrganizationVoterGuidesModal: false,
   showHeader: 0,
