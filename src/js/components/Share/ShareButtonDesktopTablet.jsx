@@ -167,7 +167,7 @@ class ShareButtonDesktopTablet extends Component {
       },
     };
     const electionDetails = BallotStore.getAnalyticsElectionDetails();
-    if (electionDetails) {
+    if (electionDetails && electionDetails.electionDate) {
       dataLayerObject.electionDetails = electionDetails;
     }
     // console.log('Pushing to dataLayer:', dataLayerObject);
