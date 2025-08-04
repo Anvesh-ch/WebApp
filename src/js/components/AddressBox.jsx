@@ -1,6 +1,5 @@
 import { Button } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
-import parser from 'parse-address';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import TagManager from 'react-gtm-module';
@@ -136,20 +135,6 @@ class AddressBox extends Component {
     if (textForMapSearch && textForMapSearch !== '') {
       ballotCaveat = `Saving new address '${textForMapSearch}'...`;
     }
-    const address = textForMapSearch;
-
-    let city = '';
-    let region = '';
-    let zip = '';
-
-    if (address) {
-      const parsedAddress = parser.parseLocation(address);
-      if (parsedAddress) {
-        city = parsedAddress.city || '';
-        region = parsedAddress.state || '';
-        zip = parsedAddress.zip || '';
-      }
-    }
 
     // console.log('Passed buttonId:', buttonId);
     const dataLayerObject = {
@@ -160,14 +145,11 @@ class AddressBox extends Component {
       event: 'action',
       pageDetails: getPageDetails(),
       userDetails: VoterStore.getAnalyticsUserDetails(),
-      electionDetails: {
-        electionGeo: {
-          city,
-          region,
-          zip,
-        },
-      },
     };
+    const electionDetails = BallotStore.getAnalyticsElectionDetails(textForMapSearch);
+    if (electionDetails && electionDetails.electionDate) {
+      dataLayerObject.electionDetails = electionDetails;
+    }
     // console.log('dataLayerObject:', dataLayerObject);
     TagManager.dataLayer({ dataLayer: dataLayerObject });
 

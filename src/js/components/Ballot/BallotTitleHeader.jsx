@@ -113,37 +113,19 @@ class BallotTitleHeader extends Component {
       const showEditAddress = true;
       const showSelectBallotModal = true;
       // this.props.toggleSelectBallotModal('', showEditAddress, false);
-
-      const address = VoterStore.getTextForMapSearch();
-      let city = '';
-      let region = '';
-      let zip = '';
-
-      if (address) {
-        const parsedAddress = parser.parseLocation(address);
-        if (parsedAddress) {
-          city = parsedAddress.city || '';
-          region = parsedAddress.state || '';
-          zip = parsedAddress.zip || '';
-        }
-      }
-
       const dataLayerObject = {
         actionDetails: {
           actionType: 'openModal',
           buttonId,
         },
         event: 'action',
-        userDetails: VoterStore.getAnalyticsUserDetails(),
         pageDetails: getPageDetails(),
-        electionDetails: {
-          electionGeo: {
-            city,
-            region,
-            zip,
-          },
-        },
+        userDetails: VoterStore.getAnalyticsUserDetails(),
       };
+      const electionDetails = BallotStore.getAnalyticsElectionDetails();
+      if (electionDetails && electionDetails.electionDate) {
+        dataLayerObject.electionDetails = electionDetails;
+      }
       // console.log('dataLayerObject:', dataLayerObject);
       TagManager.dataLayer({ dataLayer: dataLayerObject });
 

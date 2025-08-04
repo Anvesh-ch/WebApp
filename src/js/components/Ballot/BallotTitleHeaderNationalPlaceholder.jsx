@@ -71,20 +71,6 @@ class BallotTitleHeaderNationalPlaceholder extends Component {
       const showEditAddress = true;
       const showSelectBallotModal = true;
       // this.props.toggleSelectBallotModal('', showEditAddress, false);
-      const address = VoterStore.getTextForMapSearch();
-      let city = '';
-      let region = '';
-      let zip = '';
-
-      if (address) {
-        const parsedAddress = parser.parseLocation(address);
-        if (parsedAddress) {
-          city = parsedAddress.city || '';
-          region = parsedAddress.state || '';
-          zip = parsedAddress.zip || '';
-        }
-      }
-
       const dataLayerObject = {
         actionDetails: {
           actionType: 'openModal',
@@ -93,14 +79,11 @@ class BallotTitleHeaderNationalPlaceholder extends Component {
         event: 'action',
         userDetails: VoterStore.getAnalyticsUserDetails(),
         pageDetails: getPageDetails(),
-        electionDetails: {
-          electionGeo: {
-            city,
-            region,
-            zip,
-          },
-        },
       };
+      const electionDetails = BallotStore.getAnalyticsElectionDetails();
+      if (electionDetails && electionDetails.electionDate) {
+        dataLayerObject.electionDetails = electionDetails;
+      }
       TagManager.dataLayer({ dataLayer: dataLayerObject });
 
       AppObservableStore.setShowSelectBallotModal(showSelectBallotModal, showEditAddress);
