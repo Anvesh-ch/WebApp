@@ -234,6 +234,7 @@ class FilterBaseSearch extends Component {
       actionDetails: {
         actionType: 'search',
         searchKeyword: searchText,
+        buttonId: 'searchIconButton',
       },
       event: 'action',
       pageDetails: getPageDetails(),
