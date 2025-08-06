@@ -20,6 +20,7 @@ import OrganizationCard from '../../components/VoterGuide/OrganizationCard';
 import OrganizationVoterGuideCard from '../../components/VoterGuide/OrganizationVoterGuideCard';
 import OrganizationVoterGuideTabs from '../../components/VoterGuide/OrganizationVoterGuideTabs';
 import AppObservableStore from '../../common/stores/AppObservableStore';
+import BallotStore from '../../stores/BallotStore';
 import OrganizationStore from '../../stores/OrganizationStore';
 import VoterGuideStore from '../../stores/VoterGuideStore';
 import VoterStore from '../../stores/VoterStore';
@@ -85,6 +86,7 @@ export default class OrganizationVoterGuide extends Component {
         voterGuideAnalyticsHasBeenSavedOnce,
       });
     }
+    this.fireGTMDataLayerIfReady();
 
     const modalToOpen = modalToShow || '';
     // console.log('componentDidMount modalToOpen:', modalToOpen);
@@ -139,19 +141,7 @@ export default class OrganizationVoterGuide extends Component {
   }
 
   componentDidUpdate (prevProps) {
-    const { dataLayerFired } = this.state;
-    if (!dataLayerFired && VoterStore.voterFirstRetrieveCompleted()) {
-      const dataLayerObject = {
-        actionDetails: {
-          actionType: 'landing',
-        },
-        event: 'landing',
-        pageDetails: getPageDetails(),
-        userDetails: VoterStore.getAnalyticsUserDetails(),
-      };
-      TagManager.dataLayer({ dataLayer: dataLayerObject });
-      this.setState({ dataLayerFired: true });
-    }
+    this.fireGTMDataLayerIfReady();
 
     // When a new organization is passed in, update this component to show the new data
     if (prevProps.match.params !== this.props.match.params) {
@@ -265,6 +255,41 @@ export default class OrganizationVoterGuide extends Component {
     this.setState({
       activeRoute: newActiveRoute,
     });
+  }
+
+  fireGTMDataLayerIfReady () {
+    let organization = {};
+    const { dataLayerFired, organizationWeVoteId } = this.state;
+    if (dataLayerFired) return;
+    // console.log('OrganizationVoterGuide, fireGTMDataLayerIfReady, dataLayerFired: ', dataLayerFired, ', organizationWeVoteId:', organizationWeVoteId, ', voterFirstRetrieveCompleted:', VoterStore.voterFirstRetrieveCompleted());
+    if (!VoterStore.voterFirstRetrieveCompleted()) return;
+    if (!organizationWeVoteId) return;
+    if (organizationWeVoteId) {
+      organization = OrganizationStore.getOrganizationByWeVoteId(organizationWeVoteId);
+      // console.log('OrganizationVoterGuide, fireGTMDataLayerIfReady, organization:', organization);
+    }
+    if (!organization && !organization.organization_id) return;
+    const dataLayerObject = {
+      actionDetails: {
+        actionType: 'landing',
+      },
+      event: 'landing',
+      pageDetails: getPageDetails(),
+      userDetails: VoterStore.getAnalyticsUserDetails(),
+    };
+    dataLayerObject.endorserDetails = {
+      endorserName: organization.organization_name || '',
+      endorserLogo: organization.organization_photo_url_medium || '',
+      endorserWeVoteId: organization.organization_we_vote_id || '',
+      linkedVoterWeVoteId: organization.linked_voter_we_vote_id || '',
+      stateCode: organization.state_code || '',
+    };
+    const electionDetails = BallotStore.getAnalyticsElectionDetails();
+    if (electionDetails && electionDetails.electionDate) {
+      dataLayerObject.electionDetails = electionDetails;
+    }
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
+    this.setState({ dataLayerFired: true });
   }
 
   ballotItemLinkHasBeenClicked (selectedBallotItemId) {

@@ -113,32 +113,14 @@ class Ready extends Component {
     this.analyticsTimer = setTimeout(() => {
       AnalyticsActions.saveActionReadyVisit(VoterStore.electionId());
     }, 8000);
+    this.fireGTMDataLayerWhenReady();
     window.scrollTo(0, 0);
   }
 
   componentDidUpdate () {
     if (AppObservableStore.isSnackMessagePending()) openSnackbar({});
-    const { dataLayerFired } = this.state;
-    if (!dataLayerFired) {
-      if (VoterStore.voterFirstRetrieveCompleted()) {
-        const dataLayerObject = {
-          actionDetails: {
-            actionType: 'landing',
-          },
-          event: 'landing',
-          pageDetails: getPageDetails(),
-          userDetails: VoterStore.getAnalyticsUserDetails(),
-        };
-
-        TagManager.dataLayer({ dataLayer: dataLayerObject });
-
-        this.setState({
-          dataLayerFired: true,
-        });
-      }
-    }
+    this.fireGTMDataLayerWhenReady();
   }
-
 
   componentDidCatch (error, info) {
     console.log('!!!Ready.jsx caught: ', error, info.componentStack);
@@ -183,6 +165,28 @@ class Ready extends Component {
     }
     cordovaSimplePageContainerTopOffset(VoterStore.getVoterIsSignedIn());
     return {};
+  }
+
+  fireGTMDataLayerWhenReady () {
+    const { dataLayerFired } = this.state;
+    if (!dataLayerFired) {
+      if (VoterStore.voterFirstRetrieveCompleted()) {
+        const dataLayerObject = {
+          actionDetails: {
+            actionType: 'landing',
+          },
+          event: 'landing',
+          pageDetails: getPageDetails(),
+          userDetails: VoterStore.getAnalyticsUserDetails(),
+        };
+
+        TagManager.dataLayer({ dataLayer: dataLayerObject });
+
+        this.setState({
+          dataLayerFired: true,
+        });
+      }
+    }
   }
 
   render () {

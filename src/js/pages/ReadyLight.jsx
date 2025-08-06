@@ -51,6 +51,7 @@ class ReadyLight extends Component {
     this.appStateSubscription = messageService.getMessage().subscribe((msg) => this.onAppObservableStoreChange(msg));
     this.onAppObservableStoreChange();
     AppObservableStore.setEvaluateHeaderDisplay();
+    this.voterStoreListener = VoterStore.addListener(this.onVoterStoreChange.bind(this));
 
     this.preloadTimer = setTimeout(() => {
       if (apiCalming('activityNoticeListRetrieve', 10000)) {
@@ -66,29 +67,12 @@ class ReadyLight extends Component {
     this.analyticsTimer = setTimeout(() => {
       AnalyticsActions.saveActionReadyVisit(VoterStore.electionId());
     }, 8000);
+    this.fireGTMDataLayerWhenReady();
     window.scrollTo(0, 0);
   }
 
   componentDidUpdate () {
-    const { dataLayerFired } = this.state;
-    if (!dataLayerFired) {
-      if (VoterStore.voterFirstRetrieveCompleted()) {
-        const dataLayerObject = {
-          actionDetails: {
-            actionType: 'landing',
-          },
-          event: 'landing',
-          pageDetails: getPageDetails(),
-          userDetails: VoterStore.getAnalyticsUserDetails(),
-        };
-
-        TagManager.dataLayer({ dataLayer: dataLayerObject });
-
-        this.setState({
-          dataLayerFired: true,
-        });
-      }
-    }
+    this.fireGTMDataLayerWhenReady();
   }
 
 
@@ -98,6 +82,7 @@ class ReadyLight extends Component {
 
   componentWillUnmount () {
     this.appStateSubscription.unsubscribe();
+    this.voterStoreListener.remove();
     clearTimeout(this.analyticsTimer);
     clearTimeout(this.preloadTimer);
     clearTimeout(this.voterPlansTimer);
@@ -118,6 +103,13 @@ class ReadyLight extends Component {
     });
   }
 
+  onVoterStoreChange () {
+    // console.log('Ready, onVoterStoreChange voter: ', VoterStore.getVoter());
+    this.setState({
+      voterIsSignedIn: VoterStore.getVoterIsSignedIn(), // Just to trigger update
+    });
+  }
+
   goToBallot = () => {
     historyPush('/ballot');
   }
@@ -130,6 +122,27 @@ class ReadyLight extends Component {
     return {};
   }
 
+  fireGTMDataLayerWhenReady () {
+    const { dataLayerFired } = this.state;
+    if (!dataLayerFired) {
+      if (VoterStore.voterFirstRetrieveCompleted()) {
+        const dataLayerObject = {
+          actionDetails: {
+            actionType: 'landing',
+          },
+          event: 'landing',
+          pageDetails: getPageDetails(),
+          userDetails: VoterStore.getAnalyticsUserDetails(),
+        };
+
+        TagManager.dataLayer({ dataLayer: dataLayerObject });
+
+        this.setState({
+          dataLayerFired: true,
+        });
+      }
+    }
+  }
   render () {
     renderLog('ReadyLight');  // Set LOG_RENDER_EVENTS to log all renders
     const {
