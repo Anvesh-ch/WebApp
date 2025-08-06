@@ -70,7 +70,7 @@ class FilterBaseSearch extends Component {
     this.organizationStoreListener.remove();
   }
 
-  handleSearch (event) {
+  handleSearch (event, buttonId) {
     // if search bar always open, isSearching is toggled only when input is given text is cleared with 'x' button
     if (this.props.alwaysOpen && event.target.value && !this.props.isSearching) {
       this.toggleSearch();
@@ -96,7 +96,7 @@ class FilterBaseSearch extends Component {
       // If search value one character or less, exit
       if (searchText.length <= 1) return [];
 
-      this.searchNewItems(searchText);
+      this.searchNewItems(searchText, buttonId);
       // Filter out items without the search terms, and put the most likely search result at the top
       // Only return results if they get past the filter
       const sortedFiltered = this.filterItems(searchText);
@@ -188,7 +188,7 @@ class FilterBaseSearch extends Component {
     this.props.onToggleSearch(isSearching);
   };
 
-  handleSearchAllItemsRefresh = () => { // eslint-disable-line consistent-return
+  handleSearchAllItemsRefresh = (buttonId = 'searchInput') => { // eslint-disable-line consistent-return
     // console.log('handleSearchAllItemsRefresh');
     let { searchText } = this.state;
     searchText = searchText.trimStart();
@@ -200,20 +200,20 @@ class FilterBaseSearch extends Component {
 
     // Filter out items without the search terms, and put the most likely search result at the top
     // Only return results if they get past the filter
-    this.searchNewItems(searchText);
+    this.searchNewItems(searchText, buttonId);
     const sortedFiltered = this.filterItems(searchText);
     // console.log('sortedFiltered:', sortedFiltered);
     return this.props.onFilterBaseSearch(searchText, sortedFiltered.length ? sortedFiltered : []);
   }
 
-  searchNewItems = (searchText) => {
+  searchNewItems = (searchText, buttonId) => {
     // const { opinionsAndBallotItemsSearchMode } = this.props;
     const { searchTextAlreadyRetrieved } = this.state;
     // console.log('searchNewItems searchText:', searchText, ', searchTextAlreadyRetrieved:', searchTextAlreadyRetrieved);
     // if (opinionsAndBallotItemsSearchMode) {
     // Reach out to API server to get more Organizations or Ballot items.
     if (!searchTextAlreadyRetrieved.includes(searchText)) {
-      this.sendSearchDataLayer(searchText);
+      this.sendSearchDataLayer(searchText, buttonId);
       OrganizationActions.organizationSearch(searchText);
       BallotActions.ballotItemOptionsRetrieve('', searchText);
       searchTextAlreadyRetrieved.push(searchText);
@@ -229,17 +229,21 @@ class FilterBaseSearch extends Component {
     }
   }
 
-  sendSearchDataLayer (searchText) {
+  sendSearchDataLayer (searchText, buttonId) {
     const dataLayerObject = {
       actionDetails: {
         actionType: 'search',
+        buttonId,
         searchKeyword: searchText,
-        buttonId: 'searchIconButton',
       },
       event: 'action',
       pageDetails: getPageDetails(),
       userDetails: VoterStore.getAnalyticsUserDetails(),
     };
+    const electionDetails = BallotStore.getAnalyticsElectionDetails();
+    if (electionDetails && electionDetails.electionDate) {
+      dataLayerObject.electionDetails = electionDetails;
+    }
     TagManager.dataLayer({ dataLayer: dataLayerObject });
   }
 
@@ -281,7 +285,7 @@ class FilterBaseSearch extends Component {
             classes={{ input: inputBaseInputClasses, root: inputBaseRootClasses }}
             id="searchInput"
             inputRef={(input) => { this.searchInput = input; }}
-            onChange={this.handleSearch}
+            onChange={(event) => this.handleSearch(event, 'searchInput')}
             value={searchText}
             onFocus={() => focusTextFieldAndroid('FilterBaseSearch')}
             onBlur={blurTextFieldAndroid}

@@ -174,6 +174,7 @@ class PayToPromoteProcess extends Component {
   }
 
   onDonationTempSubmit = (buttonId) => {
+    const { chipInPaymentValue } = this.state;
     this.setState({
       preDonation: false,
     });
@@ -181,6 +182,7 @@ class PayToPromoteProcess extends Component {
       actionDetails: {
         actionType: 'chipIn',
         buttonId,
+        chipInPaymentValue,
       },
       event: 'action',
       userDetails: VoterStore.getAnalyticsUserDetails(),

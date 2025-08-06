@@ -44,7 +44,7 @@ export default class Header extends Component {
       organizationModalHidePositions: false,
       sharedItemCode: '',
       showHowItWorksModal: false,
-      showEditCandidateBar: AppObservableStore.getShowEditCandidateBar(),
+      showNotificationBarAboveHeader: AppObservableStore.getShowNotificationBarAboveHeader(),
       showVoterPlanModal: false,
       showOrganizationModal: false,
       showPositionDrawer: false,
@@ -151,7 +151,7 @@ export default class Header extends Component {
       showOrganizationModal: AppObservableStore.showOrganizationModal(),
       showPositionDrawer: AppObservableStore.showPositionDrawer(),
       showSharedItemModal: AppObservableStore.showSharedItemModal(),
-      showEditCandidateBar: AppObservableStore.getShowEditCandidateBar(),
+      showNotificationBarAboveHeader: AppObservableStore.getShowNotificationBarAboveHeader(),
     });
   }
 
@@ -209,12 +209,12 @@ export default class Header extends Component {
   }
 
   closeEditBar () {
-    AppObservableStore.setShowEditCandidateBar(false);
+    AppObservableStore.setShowNotificationBarAboveHeader(false);
   }
 
   render () {
     renderLog('Header');  // Set LOG_RENDER_EVENTS to log all renders
-    const { showEditCandidateBar } = this.state;
+    const { showNotificationBarAboveHeader } = this.state;
 
     if (this.hideHeader()) {
       renderLog('Header hidden');
@@ -223,7 +223,7 @@ export default class Header extends Component {
     const updateCandidateInformationLink = 'https://docs.google.com/forms/d/e/1FAIpQLSePdeW32PClaSO1pUWBJnQ75wFGPOtviNaqOABBYps7NIH3hA/viewform?usp=sf_link';
     const pathname = normalizedHref();
     const isCandidatePage = /^\/[-a-z0-9]+\/-\/?$/.test(pathname);
-    const editBannerComponent = (showEditCandidateBar && isCandidatePage) && (
+    const notificationBarAboveHeader = (showNotificationBarAboveHeader && isCandidatePage) && (
       <EditBanner>
         <BannerText>
           Review your candidate’s profile for accuracy or add more info.
@@ -530,9 +530,9 @@ export default class Header extends Component {
           <IPhoneSpacer />
           <HeadroomWrapper id="hw4">
             <div className={pageHeaderClasses} style={cordovaTopHeaderTopMargin()} id="header-container">
-              {showEditCandidateBar && (
+              {showNotificationBarAboveHeader && (
                 <EditBannerWrapper>
-                  {editBannerComponent}
+                  {notificationBarAboveHeader}
                 </EditBannerWrapper>
               )}
               {(headerNotVisible || hideHeader) ? (

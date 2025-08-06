@@ -115,7 +115,7 @@ class OrganizationDisplayForList extends Component {
         actionType: 'navigate',
         buttonId,
         endorserName,
-        organizationWeVoteId,
+        endorserWeVoteId: organizationWeVoteId,
       },
       event: 'action',
       destinationDetails: {
