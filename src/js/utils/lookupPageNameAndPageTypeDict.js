@@ -22,8 +22,8 @@ const pageNameAndTypeSimpleDict = {
     pageType: !isWeVoteMarketingSite() || window.isCordovaGlobal ? 'homepage' : 'donate',
   },
   '/more/about': {
-    pageName: 'About',
-    pageType: 'about',
+    pageName: 'Team',
+    pageType: 'team',
   },
   '/more/attributions': {
     pageName: 'Attributions',
@@ -81,6 +81,10 @@ const pageNameAndTypeSimpleDict = {
   '/terms': {
     pageName: 'TermsOfService',
     pageType: 'termsOfService',
+  },
+  '/more/credits': {
+    pageName: 'Credits',
+    pageType: 'credits',
   },
 };
 

@@ -23,8 +23,8 @@ export default function FooterCandidateList () {
       event: 'action',
       pageDetails: getPageDetails(),
       destinationDetails: {
-        destinationPageName: destinationPage.pageName,
-        destinationPageType: destinationPage.pageType,
+        destinationPageName: destinationPage.pageName || 'notSet',
+        destinationPageType: destinationPage.pageType || 'notSet',
         destinationPathname: linkTo,
       },
       userDetails: VoterStore.getAnalyticsUserDetails(),
@@ -45,14 +45,15 @@ export default function FooterCandidateList () {
           .toLowerCase();
         // console.log('tempStateCode:', tempStateCode, ', stateAlreadySelected:', stateAlreadySelected);
         const linkTo = `/${stateNamePhraseLowerCase}/cs/`;
+        const buttonId = `footerLink_${stateNamePhraseLowerCase}`;
 
         return (
           <SimpleModeItemWrapper key={stateCode}>
             <Link
-              id={`${stateNamePhraseLowerCase}_Link`}
+              id={buttonId}
               className="u-link-color"
               to={linkTo}
-              onClick={() => handleClick(linkTo, `${stateNamePhraseLowerCase}_Link`)}
+              onClick={() => handleClick(linkTo, buttonId)}
             >
               {stateName}
               {' '}
