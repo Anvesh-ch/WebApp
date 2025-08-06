@@ -26,7 +26,7 @@ export default class OpenExternalWebSite extends Component {
       const dataLayerObject = {
         actionDetails: {
           actionType: 'navigate',
-          buttonId: linkIdAttribute,
+          buttonId: linkIdAttribute || 'externalLink',
         },
         event: 'click',
         destinationDetails: {
@@ -43,15 +43,9 @@ export default class OpenExternalWebSite extends Component {
       };
       if (candidateWeVoteId) {
         dataLayerObject.candidateDetails = CandidateStore.getAnalyticsCandidateDetails(candidateWeVoteId);
-      } else {
-        // console.log('candidateWeVoteId is falsy:', candidateWeVoteId);
       }
       if (politicianWeVoteId) {
-        // console.log('About to get politician details for:', politicianWeVoteId);
-        // console.log('politicianDetails returned:', politicianDetails);
         dataLayerObject.politicianDetails = PoliticianStore.getAnalyticsPoliticianDetails(politicianWeVoteId);
-      } else {
-        // console.log('politicianWeVoteId is falsy:', politicianWeVoteId);
       }
       // console.log('Sending dataLayerObject to GTM:', dataLayerObject);
       TagManager.dataLayer({ dataLayer: dataLayerObject });

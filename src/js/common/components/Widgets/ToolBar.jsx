@@ -27,10 +27,11 @@ function ToolBar (params) {
       <ToolBarContainer>
         <Suspense fallback={<></>}>
           <OpenExternalWebSite
-            linkIdAttribute="wevoteTikTok"
+            linkIdAttribute="weVoteTikTok"
             className="u-no-underline"
             url="https://tiktok.com/@wevoteus"
             target="_blank"
+            trackingOn
             ariaLabel="TikTok"
             body={(
               <Tooltip title="TikTok">
@@ -44,13 +45,14 @@ function ToolBar (params) {
 
         <Suspense fallback={<></>}>
           <OpenExternalWebSite
-            linkIdAttribute="wevoteTwitter"
+            linkIdAttribute="weVoteTwitter"
             className="u-no-underline"
-            url="https://twitter.com/WeVote"
+            url="https://x.com/WeVote"
             target="_blank"
-            ariaLabel="Twitter"
+            trackingOn
+            ariaLabel="X / Twitter"
             body={(
-              <Tooltip title="Twitter">
+              <Tooltip title="X / Twitter">
                 <IconButton size="large">
                   <TwitterStyled />
                 </IconButton>
@@ -61,10 +63,11 @@ function ToolBar (params) {
 
         <Suspense fallback={<></>}>
           <OpenExternalWebSite
-            linkIdAttribute="wevoteFacebook"
+            linkIdAttribute="weVoteFacebook"
             className="u-no-underline"
             url="https://www.facebook.com/WeVoteUSA"
             target="_blank"
+            trackingOn
             ariaLabel="Facebook"
             body={(
               <Tooltip title="Facebook">
@@ -78,10 +81,11 @@ function ToolBar (params) {
 
         <Suspense fallback={<></>}>
           <OpenExternalWebSite
-            linkIdAttribute="wevoteInstagram"
+            linkIdAttribute="weVoteInstagram"
             className="u-no-underline"
             url="https://www.instagram.com/WeVote"
             target="_blank"
+            trackingOn
             ariaLabel="Instagram"
             body={(
               <Tooltip title="Instagram">
@@ -99,6 +103,7 @@ function ToolBar (params) {
             className="u-no-underline"
             url="https://eepurl.com/cx_frP"
             target="_blank"
+            trackingOn
             ariaLabel="Newsletter"
             body={(
               <Tooltip title="Newsletter">
@@ -113,10 +118,11 @@ function ToolBar (params) {
         {!hideGitHub && (
           <Suspense fallback={<></>}>
             <OpenExternalWebSite
-              linkIdAttribute="wevoteGithub"
+              linkIdAttribute="weVoteGithub"
               className="u-no-underline"
               url="https://github.com/WeVote"
               target="_blank"
+              trackingOn
               ariaLabel="Github"
               body={isMobileScreenSize() ? (<></>) : (
                 <Tooltip title="Github">
@@ -130,10 +136,11 @@ function ToolBar (params) {
         )}
         <Suspense fallback={<></>}>
           <OpenExternalWebSite
-            linkIdAttribute="wevoteBlog"
+            linkIdAttribute="weVoteBlog"
             className="u-no-underline"
             url="https://blog.wevote.us/"
             target="_blank"
+            trackingOn
             ariaLabel="Blog"
             body={(
               <Tooltip title="Blog">
