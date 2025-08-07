@@ -8,7 +8,6 @@ import styled from 'styled-components';
 import { hasIPhoneNotch, isAndroidSizeWide } from '../../common/utils/cordovaUtils';
 import { isAndroid, isCordova } from '../../common/utils/isCordovaOrWebApp';
 import { renderLog } from '../../common/utils/logging';
-import itemPositionStatementActionBar from "./ItemPositionStatementActionBar";
 
 
 class ModalDisplayTemplateA extends Component {
@@ -25,12 +24,8 @@ class ModalDisplayTemplateA extends Component {
     } = this.props;
     let dialogPaperCombined;
     if (tallMode) {
-      dialogPaperCombined = `${classes.dialogPaper} ${classes.dialogPaperAdditionTall}`;
-    }
-    // if (tallMode) {
-    //   dialogPaperCombined = { ...classes.dialogPaper, ...classes.dialogPaperAdditionTall };
-    // }
-    else {
+      dialogPaperCombined = { ...classes.dialogPaper, ...classes.dialogPaperAdditionTall };
+    } else {
       dialogPaperCombined = classes.dialogPaper;
     }
     // This template is used by other components like ActivityPostModal, and PositionStatementModal
@@ -85,12 +80,12 @@ export const templateAStyles = (theme) => ({
   dialogPaper: {
     marginTop: hasIPhoneNotch() ? 68 : 48,
     minHeight: isAndroid() ? '257px' : '200px',
-    // maxHeight: '350px',
-    // height: '80%',
+    maxHeight: '350px',
+    height: '80%',
     width: '90%',
-    maxWidth: '650px',
-    // top: '0',
-    // transform: isAndroid() ? 'translate(0%, -18%)' : 'translate(0%, -20%)',
+    maxWidth: '600px',
+    top: '0',
+    transform: isAndroid() ? 'translate(0%, -18%)' : 'translate(0%, -20%)',
     [theme.breakpoints.down('xs')]: {
       minWidth: '95%',
       maxWidth: '95%',
@@ -103,7 +98,7 @@ export const templateAStyles = (theme) => ({
     },
   },
   dialogPaperAdditionTall: {
-    maxHeight: '750px',
+    maxHeight: '550px',
     [theme.breakpoints.down('xs')]: {
       maxHeight: '530px',
     },
