@@ -116,6 +116,9 @@ function calculatePageNameAndPageTypeDictForExternalUrls (pathOrURL) {
   } else if (/^\/[^/\s]+$/.test(pathOrURL)) {
     pageName = 'TwitterHandleLanding';
     pageType = 'endorser';  // Changed from 'twitterHandleLanding' to 'endorser'
+  } else if (pathOrURL.endsWith('/more/credits')) {
+    pageName = 'CreditsAndThanks';
+    pageType = 'about';
   }
 
   if (pathOrURL.startsWith('https//') || pathOrURL.startsWith('http://')) {

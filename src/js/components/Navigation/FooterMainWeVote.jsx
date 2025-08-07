@@ -165,12 +165,17 @@ class FooterMainWeVote extends Component {
                     className={classes.link}
                   />
                   <RowSpacer />
-                  <Link
-                    id="footerLinkCredits"
-                    to="/more/credits"
+                  <OpenExternalWebSite
+                    linkIdAttribute="footerLinkCredits"
+                    url={`${webAppConfig.WE_VOTE_URL_PROTOCOL + webAppConfig.WE_VOTE_HOSTNAME}/more/credits`}
+                    target="_blank"
+                    trackingOn
+                    body={(<span>Credits &amp; Thanks</span>)}
                     className={classes.link}
-                    onClick={() => {
-                      const currentPathname = '/more/credits';
+                    onClickFunction={() => {
+                      const destinationPathname = '/more/credits';
+                      const destinationPage = lookupPageNameAndPageTypeDict(destinationPathname);
+                      const currentPathname = window.location.pathname;
                       const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
                       const dataLayerObject = {
                         actionDetails: {
@@ -178,22 +183,20 @@ class FooterMainWeVote extends Component {
                         },
                         event: 'click',
                         destinationDetails: {
-                          destinationPageName: currentPage.pageName,
-                          destinationPageType: currentPage.pageType,
-                          destinationPathname: currentPathname,
+                          destinationPageName: destinationPage.pageName,
+                          destinationPageType: destinationPage.pageType,
+                          destinationPathname,
                         },
                         pageDetails: {
                           pageName: currentPage.pageName,
                           pageType: currentPage.pageType,
-                          pathname: window.location.pathname,
+                          pathname: currentPathname,
                         },
                         userDetails: VoterStore.getAnalyticsUserDetails(),
                       };
                       TagManager.dataLayer({ dataLayer: dataLayerObject });
                     }}
-                  >
-                    <span>Credits &amp; Thanks</span>
-                  </Link>
+                  />
                 </>
               ) : (
                 <>
