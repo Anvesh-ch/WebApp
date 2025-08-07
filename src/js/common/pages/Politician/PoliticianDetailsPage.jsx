@@ -1469,6 +1469,7 @@ const ColumnOneThird = styled('div')`
   flex: 1;
   flex-direction: column;
   flex-basis: 40%;
+  min-width: 260px;
 `;
 
 const ColumnsWrapper = styled('div')`
@@ -1484,6 +1485,7 @@ const ColumnTwoThirds = styled('div')`
   flex-direction: column;
   flex-basis: 60%;
   margin: 0 0 0 25px;
+  // min-width: 500px; // keeps central block aligned with header menu and prevents over-expansion on large screens
 `;
 
 const HeartToggleAndThermometerWrapper = styled('div')`
