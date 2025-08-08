@@ -4,10 +4,15 @@ import styled from 'styled-components';
 import DesignTokenColors from '../../Style/DesignTokenColors';
 import ModalDisplayTemplateA from '../../../../components/Widgets/ModalDisplayTemplateA';
 import { StepTitle } from '../../../../components/Style/ReadyIntroductionStyles';
+import AppObservableStore from '../../../stores/AppObservableStore';
 
-const VerifyOtherWaysModal = ({ setShowVerifyOtherWaysModal, showVerifyOtherWaysModal, politicianName }) => {
+const VerifyOtherWaysModal = ({ politicianName }) => {
   const [relationshipOption, setRelationshipOption] = useState(null);
   const [otherOptionText, setOtherOptionText] = useState(null);
+
+  const handleCloseVerifyOtherWaysModal = () => {
+    AppObservableStore.setShowClaimProfileWithOtherWaysModal(false);
+  };
 
   const handleRelationshipOption = (option) => {
     setOtherOptionText('');
@@ -41,13 +46,12 @@ const VerifyOtherWaysModal = ({ setShowVerifyOtherWaysModal, showVerifyOtherWays
       </VerifyStepFlexContainer>
       <RelationshipOptionsContainer>
         {relationshipOptions.map((option) => (
-          <>
+          <React.Fragment key={`relationship-${option}`}>
             {option !== 'Other' ? (
               <RelationshipOptionLabel
                 htmlFor={`relationship-${option}`}
               >
                 <RelationshipOptionInput
-                  key={option}
                   type="radio"
                   value={option}
                   checked={relationshipOption === option}
@@ -62,7 +66,6 @@ const VerifyOtherWaysModal = ({ setShowVerifyOtherWaysModal, showVerifyOtherWays
                   htmlFor={`relationship-${option}`}
                 >
                   <RelationshipOptionInput
-                    key={option}
                     type="radio"
                     value={option}
                     checked={relationshipOption === option}
@@ -78,7 +81,7 @@ const VerifyOtherWaysModal = ({ setShowVerifyOtherWaysModal, showVerifyOtherWays
                 </RelationshipOptionLabel>
               </div>
             )}
-          </>
+          </React.Fragment>
         ))}
       </RelationshipOptionsContainer>
       <VerifyStepFlexCenterContainer>
@@ -161,7 +164,7 @@ const VerifyOtherWaysModal = ({ setShowVerifyOtherWaysModal, showVerifyOtherWays
       <VerifyButtonsContainer>
         <CancelButton
           type="button"
-          onClick={() => setShowVerifyOtherWaysModal(!showVerifyOtherWaysModal)}
+          onClick={handleCloseVerifyOtherWaysModal}
         >
           Cancel
         </CancelButton>
@@ -177,8 +180,8 @@ const VerifyOtherWaysModal = ({ setShowVerifyOtherWaysModal, showVerifyOtherWays
   return (
     <ModalDisplayTemplateA
       dialogTitleJSX={dialogTitleJsx}
-      toggleModal={setShowVerifyOtherWaysModal}
-      show={showVerifyOtherWaysModal}
+      toggleModal={handleCloseVerifyOtherWaysModal}
+      show={AppObservableStore.getShowClaimProfileWithOtherWaysModal()}
       textFieldJSX={textFieldJsx}
       tallMode
     />
@@ -187,8 +190,6 @@ const VerifyOtherWaysModal = ({ setShowVerifyOtherWaysModal, showVerifyOtherWays
 
 VerifyOtherWaysModal.propTypes = {
   politicianName: PropTypes.string,
-  setShowVerifyOtherWaysModal: PropTypes.func.isRequired,
-  showVerifyOtherWaysModal: PropTypes.bool,
 };
 
 const VerifyOtherWaysModalHeader = styled('h1')`

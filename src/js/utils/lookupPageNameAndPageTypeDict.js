@@ -94,8 +94,13 @@ function calculatePageNameAndPageTypeDict (path) {
     settingsPageName = 'PoliticianDetailsPage';
     settingsPageType = 'politician';
   } else if (path.startsWith('/ballot')) {
-    settingsPageName = 'Ballot';
-    settingsPageType = 'ballot';
+    if (path.includes('/modal/share')) {
+      settingsPageName = 'SharedItemModal';
+      settingsPageType = 'ballot';
+    } else {
+      settingsPageName = 'Ballot';
+      settingsPageType = 'ballot';
+    }
   } else if (path.startsWith('/candidate/')) {
     settingsPageName = 'Candidate';
     settingsPageType = 'candidate';

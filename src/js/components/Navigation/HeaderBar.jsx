@@ -330,15 +330,18 @@ class HeaderBar extends Component {
         case 'challenges':
           challenges.css(highlight);
           break;
+        case 'donate':
+        case 'more/donate':
+          donate.css(highlight);
+          break;
         case 'friends':
           friends.css(highlight);
           break;
         case 'news':
           news.css(highlight);
           break;
-        case 'donate':
-        case 'more/donate':
-          donate.css(highlight);
+        case 'politicianpage':
+          candidates.css(highlight);
           break;
         case 'squads':
           squads.css(highlight);

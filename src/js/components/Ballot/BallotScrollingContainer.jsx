@@ -30,6 +30,7 @@ import PositionRowListCompressed from './PositionRowListCompressed';
 import BallotMatchIndicator2024 from '../BallotItem/BallotMatchIndicator2024';
 import lookupPageNameAndPageTypeDict, { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
 import webAppConfig from '../../config';
+import BallotStore from '../../stores/BallotStore';
 
 // const DelayedLoad = React.lazy(() => import(/* webpackChunkName: 'DelayedLoad' */ '../../common/components/Widgets/DelayedLoad'));
 const ImageHandler = React.lazy(() => import(/* webpackChunkName: 'ImageHandler' */ '../ImageHandler'));
@@ -107,6 +108,10 @@ class BallotScrollingContainer extends Component {
     };
     if (candidateWeVoteId) {
       dataLayerObject.candidateDetails = CandidateStore.getAnalyticsCandidateDetails(candidateWeVoteId);
+    }
+    const electionDetails = BallotStore.getAnalyticsElectionDetails();
+    if (electionDetails && electionDetails.electionDate) {
+      dataLayerObject.electionDetails = electionDetails;
     }
     if (politicianWeVoteId) {
       const politicianDetails = PoliticianStore.getAnalyticsPoliticianDetails(politicianWeVoteId);

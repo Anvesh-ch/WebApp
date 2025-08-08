@@ -188,7 +188,7 @@ export function headroomWrapperOffset (includePosition, pageNameOverride = null)
     const page = pageNameOverride || pageEnumeration();
     if (page === 'PoliticianDetailsPage' && isCordova()) {
       offset = -44;
-    } else if (page === 'candidatelist' || page === 'values') {
+    } else if (page === 'candidatelist' || page === 'politicianpage' || page === 'values') {
       if (isIOS()) {
         if (page === 'values') {
           offset /= 3 / 2;
