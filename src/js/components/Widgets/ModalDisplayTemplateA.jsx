@@ -8,7 +8,6 @@ import styled from 'styled-components';
 import { hasIPhoneNotch, isAndroidSizeWide } from '../../common/utils/cordovaUtils';
 import { isAndroid, isCordova } from '../../common/utils/isCordovaOrWebApp';
 import { renderLog } from '../../common/utils/logging';
-import itemPositionStatementActionBar from "./ItemPositionStatementActionBar";
 
 
 class ModalDisplayTemplateA extends Component {
@@ -88,7 +87,7 @@ export const templateAStyles = (theme) => ({
     // maxHeight: '350px',
     // height: '80%',
     width: '90%',
-    maxWidth: '650px',
+    maxWidth: '600px',
     // top: '0',
     // transform: isAndroid() ? 'translate(0%, -18%)' : 'translate(0%, -20%)',
     [theme.breakpoints.down('xs')]: {
