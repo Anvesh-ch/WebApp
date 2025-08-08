@@ -44,6 +44,12 @@ export const IOSNoNotchSpacer = styled('div')`
 `;
 
 function getPaddingTop () {
+  if ((normalizedHrefPage() === 'politicianpage') && AppObservableStore.getShowNotificationBannerAboveHeader() === true) {
+    // In this case we want to start the page content below the NotificationBannerAboveHeader and the top menu
+    // Applies to both WebApp and Cordova
+    // Example page: http://localhost:3000/ted-lieu-politician-from-california/-/?show_edit_politician_notice=1
+    return '102px !important';
+  }
   if (isCordova()) {
     if ((normalizedHrefPage() === 'ballot') ||
         (normalizedHrefPage() === 'friends' && VoterStore.getVoterIsSignedIn())) {

@@ -1,13 +1,17 @@
 import PropTypes from 'prop-types';
 import React, { useState, Suspense } from 'react';
 import styled from 'styled-components';
-import { Close, EditOutlined } from '@mui/icons-material';
+import { Close, EditOutlined, ExpandMoreRounded } from '@mui/icons-material';
 import { Button, IconButton } from '@mui/material';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled as muiStyled } from '@mui/material/styles';
 import DesignTokenColors from '../../Style/DesignTokenColors';
 import VerifyOtherWaysModal from './VerifyOtherWaysModal';
 import VerifyWithEmailModal from './VerifyWithEmailModal';
+import AppObservableStore from '../../../stores/AppObservableStore';
+import webAppConfig from '../../../../config';
+
+const nextReleaseFeaturesEnabled = webAppConfig.ENABLE_NEXT_RELEASE_FEATURES === undefined ? false : webAppConfig.ENABLE_NEXT_RELEASE_FEATURES;
 
 
 const OpenExternalWebSite = React.lazy(() => import(/* webpackChunkName: 'OpenExternalWebSite' */ '../../Widgets/OpenExternalWebSite'));
@@ -30,94 +34,89 @@ const CustomTooltip = muiStyled(({ className, ...props }) => (
 }));
 
 const UpdatePoliticianInformation =  (props) => {
-  const [showVerifyWithEmailModal, setShowVerifyWithEmailModal] = useState(false);
-  const [showVerifyOtherWaysModal, setShowVerifyOtherWaysModal] = useState(false);
   const { politicianName } = props;
   const [tooltipOpen, setTooltipOpen] = useState(false);
-  const newDesign2025 = true;
-  const voterCanEditCandidate = true; // This should be determined by the actual application logic
+  const voterCanEditCandidate = false; // This should be determined by the actual application logic
   const voterCanEditCandidateHighlight = false;
 
   const handleOpenVerifyWithEmailModal = () => {
-    setShowVerifyWithEmailModal(true);
+    AppObservableStore.setShowClaimProfileWithEmailModal(true);
   };
 
   return (
     <UpdateInformationWrapper>
       {!!(politicianName) && (
         <>
-          {newDesign2025 && (
+          {nextReleaseFeaturesEnabled ? (
             <>
               {voterCanEditCandidate ? (
-                <>
-                  <CustomTooltip
-                    interactive
-                    arrow
-                    placement="right"
-                    open={tooltipOpen}
-                    onOpen={() => setTooltipOpen(true)}
-                    onClose={() => setTooltipOpen(false)}
-                    title={(
-                      <TooltipContent>
-                        <CloseButton size="small" onClick={() => setTooltipOpen(false)}>
-                          <Close fontSize="small" />
-                        </CloseButton>
-                        Edit your candidate’s profile here
-                        <GotItButton onClick={() => setTooltipOpen(false)}>
-                          GOT IT
-                        </GotItButton>
-                      </TooltipContent>
-                    )}
+                <CustomTooltip
+                  interactive
+                  arrow
+                  placement="right"
+                  open={tooltipOpen}
+                  onOpen={() => setTooltipOpen(true)}
+                  onClose={() => setTooltipOpen(false)}
+                  title={(
+                    <TooltipContent>
+                      <CloseButton size="small" onClick={() => setTooltipOpen(false)}>
+                        <Close fontSize="small" />
+                      </CloseButton>
+                      Edit your candidate’s profile here
+                      <GotItButton onClick={() => setTooltipOpen(false)}>
+                        GOT IT
+                      </GotItButton>
+                    </TooltipContent>
+                  )}
+                >
+                  <EditProfileWrapper
+                    onMouseEnter={() => setTooltipOpen(true)}
+                    highlight={voterCanEditCandidateHighlight}
+                    onClick={handleOpenVerifyWithEmailModal}
                   >
-                    <EditProfileWrapper
-                      onMouseEnter={() => setTooltipOpen(true)}
-                      highlight={voterCanEditCandidateHighlight}
-                      onClick={handleOpenVerifyWithEmailModal}
-                    >
-                      <EditOutlined fontSize="small" style={{ marginRight: 4 }} />
-                      Edit profile
-                    </EditProfileWrapper>
-                  </CustomTooltip>
-                  <>
-                    <VerifyOtherWaysModal
-                      setShowVerifyOtherWaysModal={setShowVerifyOtherWaysModal}
-                      showVerifyOtherWaysModal={showVerifyOtherWaysModal}
-                      politicianName={politicianName}
-                    />
-                    <VerifyWithEmailModal
-                      setShowVerifyWithEmailModal={setShowVerifyWithEmailModal}
-                      showVerifyWithEmailModal={showVerifyWithEmailModal}
-                      setShowVerifyOtherWaysModal={setShowVerifyOtherWaysModal}
-                      politicianName={politicianName}
-                    />
-                  </>
-                </>
+                    <EditOutlined fontSize="small" style={{ marginRight: 4 }} />
+                    Edit profile
+                  </EditProfileWrapper>
+                </CustomTooltip>
               ) : (
-                <Suspense fallback={<></>}>
-                  <FlexLayoutDiv>
-                    <CandidateStaffText>
-                      For candidate staff:&nbsp;
-                    </CandidateStaffText>
-                    <AddInfoLink>
-                      <OpenExternalWebSite
-                        linkIdAttribute="updateCandidateInformation"
-                        url={updateCandidateInformationLink}
-                        target="_blank"
-                        className="u-link-color"
-                        body={(
-                          <div>
-                            Add info
-                          </div>
-                        )}
-                        destinationPageName="PoliticianEditForm"
-                        destinationPageType="politician"
-                        trackingOn
-                      />
-                    </AddInfoLink>
-                  </FlexLayoutDiv>
-                </Suspense>
+                <CandidateStaffAccessButton
+                  onClick={handleOpenVerifyWithEmailModal}
+                >
+                  Candidate staff access
+                  <ExpandMoreRounded />
+                </CandidateStaffAccessButton>
               )}
+              <VerifyOtherWaysModal
+                politicianName={politicianName}
+              />
+              <VerifyWithEmailModal
+                politicianName={politicianName}
+              />
             </>
+          ) : (
+            <Suspense fallback={<></>}>
+              <FlexLayoutDiv>
+                <CandidateStaffText>
+                  For candidate staff:&nbsp;
+                </CandidateStaffText>
+                <AddInfoLink>
+                  <OpenExternalWebSite
+                    linkIdAttribute="updateCandidateInformation"
+                    url={updateCandidateInformationLink}
+                    target="_blank"
+                    className="u-link-color"
+                    body={(
+                      <div>
+                        Add info
+                      </div>
+                    )}
+                    destinationPageName="PoliticianEditForm"
+                    destinationPageType="politician"
+                    trackingOn
+                  />
+                </AddInfoLink>
+              </FlexLayoutDiv>
+            </Suspense>
           )}
         </>
       )}
@@ -131,6 +130,14 @@ UpdatePoliticianInformation.propTypes = {
 
 const AddInfoLink = styled('div')`
   font-size: 12px;
+`;
+
+const CandidateStaffAccessButton = styled('button')`
+  background: transparent;
+  border: none;
+  color: ${DesignTokenColors.primary600};
+  font-size: 12px;
+  margin-top: -3px;
 `;
 
 const CandidateStaffText = styled('div')`

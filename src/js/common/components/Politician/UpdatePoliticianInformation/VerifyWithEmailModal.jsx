@@ -5,12 +5,17 @@ import DesignTokenColors from '../../Style/DesignTokenColors';
 import ModalDisplayTemplateA from '../../../../components/Widgets/ModalDisplayTemplateA';
 import standardBoxShadow from '../../Style/standardBoxShadow';
 import PasskeyVerifiedModal from './PasskeyVerifiedModal';
+import AppObservableStore from '../../../stores/AppObservableStore';
 
-const VerifyWithEmailModal = ({ setShowVerifyWithEmailModal, showVerifyWithEmailModal, setShowVerifyOtherWaysModal, politicianName }) => {
+const VerifyWithEmailModal = ({ politicianName }) => {
   const [emailOption, setEmailOption] = useState(null);
   const [passkey, setPasskey] = useState('');
   const [passkeyVerified, setPasskeyVerified] = useState(false); // switch to toggle PasskeyVerifiedModal
   const publicEmails = [`info@${politicianName.toLowerCase().replaceAll( /[. ]/g, '')}.com`, 'john.dough@lacounty.gov'];
+
+  const handleCloseVerifyWithEmailModal = () => {
+    AppObservableStore.setShowClaimProfileWithEmailModal(false);
+  };
 
   const handleEmailOptionClick = (value) => {
     setEmailOption((prev) => (prev === value ? null : value));
@@ -21,8 +26,8 @@ const VerifyWithEmailModal = ({ setShowVerifyWithEmailModal, showVerifyWithEmail
   };
 
   const handleOpenVerifyOtherWaysModal = () => {
-    setShowVerifyOtherWaysModal(true);
-    setShowVerifyWithEmailModal(false);
+    AppObservableStore.setShowClaimProfileWithEmailModal(false);
+    AppObservableStore.setShowClaimProfileWithOtherWaysModal(true);
   };
 
   const dialogTitleJsx = (
@@ -103,8 +108,8 @@ const VerifyWithEmailModal = ({ setShowVerifyWithEmailModal, showVerifyWithEmail
   return (
     <ModalDisplayTemplateA
       dialogTitleJSX={dialogTitleJsx}
-      toggleModal={setShowVerifyWithEmailModal}
-      show={showVerifyWithEmailModal}
+      toggleModal={handleCloseVerifyWithEmailModal}
+      show={AppObservableStore.getShowClaimProfileWithEmailModal()}
       textFieldJSX={textFieldJsx}
       tallMode
     />
@@ -112,9 +117,6 @@ const VerifyWithEmailModal = ({ setShowVerifyWithEmailModal, showVerifyWithEmail
 };
 
 VerifyWithEmailModal.propTypes = {
-  showVerifyWithEmailModal: PropTypes.bool.isRequired,
-  setShowVerifyWithEmailModal: PropTypes.func.isRequired,
-  setShowVerifyOtherWaysModal: PropTypes.func.isRequired,
   politicianName: PropTypes.string,
 };
 

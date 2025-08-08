@@ -1,3 +1,4 @@
+import { Edit } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
 import styled from 'styled-components';
@@ -44,7 +45,7 @@ export default class Header extends Component {
       organizationModalHidePositions: false,
       sharedItemCode: '',
       showHowItWorksModal: false,
-      showNotificationBarAboveHeader: AppObservableStore.getShowNotificationBarAboveHeader(),
+      showNotificationBannerAboveHeader: AppObservableStore.getShowNotificationBannerAboveHeader(),
       showVoterPlanModal: false,
       showOrganizationModal: false,
       showPositionDrawer: false,
@@ -151,7 +152,7 @@ export default class Header extends Component {
       showOrganizationModal: AppObservableStore.showOrganizationModal(),
       showPositionDrawer: AppObservableStore.showPositionDrawer(),
       showSharedItemModal: AppObservableStore.showSharedItemModal(),
-      showNotificationBarAboveHeader: AppObservableStore.getShowNotificationBarAboveHeader(),
+      showNotificationBannerAboveHeader: AppObservableStore.getShowNotificationBannerAboveHeader(),
     });
   }
 
@@ -209,34 +210,50 @@ export default class Header extends Component {
   }
 
   closeEditBar () {
-    AppObservableStore.setShowNotificationBarAboveHeader(false);
+    AppObservableStore.setShowNotificationBannerAboveHeader(false);
   }
 
   render () {
     renderLog('Header');  // Set LOG_RENDER_EVENTS to log all renders
-    const { showNotificationBarAboveHeader } = this.state;
+    const { showNotificationBannerAboveHeader } = this.state;
 
     if (this.hideHeader()) {
       renderLog('Header hidden');
       return null;
     }
-    const updateCandidateInformationLink = 'https://docs.google.com/forms/d/e/1FAIpQLSePdeW32PClaSO1pUWBJnQ75wFGPOtviNaqOABBYps7NIH3hA/viewform?usp=sf_link';
     const pathname = normalizedHref();
     const isCandidatePage = /^\/[-a-z0-9]+\/-\/?$/.test(pathname);
-    const notificationBarAboveHeader = (showNotificationBarAboveHeader && isCandidatePage) && (
-      <EditBanner>
-        <BannerText>
-          Review your candidate’s profile for accuracy or add more info.
-          <TipsLink href="tips-for-strong-profiles" target="_blank" rel="noopener noreferrer">
-            {/* TODO link for Tips for strong profiles */}
-            Tips for strong profiles
-          </TipsLink>
-          <EditButton onClick={() => window.open(updateCandidateInformationLink, '_blank')}>
-            ✎ Make profile edits
-          </EditButton>
-        </BannerText>
+    const voterCanEditPoliticianProfile = false;
+    const notificationBannerAboveHeader = (showNotificationBannerAboveHeader && isCandidatePage) && (
+      <NotificationBannerAboveHeader>
+        {voterCanEditPoliticianProfile ? (
+          <BannerText>
+            <BannerIntroTextMobile className="u-show-mobile">Review for accuracy.</BannerIntroTextMobile>
+            <BannerIntroTextDesktop className="u-show-desktop-tablet">Review your candidate’s profile for accuracy or add more info.</BannerIntroTextDesktop>
+            <TipsLink className="u-show-desktop-tablet" href="tips-for-strong-profiles" target="_blank" rel="noopener noreferrer">
+              {/* TODO link for Tips for strong profiles */}
+              Tips for strong profiles
+            </TipsLink>
+            <EditButton onClick={() => AppObservableStore.setShowClaimProfileWithEmailModal(true)}>
+              <EditStyled />
+              {' '}
+              <BannerIntroTextMobile className="u-show-mobile">Edit</BannerIntroTextMobile>
+              <BannerIntroTextDesktop className="u-show-desktop-tablet">Make profile edits</BannerIntroTextDesktop>
+            </EditButton>
+          </BannerText>
+        ) : (
+          <BannerText>
+            <BannerIntroTextMobile className="u-show-mobile">Claim and edit.</BannerIntroTextMobile>
+            <BannerIntroTextDesktop className="u-show-desktop-tablet">Claim this candidate’s profile and make edits.</BannerIntroTextDesktop>
+            <EditButton onClick={() => AppObservableStore.setShowClaimProfileWithEmailModal(true)}>
+              <EditStyled />
+              {' '}
+              Claim this profile
+            </EditButton>
+          </BannerText>
+        )}
         <CloseButton onClick={this.closeEditBar}>✕</CloseButton>
-      </EditBanner>
+      </NotificationBannerAboveHeader>
     );
     const { hideHeader, params } = this.props;
     // console.log('Header global.weVoteGlobalHistory', global.weVoteGlobalHistory);
@@ -530,10 +547,10 @@ export default class Header extends Component {
           <IPhoneSpacer />
           <HeadroomWrapper id="hw4">
             <div className={pageHeaderClasses} style={cordovaTopHeaderTopMargin()} id="header-container">
-              {showNotificationBarAboveHeader && (
-                <EditBannerWrapper>
-                  {notificationBarAboveHeader}
-                </EditBannerWrapper>
+              {showNotificationBannerAboveHeader && (
+                <NotificationBannerAboveHeaderWrapper>
+                  {notificationBannerAboveHeader}
+                </NotificationBannerAboveHeaderWrapper>
               )}
               {(headerNotVisible || hideHeader) ? (
                 <>
@@ -629,6 +646,12 @@ const BackToSettingsMobileDesktopSpan = styled('span')`
   ${() => (!isMobileScreenSize() || isTablet() ? '' : 'display: none;')};
 `;
 
+const BannerIntroTextDesktop = styled('span')`
+`;
+
+const BannerIntroTextMobile = styled('span')`
+`;
+
 const BannerText = styled.div`
   align-items: center;
   display: flex;
@@ -652,7 +675,7 @@ const CloseButton = styled.button`
   }
 `;
 
-const EditBanner = styled.div`
+const NotificationBannerAboveHeader = styled.div`
   align-items: center;
   background: ${DesignTokenColors.secondary800};
   color: ${DesignTokenColors.whiteUI};
@@ -682,10 +705,15 @@ const EditButton = styled.button`
     order: 1;
   }
 `;
-const EditBannerWrapper = styled.div`
+const NotificationBannerAboveHeaderWrapper = styled.div`
   display: flex;
   justify-content: center;
   padding: 0 16px;
+`;
+
+const EditStyled = styled(Edit)`
+  height: 16px;
+  width: 16px;
 `;
 
 const TipsLink = styled.a`
