@@ -72,10 +72,15 @@ class ShareModalOption extends Component {
       this.props.onClickFunction();
     }
     const dataLayerObject = {
+      actionDetails: {
+        actionType: 'share',
+        buttonId: `shareModalOption-${this.props.uniqueExternalId}`,
+      },
       event: 'ShareModalCopyLinkClick',
       shareDetails: {
-        title: this.props.title || 'Copy link',
+        shareType: this.props.title || 'Copy link',
         urlShared: this.props.urlToShare || '',
+        contentToggle: AppObservableStore.getWhatAndHowMuchToShare(),
       },
       pageDetails: getPageDetails(),
       userDetails: VoterStore.getAnalyticsUserDetails(),
