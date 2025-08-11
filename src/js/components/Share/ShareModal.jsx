@@ -22,7 +22,7 @@ import FriendStore from '../../stores/FriendStore';
 import VoterStore from '../../stores/VoterStore';
 import createMessageToFriendDefaults from '../../utils/createMessageToFriendDefaults';
 import sortFriendListByMutualFriends from '../../utils/friendFunctions';
-import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import lookupPageNameAndPageTypeDict, { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
 import MessageCard from '../Widgets/MessageCard';
 import { CopyLink, getKindOfShareFromURL, saveActionShareAnalytics, ShareFacebook, SharePreviewFriends, shareStyles, ShareTwitter, ShareWeVoteFriends } from './shareButtonCommon'; // cordovaSocialSharingByEmail
 import { generateShareLinks } from './ShareModalText';
@@ -155,6 +155,24 @@ class ShareModal extends Component {
     });
   }
 
+  pushDataLayerShare (shareType, contentToggle, shareLink, buttonId = '') {
+    const dataLayerObject = {
+      actionDetails: {
+        actionType: 'click',
+        buttonId,
+      },
+      event: 'share',
+      pageDetails: getPageDetails(),
+      shareDetails: {
+        shareType: shareType,
+        contentToggle: contentToggle,
+        shareLink: shareLink,
+      },
+      userDetails: VoterStore.getAnalyticsUserDetails(),
+    };
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
+  }
+
   saveActionShareButtonCopy = () => {
     AnalyticsActions.saveActionShareButtonCopy(VoterStore.electionId());
   }
@@ -181,6 +199,7 @@ class ShareModal extends Component {
 
   saveActionShareButtonTwitter = () => {
     AnalyticsActions.saveActionShareButtonTwitter(VoterStore.electionId());
+    pushDataLayerShare();
   }
 
   closeShareModal = (buttonId = '') => {

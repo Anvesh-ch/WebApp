@@ -92,28 +92,11 @@ class ChallengesHome extends Component {
       }
     }, 5000);  // April 19, 2021: Tuned to keep performance above 83.  LCP at 597ms
     // AnalyticsActions.saveActionOffice(VoterStore.electionId(), params.office_we_vote_id);
+    this.fireGTMDataLayerWhenReady();
   }
 
   componentDidUpdate () {
-    const { dataLayerFired } = this.state;
-    if (!dataLayerFired) {
-      if (VoterStore.voterFirstRetrieveCompleted()) {
-        const dataLayerObject = {
-          event: 'landing',
-          actionDetails: {
-            actionType: 'landing',
-          },
-          pageDetails: getPageDetails(),
-          userDetails: VoterStore.getAnalyticsUserDetails(),
-        };
-
-        TagManager.dataLayer({ dataLayer: dataLayerObject });
-
-        this.setState({
-          dataLayerFired: true,
-        });
-      }
-    }
+    this.fireGTMDataLayerWhenReady();
   }
 
   componentWillUnmount () {
@@ -321,6 +304,28 @@ class ChallengesHome extends Component {
       numberOfChallengeResults: listResults,
       numberOfChallengeSearchResults: searchResults,
     });
+  }
+
+  fireGTMDataLayerWhenReady () {
+    const { dataLayerFired } = this.state;
+    if (!dataLayerFired) {
+      if (VoterStore.voterFirstRetrieveCompleted()) {
+        const dataLayerObject = {
+          actionDetails: {
+            actionType: 'landing',
+          },
+          event: 'landing',
+          pageDetails: getPageDetails(),
+          userDetails: VoterStore.getAnalyticsUserDetails(),
+        };
+
+        TagManager.dataLayer({ dataLayer: dataLayerObject });
+
+        this.setState({
+          dataLayerFired: true,
+        });
+      }
+    }
   }
 
   render () {
