@@ -5,11 +5,11 @@ import React, { Component, Suspense } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import TagManager from 'react-gtm-module';
 import styled from 'styled-components';
-import VoterStore from '../../stores/VoterStore';
-import { renderLog } from '../../common/utils/logging';
-import AppObservableStore, { messageService } from '../../common/stores/AppObservableStore';
 import { openSnackbar } from '../../common/components/Widgets/SnackNotifier';
-import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import AppObservableStore, { messageService } from '../../common/stores/AppObservableStore';
+import { renderLog } from '../../common/utils/logging';
+import VoterStore from '../../stores/VoterStore';
+import { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
 import stringContains from '../../common/utils/stringContains';
 
 const OpenExternalWebSite = React.lazy(() => import(/* webpackChunkName: 'OpenExternalWebSite' */ '../../common/components/Widgets/OpenExternalWebSite'));
@@ -93,7 +93,6 @@ class ShareModalOption extends Component {
 
   copyLink = () => {
     // console.log('ShareModalOption copyLink');
-    const { location: { pathname: currentPathname } } = window;
     openSnackbar({ message: 'Copied!' });
     this.setState({
       copyLinkCopied: true,
@@ -107,10 +106,7 @@ class ShareModalOption extends Component {
         title: this.props.title || 'Copy link',
         urlShared: this.props.urlToShare || '',
       },
-      pageDetails: {
-        pageName: 'ShareModal',
-        pathname: currentPathname,
-      },
+      pageDetails: getPageDetails(),
       userDetails: VoterStore.getAnalyticsUserDetails(),
     };
     // console.log('DataLayer for ShareModal Copy Link:', dataLayerObject);
