@@ -52,8 +52,6 @@ class ShareModalOption extends Component {
     }
 
     if ((uniqueExternalId || '').toLowerCase().includes('friends')) {
-      const { location: { pathname: currentPathname } } = window;
-      const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
 
       // Derive sharing mode from the current step string
       const whatAndHowMuchToShareNow = AppObservableStore.getWhatAndHowMuchToShare() || this.state.whatAndHowMuchToShare || '';
@@ -67,11 +65,7 @@ class ShareModalOption extends Component {
           actionType: 'share',
           buttonId: uniqueExternalId,
         },
-        pageDetails: {
-          pageName: currentPage.pageName,
-          pageType: currentPage.pageType,
-          pathname: currentPathname,
-        },
+        pageDetails: getPageDetails(),
         shareDetails: {
           shareMethod: 'wevote_friends',
           ballotSharingMode,
