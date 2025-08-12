@@ -3,25 +3,26 @@ import withStyles from '@mui/styles/withStyles';
 import { filter } from 'lodash-es';
 import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
+import TagManager from 'react-gtm-module';
 import { Helmet } from 'react-helmet-async';
 import styled from 'styled-components';
-import TagManager from 'react-gtm-module';
 import IssueActions from '../../actions/IssueActions';
 import OrganizationActions from '../../actions/OrganizationActions';
+import SearchBar2024 from '../../common/components/Search/SearchBar2024';
 import apiCalming from '../../common/utils/apiCalming';
 import { renderLog } from '../../common/utils/logging';
-import SearchBar2024 from '../../common/components/Search/SearchBar2024';
+import { convertNameToSlug } from '../../common/utils/textFormat';
+import NoSearchResult from '../../components/Search/NoSearchResult';
 import { PageContentContainer } from '../../components/Style/pageLayoutStyles';
 import GuideList from '../../components/VoterGuide/GuideList';
+import EndorsementCard from '../../components/Widgets/EndorsementCard';
 import IssueStore from '../../stores/IssueStore';
 import OrganizationStore from '../../stores/OrganizationStore';
 import VoterGuideStore from '../../stores/VoterGuideStore';
-import ValuesList from './ValuesList';
-import { convertNameToSlug } from '../../common/utils/textFormat';
-import NoSearchResult from '../../components/Search/NoSearchResult';
-import EndorsementCard from '../../components/Widgets/EndorsementCard';
-import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
 import VoterStore from '../../stores/VoterStore';
+import { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
+import ValuesList from './ValuesList';
+
 
 const DelayedLoad = React.lazy(() => import(/* webpackChunkName: 'DelayedLoad' */ '../../common/components/Widgets/DelayedLoad'));
 const IssueCard = React.lazy(() => import(/* webpackChunkName: 'IssueCard' */ '../../components/Values/IssueCard'));
@@ -44,6 +45,19 @@ class OneValue extends Component {
   }
 
   componentDidMount () {
+    if (VoterStore.voterFirstRetrieveCompleted()) {
+      const dataLayerObject = {
+        actionDetails: {
+          actionType: 'landing',
+        },
+        event: 'landing',
+        pageDetails: getPageDetails(),
+        userDetails: VoterStore.getAnalyticsUserDetails(),
+      };
+
+      TagManager.dataLayer({ dataLayer: dataLayerObject });
+    }
+
     const { match: { params: { value_slug: valueSlug } } } = this.props;
     const issue = IssueStore.getIssueBySlug(valueSlug);
     const issueWeVoteId = issue.issue_we_vote_id;
@@ -75,18 +89,28 @@ class OneValue extends Component {
   componentDidUpdate (prevProps) {
     const { match: { params: prevParams } } = prevProps;
     const { match: { params: nextParams } } = this.props;
-    // console.log('prevParams:', prevParams, 'nextParams:', nextParams);
     const issue = IssueStore.getIssueBySlug(nextParams.value_slug);
     const issueWeVoteId = issue.issue_we_vote_id;
     if (issueWeVoteId) {
-      if (apiCalming(`issueOrganizationsRetrieve${issueWeVoteId}`, 3600000)) { // Only once per 60 minutes
+      if (apiCalming(`issueOrganizationsRetrieve${issueWeVoteId}`, 3600000)) {
         IssueActions.issueOrganizationsRetrieve(issueWeVoteId);
       }
     }
     if (prevParams.value_slug !== nextParams.value_slug) {
       this.onIssueStoreChange();
-      // this.onOrganizationStoreChange();
       window.scrollTo(0, 0);
+    }
+    if (!this.state.isDataLayerFired && this.state.voterDataRetrieved) {
+      const currentPageDetails = getPageDetails();
+      const userDetails = VoterStore.getAnalyticsUserDetails();
+      const dataLayerObject = {
+        actionDetails: { actionType: 'landing' },
+        event: 'landing',
+        pageDetails: currentPageDetails,
+        userDetails,
+      };
+      TagManager.dataLayer({ dataLayer: dataLayerObject });
+      this.setState({ isDataLayerFired: true });
     }
   }
 
@@ -153,8 +177,6 @@ class OneValue extends Component {
   }
 
   changeListModeShown = (buttonId) => {
-    const { location: { pathname: currentPathname } } = window;
-    const { pageName, pageType } = lookupPageNameAndPageTypeDict(currentPathname);
     const { issue } = this.state;
     const dataLayerObject = {
       actionDetails: {
@@ -162,11 +184,7 @@ class OneValue extends Component {
         buttonId,
       },
       event: 'action',
-      pageDetails: {
-        pageName,
-        pageType,
-        pathname: currentPathname,
-      },
+      pageDetails: getPageDetails(),
       userDetails: VoterStore.getAnalyticsUserDetails(),
     };
     if (issue.issue_we_vote_id) {

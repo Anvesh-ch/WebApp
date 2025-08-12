@@ -51,6 +51,8 @@ import saveCampaignSupportAndGoToNextPage from '../../utils/saveCampaignSupportA
 import extractPoliticianDetailsFromUrl from '../../utils/extractPoliticianDetailsFromUrl';
 import VoterStore from '../../../stores/VoterStore';
 import VoterPositionEntryAndDisplay from '../../../components/PositionItem/VoterPositionEntryAndDisplay';
+// import VoterPositionEntryAndDisplayMook from '../../components/PositionItem/VoterPositionEntryAndDisplay';
+import { getPageDetails } from '../../../utils/lookupPageNameAndPageTypeDict';
 
 const CampaignRetrieveController = React.lazy(() => import(/* webpackChunkName: 'CampaignRetrieveController' */ '../../components/Campaign/CampaignRetrieveController'));
 const CampaignSupportThermometer = React.lazy(() => import(/* webpackChunkName: 'CampaignSupportThermometer' */ '../../components/CampaignSupport/CampaignSupportThermometer'));
@@ -64,7 +66,7 @@ const PoliticianLinks = React.lazy(() => import(/* webpackChunkName: 'PolitianLi
 const PoliticianRetrieveController = React.lazy(() => import(/* webpackChunkName: 'PoliticianRetrieveController' */ '../../components/Politician/PoliticianRetrieveController'));
 const PoliticianPositionRetrieveController = React.lazy(() => import(/* webpackChunkName: 'PoliticianPositionRetrieveController' */ '../../components/Position/PoliticianPositionRetrieveController'));
 const ReadMore = React.lazy(() => import(/* webpackChunkName: 'ReadMore' */ '../../components/Widgets/ReadMore'));
-const UpdatePoliticianInformation = React.lazy(() => import(/* webpackChunkName: 'UpdatePoliticianInformation' */ '../../components/Politician/UpdatePoliticianInformation'));
+const UpdatePoliticianInformation = React.lazy(() => import(/* webpackChunkName: 'UpdatePoliticianInformation' */ '../../components/Politician/UpdatePoliticianInformation/UpdatePoliticianInformation'));
 const ViewUpcomingBallotButton = React.lazy(() => import(/* webpackChunkName: 'ViewUpcomingBallotButton' */ '../../../components/Ready/ViewUpcomingBallotButton'));
 
 const futureFeaturesDisabled = true;
@@ -108,7 +110,7 @@ class PoliticianDetailsPage extends Component {
       finalElectionDateInPast: false,
       // inPrivateLabelMode: false,
       loadSlow: false,
-      officeHeldList: [],
+      // officeHeldList: [],
       opponentCandidateList: [],
       opponentCandidatesToShowCount: 5,
       payToPromoteStepCompleted: false,
@@ -124,7 +126,7 @@ class PoliticianDetailsPage extends Component {
       showMobileViewUpcomingBallot: false,
       stateText: '',
       step2Completed: false,
-      supporterEndorsementsWithText: [],
+      // supporterEndorsementsWithText: [],
       voterCanEditThisPolitician: false,
       wikipediaUrl: '',
       politicianStateParsedFromURLBeforeLoad: '',
@@ -218,7 +220,7 @@ class PoliticianDetailsPage extends Component {
   }
 
   componentDidUpdate (prevProps) {
-    // console.log('PoliticianDetailsPage componentDidMount');
+    // console.log('PoliticianDetailsPage componentDidUpdate');
     const { match: { params: prevParams } } = prevProps;
     const { politicianSEOFriendlyPath: prevPoliticianSEOFriendlyPath, politicianWeVoteId: prevPoliticianWeVoteId } = prevParams;
     const { match: { params } } = this.props;
@@ -229,9 +231,10 @@ class PoliticianDetailsPage extends Component {
     const politician = PoliticianStore.getPoliticianBySEOFriendlyPath(politicianSEOFriendlyPathFromUrl);
     const politicianSEOFriendlyPathFromObject = politician.seo_friendly_path;
     // console.log('componentDidUpdate politicianSEOFriendlyPathFromUrl: ', politicianSEOFriendlyPathFromUrl, ', politicianSEOFriendlyPathFromObject: ', politicianSEOFriendlyPathFromObject, ', prevPoliticianSEOFriendlyPath:', prevPoliticianSEOFriendlyPath);
-    // console.log('politicianWeVoteId: ', politicianWeVoteId, ', prevPoliticianWeVoteId: ', prevPoliticianWeVoteId);
+    // console.log('componentDidUpdate this.props.politicianWeVoteId: ', politicianWeVoteId, ', prevPoliticianWeVoteId: ', prevPoliticianWeVoteId);
+    // console.log('componentDidUpdate this.state.politicianWeVoteId: ', this.state.politicianWeVoteId, ', this.state.politicianWeVoteIdForDisplay: ', this.state.politicianWeVoteIdForDisplay);
     if (politicianSEOFriendlyPathFromUrl && (politicianSEOFriendlyPathFromUrl !== prevPoliticianSEOFriendlyPath)) {
-      // console.log('politicianSEOFriendlyPathFromUrl CHANGE 1');
+      console.log('politicianSEOFriendlyPathFromUrl CHANGE 1');
       // console.log('componentDidUpdate prevPoliticianSEOFriendlyPath: ', prevPoliticianSEOFriendlyPath);
       const politicianWeVoteIdFromUrl = PoliticianStore.getPoliticianWeVoteIdFromPoliticianSEOFriendlyPath(politicianSEOFriendlyPathFromUrl);
       const politicianWeVoteIdFromPreviousUrl = PoliticianStore.getPoliticianWeVoteIdFromPoliticianSEOFriendlyPath(prevPoliticianSEOFriendlyPath);
@@ -301,6 +304,7 @@ class PoliticianDetailsPage extends Component {
     }
     if (triggerFreshRetrieve) {
       // Take the "calculated" identifiers and retrieve if missing
+      // console.log('componentDidUpdate triggerFreshRetrieve: ', triggerFreshRetrieve, ', politicianWeVoteId: ', politicianWeVoteId);
       retrievePoliticianFromIdentifiersIfNeeded(politicianSEOFriendlyPathFromUrl, politicianWeVoteId);
     }
     if (triggerFreshRetrieve || triggerSEOPathRedirect) {
@@ -308,23 +312,24 @@ class PoliticianDetailsPage extends Component {
       window.scrollTo(0, 0);
     }
     if (!this.state.dataLayerSent) {
-      // console.log('TagManager code executing...');
-      // console.log('Politician ID id exists? ', politician);
       if (politician && politician.politician_we_vote_id) {
-        // console.log('Politician Details retrieved, Adding DataLayer...');
-        const { location: { pathname: currentPathname } } = window;
         const dataLayerObject = {
-          event: 'landing',
-          userDetails: VoterStore.getAnalyticsUserDetails(),
-          pageDetails: {
-            pageName: this.constructor.name, // name of page from constructor itself
-            pageType: 'politician', // in which page we are currently
-            pathname: currentPathname,
+          actionDetails: {
+            actionType: 'landing',
           },
+          event: 'landing',
+          pageDetails: getPageDetails(),
+          userDetails: VoterStore.getAnalyticsUserDetails(),
         };
+        const candidateWeVoteId = CandidateStore.getCandidateWeVoteIdRunningFromPoliticianWeVoteId(politician.politician_we_vote_id);
+        // console.log('candidateWeVoteId from getCandidateWeVoteIdRunningFromPoliticianWeVoteId:', candidateWeVoteId);
+        if (candidateWeVoteId) {
+          dataLayerObject.candidateDetails = CandidateStore.getAnalyticsCandidateDetails(candidateWeVoteId);
+        }
         if (politician.politician_we_vote_id) {
           dataLayerObject.politicianDetails = PoliticianStore.getAnalyticsPoliticianDetails(politician.politician_we_vote_id);
         }
+        // console.log('DataLayer object being sent:', dataLayerObject);
         TagManager.dataLayer({ dataLayer: dataLayerObject });
         // Set the flag to true so that it runs just once
         this.setState({
@@ -377,13 +382,13 @@ class PoliticianDetailsPage extends Component {
 
   onCampaignSupporterStoreChange () {
     const { linkedCampaignXWeVoteId } = this.state;
-    const supporterEndorsementsWithText = CampaignSupporterStore.getLatestCampaignXSupportersWithTextList(linkedCampaignXWeVoteId);
+    // const supporterEndorsementsWithText = CampaignSupporterStore.getLatestCampaignXSupportersWithTextList(linkedCampaignXWeVoteId);
     const step2Completed = CampaignSupporterStore.voterSupporterEndorsementExists(linkedCampaignXWeVoteId);
     const payToPromoteStepCompleted = CampaignSupporterStore.voterChipInExists(linkedCampaignXWeVoteId);
     const sharingStepCompleted = false;
     // console.log('onCampaignSupporterStoreChange step2Completed: ', step2Completed, ', sharingStepCompleted: ', sharingStepCompleted, ', payToPromoteStepCompleted:', payToPromoteStepCompleted);
     this.setState({
-      supporterEndorsementsWithText,
+      // supporterEndorsementsWithText,
       sharingStepCompleted,
       step2Completed,
       payToPromoteStepCompleted,
@@ -392,6 +397,7 @@ class PoliticianDetailsPage extends Component {
 
   onCandidateStoreChange () {
     const { politicianWeVoteId } = this.state;
+    // console.log('onCandidateStoreChange politicianWeVoteId: ', politicianWeVoteId);
     if (politicianWeVoteId) {
       const allCachedPositionsForThisPolitician = CandidateStore.getAllCachedPositionsByPoliticianWeVoteId(politicianWeVoteId);
       this.setState({
@@ -427,7 +433,7 @@ class PoliticianDetailsPage extends Component {
       }
     }
     this.setState({
-      officeHeldList: officeHeldListFiltered,
+      // officeHeldList: officeHeldListFiltered,
       officeHeldNameForSearch,
     });
   }
@@ -460,6 +466,7 @@ class PoliticianDetailsPage extends Component {
       wikipediaUrl,
       youtubeUrl,
     } = getPoliticianValuesFromIdentifiers(politicianSEOFriendlyPathFromUrl, politicianWeVoteIdFromParams);
+    // console.log('onPoliticianStoreChange politicianWeVoteId: ', politicianWeVoteId, ', politicianSEOFriendlyPathFromUrl:', politicianSEOFriendlyPathFromUrl, ', politicianWeVoteIdFromParams:', politicianWeVoteIdFromParams);
     if (politicianWeVoteId) {
       const voterCanEditThisPolitician = PoliticianStore.getVoterCanEditThisPolitician(politicianWeVoteId);
       const voterSupportsThisPolitician = PoliticianStore.getVoterSupportsThisPolitician(politicianWeVoteId);
@@ -672,6 +679,7 @@ class PoliticianDetailsPage extends Component {
       wikipediaUrl, youtubeUrl,
     } = this.state;
     let { contestOfficeName } = this.state;
+    // console.log('PoliticianDetailsPage render this.state.politicianWeVoteId:', politicianWeVoteId, ', this.state.politicianWeVoteIdForDisplay:', politicianWeVoteIdForDisplay);
 
     const politicianLinksList = [];
     if (politicianUrl) {
@@ -955,6 +963,7 @@ class PoliticianDetailsPage extends Component {
     //   );
     // }
     const pigsCanFly = false;
+    // console.log('PoliticianDetailsPage politicianWeVoteId: ', politicianWeVoteId, ', politicianWeVoteIdForDisplay:', politicianWeVoteIdForDisplay);
     return (
       <PageContentContainer>
         <Suspense fallback={<span>&nbsp;</span>}>
@@ -1092,9 +1101,15 @@ class PoliticianDetailsPage extends Component {
             </CampaignDescriptionWrapper>
             {listTitleHtml}
             <VoterPositionEntryAndDisplay
+              politicianWeVoteId={politicianWeVoteIdForDisplay || politicianWeVoteId}
+              politicianName={politicianName}
+            />
+            {/*
+            <VoterPositionEntryAndDisplayMook
               politicianWeVoteId={politicianWeVoteId}
               politicianName={politicianName}
             />
+            */}
             {positionListTeaserHtml}
             <SpacerAfterPositions />
             {(opponentCandidateList && opponentCandidateList.length > 0) && (
@@ -1269,9 +1284,15 @@ class PoliticianDetailsPage extends Component {
               <ColumnTwoThirds>
                 {listTitleHtml}
                 <VoterPositionEntryAndDisplay
+                  politicianWeVoteId={politicianWeVoteIdForDisplay || politicianWeVoteId}
+                  politicianName={politicianName}
+                />
+                {/*
+                <VoterPositionEntryAndDisplayMook
                   politicianWeVoteId={politicianWeVoteId}
                   politicianName={politicianName}
                 />
+                */}
                 {positionListTeaserHtml}
                 <SpacerAfterPositions />
                 {(opponentCandidateList && opponentCandidateList.length > 0) && (

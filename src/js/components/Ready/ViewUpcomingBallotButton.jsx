@@ -11,7 +11,7 @@ import BallotStore from '../../stores/BallotStore';
 import VoterStore from '../../stores/VoterStore';
 import VoterActions from '../../actions/VoterActions';
 import apiCalming from '../../common/utils/apiCalming';
-import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import lookupPageNameAndPageTypeDict, { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
 
 class ViewUpcomingBallotButton extends React.Component {
   constructor (props) {
@@ -66,17 +66,16 @@ class ViewUpcomingBallotButton extends React.Component {
     });
   }
 
-  goToBallotLocal = () => {
+  goToBallotLocal = (buttonId) => {
     if (this.props.goToBallotFunction) {
-      const { location: { pathname: currentPathname } } = window;
-      const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
       const destinationPathname = '/ballot';
       const destinationPage = lookupPageNameAndPageTypeDict(destinationPathname);
       const dataLayerObject = {
         actionDetails: {
           actionType: 'navigate',
-          buttonId: 'viewUpcomingBallotButton',
+          buttonId,
         },
+        electionDetails: BallotStore.getAnalyticsElectionDetails(),
         event: 'action',
         userDetails: VoterStore.getAnalyticsUserDetails(),
         destinationDetails: {
@@ -84,11 +83,7 @@ class ViewUpcomingBallotButton extends React.Component {
           destinationPageType: destinationPage.pageType,
           destinationPathname,
         },
-        pageDetails: {
-          pageName: currentPage.pageName,
-          pageType: currentPage.pageType,
-          pathname: currentPathname,
-        },
+        pageDetails: getPageDetails(),
       };
       TagManager.dataLayer({ dataLayer: dataLayerObject });
       this.props.goToBallotFunction();
@@ -125,11 +120,12 @@ class ViewUpcomingBallotButton extends React.Component {
     const {
       electionDataExistsForUpcomingElection,
     } = this.state;
+    const buttonId = (electionDataExistsForUpcomingElection || onlyOfferViewYourBallot) ? 'viewUpcomingBallotButton' : 'viewUpcomingBallotFindYourFriends';
     return (
       <ViewUpcomingBallotButtonWrapper>
         <BaseButton
-          id={(electionDataExistsForUpcomingElection || onlyOfferViewYourBallot) ? 'viewUpcomingBallotButton' : 'viewUpcomingBallotFindYourFriends'}
-          onClick={(electionDataExistsForUpcomingElection || onlyOfferViewYourBallot) ? this.goToBallotLocal : this.goToFindFriends}
+          id={buttonId}
+          onClick={(electionDataExistsForUpcomingElection || onlyOfferViewYourBallot) ? () => this.goToBallotLocal(buttonId) : this.goToFindFriends}
           primary
           label={(electionDataExistsForUpcomingElection || onlyOfferViewYourBallot) ? buttonText || 'View Your Ballot' : 'Find Your Friends'}
         />

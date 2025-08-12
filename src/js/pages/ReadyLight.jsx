@@ -1,8 +1,8 @@
-import TagManager from 'react-gtm-module';
 import withStyles from '@mui/styles/withStyles';
 import withTheme from '@mui/styles/withTheme';
 import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
+import TagManager from 'react-gtm-module';
 import { Helmet } from 'react-helmet-async';
 import ActivityActions from '../actions/ActivityActions';
 import AnalyticsActions from '../actions/AnalyticsActions';
@@ -12,7 +12,6 @@ import apiCalming from '../common/utils/apiCalming';
 import historyPush from '../common/utils/historyPush';
 import { isAndroid, isWebApp } from '../common/utils/isCordovaOrWebApp';
 import { renderLog } from '../common/utils/logging';
-import lookupPageNameAndPageTypeDict from '../utils/lookupPageNameAndPageTypeDict';
 import ReadyFinePrint from '../components/Ready/ReadyFinePrint';
 import ReadyIntroduction from '../components/Ready/ReadyIntroduction';
 import ReadyTaskPlan from '../components/Ready/ReadyTaskPlan';
@@ -25,6 +24,7 @@ import webAppConfig from '../config';
 import VoterStore from '../stores/VoterStore';
 import { cordovaSimplePageContainerTopOffset } from '../utils/cordovaCalculatedOffsets';
 import lazyPreloadPages from '../utils/lazyPreloadPages';
+import { getPageDetails } from '../utils/lookupPageNameAndPageTypeDict';
 
 const DelayedLoad = React.lazy(() => import(/* webpackChunkName: 'DelayedLoad' */ '../common/components/Widgets/DelayedLoad'));
 const ElectionCountdown = React.lazy(() => import(/* webpackChunkName: 'ElectionCountdown' */ '../components/Ready/ElectionCountdown'));
@@ -51,6 +51,7 @@ class ReadyLight extends Component {
     this.appStateSubscription = messageService.getMessage().subscribe((msg) => this.onAppObservableStoreChange(msg));
     this.onAppObservableStoreChange();
     AppObservableStore.setEvaluateHeaderDisplay();
+    this.voterStoreListener = VoterStore.addListener(this.onVoterStoreChange.bind(this));
 
     this.preloadTimer = setTimeout(() => {
       if (apiCalming('activityNoticeListRetrieve', 10000)) {
@@ -66,36 +67,12 @@ class ReadyLight extends Component {
     this.analyticsTimer = setTimeout(() => {
       AnalyticsActions.saveActionReadyVisit(VoterStore.electionId());
     }, 8000);
+    this.fireGTMDataLayerWhenReady();
     window.scrollTo(0, 0);
   }
 
   componentDidUpdate () {
-    const { dataLayerFired } = this.state;
-    if (!dataLayerFired) {
-      if (VoterStore.voterFirstRetrieveCompleted()) {
-        const { location: { pathname: currentPathname } } = window;
-        const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
-
-        const dataLayerObject = {
-          actionDetails: {
-            actionType: 'landing',
-          },
-          event: 'landing',
-          pageDetails: {
-            pageName: currentPage.pageName,
-            pageType: currentPage.pageType,
-            pathname: currentPathname,
-          },
-          userDetails: VoterStore.getAnalyticsUserDetails(),
-        };
-
-        TagManager.dataLayer({ dataLayer: dataLayerObject });
-
-        this.setState({
-          dataLayerFired: true,
-        });
-      }
-    }
+    this.fireGTMDataLayerWhenReady();
   }
 
 
@@ -105,6 +82,7 @@ class ReadyLight extends Component {
 
   componentWillUnmount () {
     this.appStateSubscription.unsubscribe();
+    this.voterStoreListener.remove();
     clearTimeout(this.analyticsTimer);
     clearTimeout(this.preloadTimer);
     clearTimeout(this.voterPlansTimer);
@@ -125,6 +103,13 @@ class ReadyLight extends Component {
     });
   }
 
+  onVoterStoreChange () {
+    // console.log('Ready, onVoterStoreChange voter: ', VoterStore.getVoter());
+    this.setState({
+      voterIsSignedIn: VoterStore.getVoterIsSignedIn(), // Just to trigger update
+    });
+  }
+
   goToBallot = () => {
     historyPush('/ballot');
   }
@@ -137,6 +122,27 @@ class ReadyLight extends Component {
     return {};
   }
 
+  fireGTMDataLayerWhenReady () {
+    const { dataLayerFired } = this.state;
+    if (!dataLayerFired) {
+      if (VoterStore.voterFirstRetrieveCompleted()) {
+        const dataLayerObject = {
+          actionDetails: {
+            actionType: 'landing',
+          },
+          event: 'landing',
+          pageDetails: getPageDetails(),
+          userDetails: VoterStore.getAnalyticsUserDetails(),
+        };
+
+        TagManager.dataLayer({ dataLayer: dataLayerObject });
+
+        this.setState({
+          dataLayerFired: true,
+        });
+      }
+    }
+  }
   render () {
     renderLog('ReadyLight');  // Set LOG_RENDER_EVENTS to log all renders
     const {

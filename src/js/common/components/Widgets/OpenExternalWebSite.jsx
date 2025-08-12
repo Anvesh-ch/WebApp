@@ -26,7 +26,7 @@ export default class OpenExternalWebSite extends Component {
       const dataLayerObject = {
         actionDetails: {
           actionType: 'navigate',
-          buttonId: linkIdAttribute,
+          buttonId: linkIdAttribute || 'externalLink',
         },
         event: 'click',
         destinationDetails: {

@@ -12,8 +12,9 @@ import { isWebApp } from '../../common/utils/isCordovaOrWebApp';
 import { renderLog } from '../../common/utils/logging';
 import stringContains from '../../common/utils/stringContains';
 import AppObservableStore, { messageService } from '../../common/stores/AppObservableStore';
+import BallotStore from '../../stores/BallotStore';
 import VoterStore from '../../stores/VoterStore';
-import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import lookupPageNameAndPageTypeDict, { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
 
 class ShareButtonDesktopTablet extends Component {
   constructor (props) {
@@ -122,8 +123,6 @@ class ShareButtonDesktopTablet extends Component {
     }
 
     // Add dataLayer tracking after kindOfShare and whatAndHowMuchToShare are calculated
-    const { location: { pathname: currentPathname } } = window;
-    const page = lookupPageNameAndPageTypeDict(currentPathname);
     const destinationPage = lookupPageNameAndPageTypeDict(pathnameWithModalShare);
 
     // Determine buttonId based on kindOfShare
@@ -160,17 +159,17 @@ class ShareButtonDesktopTablet extends Component {
         withOpinions: withOpinionsModified,
         whatAndHowMuchToShare,
       },
-      pageDetails: {
-        pageName: page.pageName,
-        pageType: page.pageType,
-        pathname: currentPathname,
-      },
+      pageDetails: getPageDetails(),
       destinationDetails: {
         destinationPageName: destinationPage.pageName,
         destinationPageType: destinationPage.pageType,
         destinationPathname: pathnameWithModalShare,
       },
     };
+    const electionDetails = BallotStore.getAnalyticsElectionDetails();
+    if (electionDetails && electionDetails.electionDate) {
+      dataLayerObject.electionDetails = electionDetails;
+    }
     // console.log('Pushing to dataLayer:', dataLayerObject);
     TagManager.dataLayer({ dataLayer: dataLayerObject });
 

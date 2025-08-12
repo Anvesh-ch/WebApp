@@ -11,7 +11,6 @@ import AnalyticsActions from '../../actions/AnalyticsActions';
 import DonateActions from '../../common/actions/DonateActions';
 import DonationListForm from '../../common/components/Donation/DonationListForm';
 import DonorboxCordova from '../../common/components/Donation/DonorboxCordova';
-import DonorboxEmbed from '../../common/components/Donation/DonorboxEmbed';
 import DesignTokenColors from '../../common/components/Style/DesignTokenColors';
 import standardBoxShadow from '../../common/components/Style/standardBoxShadow';
 import OpenExternalWebSite from '../../common/components/Widgets/OpenExternalWebSite';
@@ -25,13 +24,15 @@ import { PageContentContainer } from '../../components/Style/pageLayoutStyles';
 import { Section } from '../../components/Welcome/sectionStyles';
 import webAppConfig from '../../config';
 import VoterStore from '../../stores/VoterStore';
-import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
+
+const DonorboxEmbed = React.lazy(() => import(/* webpackChunkName: 'DonorboxEmbed' */ '../../common/components/Donation/DonorboxEmbed'));
 
 /* global $ */
 
 // const stripePromise = loadStripe(webAppConfig.STRIPE_API_KEY);
 
-const donationImage = normalizedImagePath('/img/global/photos/Donate_Screenshot.png');
+const donationPhoto = normalizedImagePath('/img/global/photos/woman-voting-donation-page.png');
 
 class Donate extends Component {
   static getProps () {
@@ -64,6 +65,7 @@ class Donate extends Component {
   }
 
   componentDidMount () {
+    const { dataLayerSent } = this.state;
     this.onDonateStoreChange();
     this.donateStoreListener = DonateStore.addListener(this.onDonateStoreChange);
     this.voterStoreListener = VoterStore.addListener(this.onVoterStoreChange);
@@ -71,6 +73,19 @@ class Donate extends Component {
     DonateActions.donationRefreshDonationList();
     window.scrollTo(0, 0);
     window.addEventListener('resize', this.handleResize);
+
+    if (!dataLayerSent && VoterStore.getVoterWeVoteId()) {
+      const dataLayerObject = {
+        actionDetails: {
+          actionType: 'landing',
+        },
+        event: 'landing',
+        pageDetails: getPageDetails(),
+        userDetails: VoterStore.getAnalyticsUserDetails(),
+      };
+      TagManager.dataLayer({ dataLayer: dataLayerObject });
+      this.setState({ dataLayerSent: true });
+    }
   }
 
   componentDidUpdate () {
@@ -84,18 +99,14 @@ class Donate extends Component {
     }
 
     if (!dataLayerSent && VoterStore.getVoterWeVoteId()) {
-      const { location: { pathname: currentPathname } } = window;
-      const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
       const dataLayerObject = {
-        event: 'landing',
-        pageDetails: {
-          pageName: currentPage.pageName,
-          pageType: currentPage.pageType,
-          pathname: currentPathname,
+        actionDetails: {
+          actionType: 'landing',
         },
+        event: 'landing',
+        pageDetails: getPageDetails(),
         userDetails: VoterStore.getAnalyticsUserDetails(),
       };
-      // console.log('WV-1462: dataLayerObject:', dataLayerObject);
       TagManager.dataLayer({ dataLayer: dataLayerObject });
       this.setState({ dataLayerSent: true });
     }
@@ -241,58 +252,82 @@ class Donate extends Component {
   donationDescriptionReadMore = (readMore, isC4Donation) => (
     <DonationDescriptionContainer>
       <DonationDescription id="donation_copy">
-        When people feel prepared to vote, they’re more likely to cast a ballot — especially in local and primary elections, where participation is lowest. At WeVote, our mission is to close the confidence gap that keeps so many voters on the sidelines.
+        When people feel prepared to vote, they’re more likely to cast a ballot — especially in local elections, where participation is lowest.
+        {' '}
+        At WeVote, our mission is to close the confidence gap so more voters bring their voices into our democracy.
       </DonationDescription>
       {readMore && (
         <>
           <p>
-            We don’t take sides. Instead, we provide trusted, nonpartisan tools that help people feel informed and ready to vote.
-            Because WeVote is 100% volunteer-run, your donation directly powers our work — helping us reach new voters, low-turnout communities, and busy people who care but aren’t sure where to start.
-            Our tools are free for voters, but not free to build, maintain, or scale. That’s why we’re asking for your support. A gift of $50, $100, or $250 will help us expand our reach, strengthen our platform, and bridge the information gap in our democracy.
+            We don’t take sides. Instead, we help people feel informed and ready to vote.
+            Because WeVote is 100% volunteer-run, your donation directly powers
+            our work.
+            Our tools are free for voters, but not free to build and maintain.
           </p>
           <p>
-            $50 - can bring 500 new voters to WeVote
+            $1 equips 1 voter with personalized, nonpartisan ballot
+            information
           </p>
           <p>
-            $100 - can match voters to their ballots for one month
+            $50 brings WeVote to 500 new voters
           </p>
           <p>
-            $250 - can provide our recruiting team with their software for one month, or cover our server fees for 10 days
+            $100 educates 1 college intern
+          </p>
+          <p>
+            $250 brings in top volunteers by fueling recruiting systems for 1 month
+          </p>
+          <p>
+            $500 powers our digital infrastructure for 1 week
           </p>
         </>
       )}
       <DonationDescription>
-        If you believe every voter deserves to feel confident and prepared, please give now.
+        Give now to help more Americans feel confident and prepared to vote.
+        <br />
         {!readMore && (
           <ReadMoreButton
-            onClick={() => this.setState({
-              readMore: true,
-            })}
+            onClick={() => {
+              const dataLayerObject = {
+                event: 'action',
+                actionDetails: {
+                  actionType: 'showMore',
+                  buttonId: 'readMoreButton',
+                },
+                pageDetails: getPageDetails(),
+                userDetails: VoterStore.getAnalyticsUserDetails(),
+              };
+
+              TagManager.dataLayer({ dataLayer: dataLayerObject });
+
+              this.setState({ readMore: true });
+            }}
           >
-            Read more...
+            Read more
           </ReadMoreButton>
         )}
       </DonationDescription>
       {readMore && (
-        <OpenExternalWebSite
-          linkIdAttribute="annualBudget"
-          url={isC4Donation ? 'https://projects.propublica.org/nonprofits/organizations/811052585' : 'https://projects.propublica.org/nonprofits/organizations/472691544'}
-          target="_blank"
-          trackingOn
-          body={(
-            <span id="budgets_small">
-              Questions about donating?
-              <Launch
-                style={{
-                  height: 14,
-                  marginLeft: 2,
-                  marginTop: '-3px',
-                  width: 14,
-                }}
-              />
-            </span>
-          )}
-        />
+        <OpenExternalWebSiteWrapper>
+          <OpenExternalWebSite
+            linkIdAttribute="annualBudget"
+            url={isC4Donation ? 'https://projects.propublica.org/nonprofits/organizations/811052585' : 'https://projects.propublica.org/nonprofits/organizations/472691544'}
+            target="_blank"
+            body={(
+              <span id="budgets_small">
+                Questions about donating?
+                <Launch
+                  style={{
+                    height: 14,
+                    marginLeft: 2,
+                    marginTop: '-3px',
+                    width: 14,
+                  }}
+                />
+              </span>
+            )}
+          />
+        </OpenExternalWebSiteWrapper>
       )}
     </DonationDescriptionContainer>
   );
@@ -321,6 +356,7 @@ class Donate extends Component {
     if (!isC4Donation) {
       c3DonationHtml = (
         <C3DonationWrapper>
+          <AddShadowToHeader />
           <ResetMargin />
           <Wrapper>
             <Helmet>
@@ -364,15 +400,8 @@ class Donate extends Component {
                   </InnerWrapper>
                 </TextAndDonorboxColumn>
                 <DonationImageContainer>
-                  {/* <InnerWrapper> */}
-                  {/*  <DonorboxWrapper> */}
-                  {/*    <Suspense fallback={<div>Loading...</div>}> */}
-                  {/*      <DonorboxEmbed /> */}
-                  {/*    </Suspense> */}
-                  {/*  </DonorboxWrapper> */}
-                  {/* </InnerWrapper> */}
                   <DonationImage
-                    src={donationImage}
+                    src={donationPhoto}
                   />
                 </DonationImageContainer>
               </TwoColumns>
@@ -637,6 +666,7 @@ const styles = (theme) => ({
 });
 
 const C3DonationWrapper = styled('div')`
+  min-height: 100%;
 `;
 
 const C4DonationWrapper = styled('div')`
@@ -667,9 +697,12 @@ const DonorboxWrapper = styled('div')`
 
 const Wrapper = styled('div')`
   display: flex;
-  flex-flow: column nowrap;
   overflow-x: hidden;
   height: 100%;
+
+  @media (max-width: 532px) {
+    flex-direction: column;
+  }
 `;
 
 const InnerWrapper = styled('div')`
@@ -677,11 +710,10 @@ const InnerWrapper = styled('div')`
 `;
 
 const DonateDescriptionContainer = styled('div')`
-  margin: 1.5em auto;
-  margin-bottom: 12px;
+  margin: 1.5em auto .25em;
   width: 960px;
   max-width: 90vw;
-  text-align: center;
+  text-align: left;
   @media (min-width: 960px) and (max-width: 991px) {
     > * {
       width: 90%;
@@ -772,17 +804,23 @@ const ContributeGridItemJoin = styled('div', {
 `));
 
 const DonationImageContainer = styled('div')`
-  height: 99%;
-  width: 70%;
+  display: flex;
+  height: 100%;
   overflow: hidden;
+  margin-left: -8%;
 `;
 
 const TextAndDonorboxColumn = styled('div')`
   max-width: 400px;
+  background-color: white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
 `;
 
 const DonationImage = styled('img')`
-  width: 57%;
+  height: 100%;
   object-fit: cover;
   display: block;
   position: fixed;
@@ -791,38 +829,60 @@ const DonationImage = styled('img')`
 
 const DonationDescriptionContainer = styled('div')`
   padding: 0 20px;
-  margin-top: 40px;
+  margin-top: 50px;
+
+  @media (max-width: 532px) {
+    margin-top: 30px;
+    padding: 0;
+  }
 `;
 
 const DonationDescription = styled('p')`
 `;
 
 const TwoColumns = styled('div')`
-  background: white;
-  margin-left: 15%;
-  margin-bottom: -3.5%;
-  padding-bottom: 1%;
+  margin-left: 13%;
   display: flex;
-  align-items: flex-start;
-  height: 100%;
+  min-height: 100vh;
+  width: 100%;
 `;
 
 const ReadMoreButton = styled('button')`
   background-color: transparent;
   border: none;
+  cursor: pointer;
   color: ${DesignTokenColors.primary700};
+  padding: 8px 0;
+  text-decoration: underline;
+  text-decoration-color: ${DesignTokenColors.primary700};
+  &:hover {
+    opacity: 0.6;
+  }
 `;
 
 const DonatePageContentContainer = styled(PageContentContainer)`
-  max-width: 100%;
-  // background-color: ${DesignTokenColors.secondary500};
+  min-width: 100%;
   background-color: #0d5470;
   padding-top: 20px;
 `;
 
+const OpenExternalWebSiteWrapper = styled('div')`
+  margin: 8px 0 24px 0;
+`;
+
+
 const ResetMargin = createGlobalStyle`
   html, body {
+    height: 100%;
     margin: 0;
+    padding: 0;
+  }
+`;
+
+const AddShadowToHeader = createGlobalStyle`
+  .HeaderBarWrapper {
+    box-shadow: ${standardBoxShadow('wide')};
+    border-bottom: 1px solid rgb(170, 170, 170);
   }
 `;
 

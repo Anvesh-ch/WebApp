@@ -12,7 +12,7 @@ import PositionRatingSnippet from '../PositionItem/PositionRatingSnippet';
 import PositionSupportOpposeSnippet from '../PositionItem/PositionSupportOpposeSnippet';
 import TwitterAccountStats from '../Widgets/TwitterAccountStats';
 import VoterStore from '../../stores/VoterStore';
-import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import lookupPageNameAndPageTypeDict, { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
 
 const FollowToggle = React.lazy(() => import(/* webpackChunkName: 'FollowToggle' */ '../Widgets/FollowToggle'));
 
@@ -106,31 +106,24 @@ class OrganizationDisplayForList extends Component {
     });
   }
 
-  sendEndorserClickEvent (buttonId) {
-    const { location: { pathname: currentPathname } } = window;
-    const { pageName, pageType } = lookupPageNameAndPageTypeDict(currentPathname);
-    const { twitterHandle } = this.state;
+  sendEndorserClickEvent (buttonId, destinationPathname, endorserName) {
     const { organizationWeVoteId } = this.props;
-    const destinationPathname = twitterHandle ? `/${twitterHandle}` : `/voterguide/${organizationWeVoteId}`;
     const { pageName: destinationPageName, pageType: destinationPageType } = lookupPageNameAndPageTypeDict(destinationPathname);
 
     const dataLayerObject = {
       actionDetails: {
         actionType: 'navigate',
         buttonId,
+        endorserName,
+        endorserWeVoteId: organizationWeVoteId,
       },
       event: 'action',
       destinationDetails: {
         destinationPageName,
         destinationPageType,
         destinationPathname,
-
       },
-      pageDetails: {
-        pageName,
-        pageType,
-        pathname: currentPathname,
-      },
+      pageDetails: getPageDetails(),
       userDetails: VoterStore.getAnalyticsUserDetails(),
     };
     TagManager.dataLayer({ dataLayer: dataLayerObject });
@@ -220,19 +213,21 @@ class OrganizationDisplayForList extends Component {
       <OrganizationDisplayForListWrapper>
         <OrganizationDetailsWrapper>
           <OrganizationLogoWrapper>
-            <Link id="organizationDisplayLogo"
-            to={voterGuideLink}
-            className="u-no-underline"
-            onClick={() => this.sendEndorserClickEvent(organizationName)}
+            <Link
+              id="organizationDisplayLogo"
+              to={voterGuideLink}
+              className="u-no-underline"
+              onClick={() => this.sendEndorserClickEvent('organizationDisplayLogo', voterGuideLink, organizationName)}
             >
               {organizationLogo}
             </Link>
           </OrganizationLogoWrapper>
           <div>
             <NameAndTwitter>
-              <Link id="organizationDisplayName"
-              to={voterGuideLink}
-              onClick={() => this.sendEndorserClickEvent(organizationName)}
+              <Link
+                id="organizationDisplayName"
+                to={voterGuideLink}
+                onClick={() => this.sendEndorserClickEvent('organizationDisplayLogo', voterGuideLink, organizationName)}
               >
                 <OrganizationName>{organizationName}</OrganizationName>
               </Link>

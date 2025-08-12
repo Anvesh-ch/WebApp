@@ -61,7 +61,10 @@ const nonFluxState = {
   showAdviserIntroModal: false,
   showAskFriendsModal: false,
   showChooseOrOpposeIntroModal: false,
+  showClaimProfileWithEmailModal: false,
+  showClaimProfileWithOtherWaysModal: false,
   showCompleteYourProfileModal: false,
+  showNotificationBannerAboveHeader: false,
   showEditAddressButton: false,
   showElectionsWithOrganizationVoterGuidesModal: false,
   showHeader: 0,
@@ -152,6 +155,14 @@ export default {
 
   getChosenWebsiteName () {
     return nonFluxState.chosenWebsiteName || 'WeVote.US'; // Used to be campaigns.WeVote.US on campaigns site
+  },
+
+  getShowClaimProfileWithEmailModal () {
+    return nonFluxState.showClaimProfileWithEmailModal;
+  },
+
+  getShowClaimProfileWithOtherWaysModal () {
+    return nonFluxState.showClaimProfileWithOtherWaysModal;
   },
 
   getCurrentPathname () {
@@ -249,6 +260,15 @@ export default {
   getShareModalStep () {
     // console.log('AppObservableStore shareModalStep:', nonFluxState.shareModalStep);
     return nonFluxState.shareModalStep;
+  },
+
+  getShowNotificationBannerAboveHeader () {
+    return nonFluxState.showNotificationBannerAboveHeader;
+  },
+
+  setShowNotificationBannerAboveHeader (show) {
+    nonFluxState.showNotificationBannerAboveHeader = show;
+    messageService.sendMessage('state updated showNotificationBannerAboveHeader');
   },
 
   getWeVoteRootURL () {
@@ -402,6 +422,16 @@ export default {
     // console.log('setChallengeParticipantNameWithHighestRank: ', challengeWeVoteId, ', voterName: ', voterName);
     nonFluxState.challengeParticipantNameWithHighestRankByChallengeWeVoteId[challengeWeVoteId] = voterName;
     messageService.sendMessage('state updated challengeParticipantNameWithHighestRankByChallengeWeVoteId');
+  },
+
+  setShowClaimProfileWithEmailModal (show) {
+    nonFluxState.showClaimProfileWithEmailModal = show;
+    messageService.sendMessage('state updated showClaimProfileWithEmailModal');
+  },
+
+  setShowClaimProfileWithOtherWaysModal (show) {
+    nonFluxState.showClaimProfileWithOtherWaysModal = show;
+    messageService.sendMessage('state updated showClaimProfileWithOtherWaysModal');
   },
 
   setCurrentPathname (currentPathname) {

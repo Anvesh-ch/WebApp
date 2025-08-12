@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import TagManager from 'react-gtm-module';
 import styled from 'styled-components';
+import VoterStore from '../../../stores/VoterStore';
+import { getPageDetails } from '../../../utils/lookupPageNameAndPageTypeDict';
 import { blurTextFieldAndroid, focusTextFieldAndroid } from '../../utils/cordovaUtils';
 import { renderLog } from '../../utils/logging';
 import SearchBase from './SearchBase';
-import VoterStore from '../../../stores/VoterStore';
-import lookupPageNameAndPageTypeDict from '../../../utils/lookupPageNameAndPageTypeDict';
 
 /* eslint-disable jsx-a11y/control-has-associated-label  */
 class SearchBar2024 extends Component {
@@ -59,10 +59,7 @@ class SearchBar2024 extends Component {
     }
   }
 
-  handleSearchBarKeyPress = () => {
-    const { location: { pathname: currentPathname } } = window;
-    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
-
+  handleSearchBarKeyPress = (buttonId) => {
     if (this.timer) {
       clearTimeout(this.timer);
     }
@@ -76,15 +73,11 @@ class SearchBar2024 extends Component {
       const dataLayerObject = {
         actionDetails: {
           actionType: 'search',
-          buttonId: 'search_input',
+          buttonId,
         },
         event: 'action',
         userDetails: VoterStore.getAnalyticsUserDetails(),
-        pageDetails: {
-          pageType: currentPage.pageType,
-          pageName: currentPage.pageName,
-          pathname: currentPathname,
-        },
+        pageDetails: getPageDetails(),
         searchString,
       };
       // console.log(dataLayerObject)
@@ -117,7 +110,7 @@ class SearchBar2024 extends Component {
           id="search_input"
           placeholder={placeholder}
           value={searchString}
-          onKeyDown={this.handleSearchBarKeyPress}
+          onKeyDown={() => this.handleSearchBarKeyPress('search_input')}
           onChange={this.updateResults}
           onFocus={() => focusTextFieldAndroid('SearchBar2024')}
           onBlur={blurTextFieldAndroid}

@@ -59,7 +59,7 @@ class PoliticianStore extends ReduceStore {
       politicalParty: politician ? politician.political_party : '',
       politicianName: politician ? this.getPoliticianName(politicianWeVoteId) : '',
       politicianWeVoteId,
-      stateCode: politician ? politician.state_code || 'na' : '',
+      stateCode: politician ? (politician.state_code || 'na').toUpperCase() : '',
     };
   }
 
@@ -80,8 +80,11 @@ class PoliticianStore extends ReduceStore {
 
   getPoliticianName (politicianWeVoteId) {
     const politician = this.getState().allCachedPoliticians[politicianWeVoteId] || {};
-    if (politician && politician.ballot_item_display_name) {
-      return politician.ballot_item_display_name;
+    if (politician) {
+      return politician.ballot_item_display_name ||
+        politician.politician_name ||
+        politician.display_name ||
+        '';
     }
     return '';
   }

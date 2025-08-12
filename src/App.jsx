@@ -58,6 +58,7 @@ const ChallengeStartPreview = React.lazy(() => import(/* webpackChunkName: 'Chal
 const ChallengeInviteFriendsJoin = React.lazy(() => import(/* webpackChunkName: 'ChallengeInviteFriendsJoin' */ './js/common/pages/ChallengeInviteFriends/ChallengeInviteFriendsJoin'));
 const ChallengeInviteCustomizeMessage = React.lazy(() => import(/* webpackChunkName: 'ChallengeInviteCustomizeMessage' */ './js/common/pages/ChallengeInviteFriends/ChallengeInviteCustomizeMessage'));
 const ChallengeInviteFriends = React.lazy(() => import(/* webpackChunkName: 'ChallengeInviteFriends' */ './js/common/pages/ChallengeInviteFriends/ChallengeInviteFriends'));
+const ChildSafety = React.lazy(() => import(/* webpackChunkName: 'ChildSafety' */ './js/pages/More/ChildSafety'));
 const ClaimYourPage = React.lazy(() => import(/* webpackChunkName: 'ClaimYourPage' */ './js/pages/Settings/ClaimYourPage'));
 const CompleteYourProfileMobile = React.lazy(() => import(/* webpackChunkName: 'CompleteYourProfileMobile' */ './js/common/pages/Settings/CompleteYourProfileMobile'));
 const Credits = React.lazy(() => import(/* webpackChunkName: 'Credits' */ './js/pages/More/Credits'));
@@ -220,11 +221,13 @@ class App extends Component {
       console.log('Cordova:   Header, hasDynamicIsland', hasDynamicIsland());
     }
 
+    this.acceptURLVariables();
     this.bypass2FA();
   }
 
   componentDidUpdate (prevProps) {
     if (prevProps.location.search !== this.props.location.search) {
+      this.acceptURLVariables();
       this.bypass2FA();
     }
   }
@@ -354,8 +357,19 @@ class App extends Component {
     this.setState({ showReadyLight: false });
   }
 
+  acceptURLVariables () {
+    const { location: { search: queryString } } = this.props;
+    const { showEditPoliticianNoticeSet  } = this.state;
+    const query = new URLSearchParams(queryString);
+    const showEditPoliticianNotice = query.get('show_edit_politician_notice');
+    if (showEditPoliticianNotice === '1' && !showEditPoliticianNoticeSet) {
+      this.setState({ showEditPoliticianNoticeSet: true });
+      AppObservableStore.setShowNotificationBannerAboveHeader(true);
+    }
+  }
+
   bypass2FA () {
-    const queryString = this.props.location.search;
+    const { location: { search: queryString } } = this.props;
     const query = new URLSearchParams(queryString);
     const cid = query.get('cid');
     const voterDeviceId = VoterStore.voterDeviceId();
@@ -433,8 +447,8 @@ class App extends Component {
                   <Route path="/-:shared_item_code/modal/share" exact component={SharedItemLanding} />
                   <Route path="/-:shared_item_code" exact component={SharedItemLanding} />
                   <Route path="/-" exact><Ready /></Route>
-                  <Route exact path="/+/:challengeWeVoteId/" render={(props) => <ChallengeHomePage match={props.match} />} />
-                  <Route exact path="/+/:challengeWeVoteId/edit" render={(props) => <ChallengeStartEditAll match={props.match} editExistingChallenge setShowHeaderFooter={this.setShowHeaderFooter} />} />
+                  <Route exact path="/++/:challengeWeVoteId/" render={(props) => <ChallengeHomePage match={props.match} />} />
+                  <Route exact path="/++/:challengeWeVoteId/edit" render={(props) => <ChallengeStartEditAll match={props.match} editExistingChallenge setShowHeaderFooter={this.setShowHeaderFooter} />} />
                   <Route exact path="/:challengeSEOFriendlyPath/+/-:shared_item_code" render={(props) => <ChallengeHomePage match={props.match} />} />
                   <Route exact path="/:challengeSEOFriendlyPath/+/" render={(props) => <ChallengeHomePage match={props.match} />} />
                   <Route exact path="/:challengeSEOFriendlyPath/+/edit" render={(props) => <ChallengeStartEditAll match={props.match} editExistingChallenge setShowHeaderFooter={this.setShowHeaderFooter} />} />
@@ -607,6 +621,7 @@ class App extends Component {
                   <Route path="/setupaccount/:set_up_page" exact component={SetUpAccountRoot} />
                   <Route path="/setupaccount" exact><SetUpAccountRoot /></Route>
                   <Route path="/squads" exact><Squads /></Route>
+                  <Route path="/standards-against-child-sexual-abuse-and-exploitation-csae" component={ChildSafety} />
                   <Route exact path="/start-a-campaign"><CampaignStartIntro /></Route>
                   <Route exact path="/start-a-challenge"><ChallengeStartIntro /></Route>
                   <Route exact path="/start-a-challenge-why-winning-matters"><ChallengeStartAddDescription /></Route>

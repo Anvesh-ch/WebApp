@@ -94,6 +94,8 @@ function CardForListBody (props) {
                           url={politicianDetailsURL}
                           target="_blank"
                           className="open-web-site open-web-site__no-right-padding"
+                          candidateWeVoteId={candidateWeVoteId}
+                          politicianWeVoteId={politicianWeVoteId}
                           body={(
                             <span>
                               <Launch

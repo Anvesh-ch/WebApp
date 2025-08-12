@@ -7,10 +7,11 @@ import DesignTokenColors from '../../common/components/Style/DesignTokenColors';
 
 const ActivityPostPublicDropdown = (props) => {
   const { visibilityIsPublic, onVisibilityChange, classes } = props;
+  // console.log('ActivityPostPublicDropdown visibilityIsPublic:', visibilityIsPublic);
 
   const handleVisibilityChange = (event) => {
     const { value } = event.target;
-    onVisibilityChange(value === 'Public');
+    onVisibilityChange(value === 'SHOW_PUBLIC');
   };
 
   return (
@@ -24,7 +25,7 @@ const ActivityPostPublicDropdown = (props) => {
           Opinion visible to:
         </Typography>
         <Select
-          value={visibilityIsPublic ? 'Public' : 'Friends Only'}
+          value={visibilityIsPublic ? 'SHOW_PUBLIC' : 'FRIENDS_ONLY'}
           onChange={handleVisibilityChange}
           className={classes.selectVisibility}
           // disableUnderline
@@ -34,10 +35,10 @@ const ActivityPostPublicDropdown = (props) => {
             classes: { paper: classes.menuPaper },
           }}
         >
-          <MenuItem value="Public" className={classes.menuItem}>
+          <MenuItem value="SHOW_PUBLIC" className={classes.menuItem}>
             Public
           </MenuItem>
-          <MenuItem value="Friends Only" className={classes.menuItem}>
+          <MenuItem value="FRIENDS_ONLY" className={classes.menuItem}>
             My friends
           </MenuItem>
         </Select>

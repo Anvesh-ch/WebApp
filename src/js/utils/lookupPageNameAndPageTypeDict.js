@@ -94,8 +94,13 @@ function calculatePageNameAndPageTypeDict (path) {
     settingsPageName = 'PoliticianDetailsPage';
     settingsPageType = 'politician';
   } else if (path.startsWith('/ballot')) {
-    settingsPageName = 'Ballot';
-    settingsPageType = 'ballot';
+    if (path.includes('/modal/share')) {
+      settingsPageName = 'SharedItemModal';
+      settingsPageType = 'ballot';
+    } else {
+      settingsPageName = 'Ballot';
+      settingsPageType = 'ballot';
+    }
   } else if (path.startsWith('/candidate/')) {
     settingsPageName = 'Candidate';
     settingsPageType = 'candidate';
@@ -132,8 +137,8 @@ function calculatePageNameAndPageTypeDict (path) {
     settingsPageName = 'IssuePage';
     settingsPageType = 'issue';
   } else if (/^\/[^/\s]+$/.test(path)) {
-    settingsPageName = 'TwitterHandleLanding';
-    settingsPageType = 'endorser';  // Changed from 'twitterHandleLanding' to 'endorser'
+    settingsPageName = 'OrganizationVoterGuide';
+    settingsPageType = 'endorser';
   }
 
   return {
@@ -148,4 +153,24 @@ export default function lookupPageNameAndPageTypeDict (path) {
   } else {
     return calculatePageNameAndPageTypeDict(path);
   }
+}
+
+export function getPageDetails (stateCode = null) {
+  const { location: { pathname } } = window;
+  const currentPage = lookupPageNameAndPageTypeDict(pathname);
+  // console.log(currentPage);
+
+  if (stateCode) {
+    return {
+      pageType: currentPage.pageType,
+      pageName: currentPage.pageName,
+      pathname,
+      stateCode,
+    };
+  }
+  return {
+    pageType: currentPage.pageType,
+    pageName: currentPage.pageName,
+    pathname,
+  };
 }

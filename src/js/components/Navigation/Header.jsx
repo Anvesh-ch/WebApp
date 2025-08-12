@@ -1,3 +1,4 @@
+import { Edit } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 import React, { Component, Suspense } from 'react';
 import styled from 'styled-components';
@@ -19,6 +20,8 @@ import cordovaTopHeaderTopMargin from '../../utils/cordovaTopHeaderTopMargin';
 import { HeadroomWrapper } from '../Style/pageLayoutStyles';
 import IPhoneSpacer from '../Widgets/IPhoneSpacer';
 import HeaderBar from './HeaderBar';
+import DesignTokenColors from '../../common/components/Style/DesignTokenColors';
+
 
 const ActivityTidbitDrawer = React.lazy(() => import(/* webpackChunkName: 'ActivityTidbitDrawer' */ '../Activity/ActivityTidbitDrawer'));
 const HeaderBackTo = React.lazy(() => import(/* webpackChunkName: 'HeaderBackTo' */ './HeaderBackTo'));
@@ -42,6 +45,7 @@ export default class Header extends Component {
       organizationModalHidePositions: false,
       sharedItemCode: '',
       showHowItWorksModal: false,
+      showNotificationBannerAboveHeader: AppObservableStore.getShowNotificationBannerAboveHeader(),
       showVoterPlanModal: false,
       showOrganizationModal: false,
       showPositionDrawer: false,
@@ -54,6 +58,7 @@ export default class Header extends Component {
     this.closeSharedItemModal = this.closeSharedItemModal.bind(this);
     this.handleResizeLocal = this.handleResizeLocal.bind(this);
     // this.storeSub = null;
+    this.closeEditBar = this.closeEditBar.bind(this);
   }
 
   componentDidMount () {
@@ -147,6 +152,7 @@ export default class Header extends Component {
       showOrganizationModal: AppObservableStore.showOrganizationModal(),
       showPositionDrawer: AppObservableStore.showPositionDrawer(),
       showSharedItemModal: AppObservableStore.showSharedItemModal(),
+      showNotificationBannerAboveHeader: AppObservableStore.getShowNotificationBannerAboveHeader(),
     });
   }
 
@@ -203,18 +209,54 @@ export default class Header extends Component {
     );
   }
 
+  closeEditBar () {
+    AppObservableStore.setShowNotificationBannerAboveHeader(false);
+  }
 
   render () {
     renderLog('Header');  // Set LOG_RENDER_EVENTS to log all renders
+    const { showNotificationBannerAboveHeader } = this.state;
 
     if (this.hideHeader()) {
       renderLog('Header hidden');
       return null;
     }
-
+    const pathname = normalizedHref();
+    const isCandidatePage = /^\/[-a-z0-9]+\/-\/?$/.test(pathname);
+    const voterCanEditPoliticianProfile = false;
+    const notificationBannerAboveHeader = (showNotificationBannerAboveHeader && isCandidatePage) && (
+      <NotificationBannerAboveHeader>
+        {voterCanEditPoliticianProfile ? (
+          <BannerText>
+            <BannerIntroTextMobile className="u-show-mobile">Review for accuracy.</BannerIntroTextMobile>
+            <BannerIntroTextDesktop className="u-show-desktop-tablet">Review your candidate’s profile for accuracy or add more info.</BannerIntroTextDesktop>
+            <TipsLink className="u-show-desktop-tablet" href="tips-for-strong-profiles" target="_blank" rel="noopener noreferrer">
+              {/* TODO link for Tips for strong profiles */}
+              Tips for strong profiles
+            </TipsLink>
+            <EditButton onClick={() => AppObservableStore.setShowClaimProfileWithEmailModal(true)}>
+              <EditStyled />
+              {' '}
+              <BannerIntroTextMobile className="u-show-mobile">Edit</BannerIntroTextMobile>
+              <BannerIntroTextDesktop className="u-show-desktop-tablet">Make profile edits</BannerIntroTextDesktop>
+            </EditButton>
+          </BannerText>
+        ) : (
+          <BannerText>
+            <BannerIntroTextMobile className="u-show-mobile">Claim and edit.</BannerIntroTextMobile>
+            <BannerIntroTextDesktop className="u-show-desktop-tablet">Claim this candidate’s profile and make edits.</BannerIntroTextDesktop>
+            <EditButton onClick={() => AppObservableStore.setShowClaimProfileWithEmailModal(true)}>
+              <EditStyled />
+              {' '}
+              Claim this profile
+            </EditButton>
+          </BannerText>
+        )}
+        <CloseButton onClick={this.closeEditBar}>✕</CloseButton>
+      </NotificationBannerAboveHeader>
+    );
     const { hideHeader, params } = this.props;
     // console.log('Header global.weVoteGlobalHistory', global.weVoteGlobalHistory);
-    const pathname = normalizedHref();
     const {
       activityTidbitWeVoteIdForDrawer, organizationModalHideBallotItemInfo, organizationModalHidePositions, organizationModalBallotItemWeVoteId,
       positionDrawerBallotItemWeVoteId, positionDrawerOrganizationWeVoteId,
@@ -505,6 +547,11 @@ export default class Header extends Component {
           <IPhoneSpacer />
           <HeadroomWrapper id="hw4">
             <div className={pageHeaderClasses} style={cordovaTopHeaderTopMargin()} id="header-container">
+              {showNotificationBannerAboveHeader && (
+                <NotificationBannerAboveHeaderWrapper>
+                  {notificationBannerAboveHeader}
+                </NotificationBannerAboveHeaderWrapper>
+              )}
               {(headerNotVisible || hideHeader) ? (
                 <>
                   <Suspense fallback={<></>}>
@@ -599,3 +646,82 @@ const BackToSettingsMobileDesktopSpan = styled('span')`
   ${() => (!isMobileScreenSize() || isTablet() ? '' : 'display: none;')};
 `;
 
+const BannerIntroTextDesktop = styled('span')`
+`;
+
+const BannerIntroTextMobile = styled('span')`
+`;
+
+const BannerText = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+`;
+
+const CloseButton = styled.button`
+  background: transparent;
+  border: none;
+  color: ${DesignTokenColors.whiteUI};
+  cursor: pointer;
+  font-size: 20px;
+  position: relative;
+
+  @media (max-width: 600px) {
+    order: 2;
+    margin-left: 8px;
+    top: auto;
+    right: auto;
+  }
+`;
+
+const NotificationBannerAboveHeader = styled.div`
+  align-items: center;
+  background: ${DesignTokenColors.secondary800};
+  color: ${DesignTokenColors.whiteUI};
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 14px;
+  justify-content: space-between;
+  max-width: 960px;
+  padding: 12px 16px;
+  width: 100%;
+`;
+const EditButton = styled.button`
+  background: ${DesignTokenColors.whiteUI};
+  border: none;
+  border-radius: 9999px;
+  color: ${DesignTokenColors.secondary800};
+  cursor: pointer;
+  font-weight: 500;
+  padding: 6px 14px;
+  white-space: nowrap;
+
+  @media (max-width: 800px) {
+    margin-top: 8px;
+  }
+    @media (max-width: 600px) {
+    width: auto;
+    order: 1;
+  }
+`;
+const NotificationBannerAboveHeaderWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+`;
+
+const EditStyled = styled(Edit)`
+  height: 16px;
+  width: 16px;
+`;
+
+const TipsLink = styled.a`
+  color: #b0d9ff;
+  margin-left: 6px;
+  text-decoration: underline;
+
+  &:hover {
+    text-decoration: none;
+  }
+`;

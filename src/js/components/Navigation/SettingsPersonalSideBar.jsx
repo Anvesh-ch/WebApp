@@ -10,6 +10,7 @@ import AppObservableStore, { messageService } from '../../common/stores/AppObser
 import { renderLog } from '../../common/utils/logging';
 import webAppConfig from '../../config';
 import VoterStore from '../../stores/VoterStore';
+import lookupPageNameAndPageTypeDict, { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
 
 const SettingsAccountLevelChip = React.lazy(() => import(/* webpackChunkName: 'SettingsAccountLeveLChip' */ '../Settings/SettingsAccountLevelChip'));
 
@@ -75,22 +76,16 @@ export default class SettingsPersonalSideBar extends Component {
   }
 
   // helper functions for datalayer
-  fireSettingsGTMEvent = ({ buttonId, destinationPath = '', actionType = 'navigate', voterWeVoteId = null, destinationPage = {} }) => {
+  fireSettingsGTMEvent = ({ buttonId, destinationPath = '', actionType = 'navigate' }) => {
+    const destinationPage = lookupPageNameAndPageTypeDict(destinationPath);
     const dataLayerObject = {
       event: 'action',
       actionDetails: {
         actionType,
         buttonId,
       },
-      userDetails: {
-        stateCode: VoterStore.getVoterStateCode(),
-        userCohort: VoterStore.getAnalyticsUserCohort(),
-        voterWeVoteId: voterWeVoteId || VoterStore.getVoterWeVoteId(),
-      },
-      pageDetails: {
-        pageTitle: document.title,
-        pagePath: window.location.pathname,
-      },
+      userDetails: VoterStore.getAnalyticsUserDetails(),
+      pageDetails: getPageDetails(),
       destinationDetails: {
         destinationPageName: destinationPage.pageName || '',
         destinationPageType: destinationPage.pageType || '',
@@ -103,7 +98,7 @@ export default class SettingsPersonalSideBar extends Component {
   voterSignOut = () => {
     this.fireSettingsGTMEvent({
       buttonId: 'signOutPersonalSidebar',
-      actionType: 'signOut',  // Sign Out is not a navigation, it's an action
+      actionType: 'signOut',
     });
 
     // Existing sign-out logic
@@ -136,14 +131,15 @@ export default class SettingsPersonalSideBar extends Component {
               'SettingsItem__summary__item-container SettingsItem__summary__item-container--selected' :
               'SettingsItem__summary__item-container '}
             >
-              <BorderBottomContainer id="personalSettingsContacts">
+              <BorderBottomContainer>
                 <Link
-                  to="/settings/contacts"
                   className="SettingsItem__summary__item"
+                  id="personalSettingsContacts"
                   onClick={() => this.fireSettingsGTMEvent({
                     buttonId: 'personalSettingsContacts',
                     destinationPath: '/settings/contacts',
                   })}
+                  to="/settings/contacts"
                 >
                   <ImportContactsIcon $isActive={String(editMode) === 'contacts'} />
                   <LinkSpan $isActive={String(editMode) === 'contacts'}>
@@ -160,14 +156,15 @@ export default class SettingsPersonalSideBar extends Component {
             //   'SettingsItem__summary__item-container '}
             // >
             <LinkContainer $isActive={String(editMode) === 'profile'}>
-              <div id="personalSettingsPhoto">
+              <div>
                 <Link
-                  to="/settings/profile"
                   className="SettingsItem__summary__item"
+                  id="personalSettingsPhoto"
                   onClick={() => this.fireSettingsGTMEvent({
                     buttonId: 'personalSettingsPhoto',
                     destinationPath: '/settings/profile',
                   })}
+                  to="/settings/profile"
                 >
                   <ProfileIcon $isActive={String(editMode) === 'profile'} />
                   <LinkSpan $isActive={String(editMode) === 'profile'}>
@@ -179,14 +176,15 @@ export default class SettingsPersonalSideBar extends Component {
           )}
 
           <LinkContainer $isActive={String(editMode) === 'account'}>
-            <div id="personalSettingsSecurity">
+            <div>
               <Link
-                to="/settings/securityAndSignIn"
                 className="SettingsItem__summary__item"
+                id="personalSettingsSecurity"
                 onClick={() => this.fireSettingsGTMEvent({
                   buttonId: 'personalSettingsSecurity',
                   destinationPath: '/settings/securityAndSignIn',
                 })}
+                to="/settings/securityAndSignIn"
               >
                 <SecurityIcon $isActive={String(editMode) === 'account'} />
                 <LinkSpan $isActive={String(editMode) === 'account'}>
@@ -202,14 +200,15 @@ export default class SettingsPersonalSideBar extends Component {
 
           {(isSignedIn) && (
             <LinkContainer $isActive={String(editMode) === 'yourdata'}>
-              <div id="personalSettingsPrivacy">
+              <div>
                 <Link
-                  to="/settings/yourdata"
                   className="SettingsItem__summary__item"
+                  id="personalSettingsPrivacy"
                   onClick={() => this.fireSettingsGTMEvent({
                     buttonId: 'personalSettingsPrivacy',
                     destinationPath: '/settings/yourdata',
                   })}
+                  to="/settings/yourdata"
                 >
                   <PrivacyIcon $isActive={String(editMode) === 'yourdata'} />
                   <LinkSpan $isActive={String(editMode) === 'yourdata'}>
@@ -220,14 +219,15 @@ export default class SettingsPersonalSideBar extends Component {
             </LinkContainer>
           )}
           <LinkContainer $isActive={String(editMode) === 'notifications'}>
-            <div id="personalSettingsNotifs">
+            <div>
               <Link
-                to="/settings/notifications"
                 className="SettingsItem__summary__item"
+                id="personalSettingsNotifs"
                 onClick={() => this.fireSettingsGTMEvent({
                   buttonId: 'personalSettingsNotifs',
                   destinationPath: '/settings/notifications',
                 })}
+                to="/settings/notifications"
               >
                 <NotificationsIcon $isActive={String(editMode) === 'notifications'} />
                 <LinkSpan $isActive={String(editMode) === 'notifications'}>
@@ -239,14 +239,15 @@ export default class SettingsPersonalSideBar extends Component {
 
           {alwaysTrue && (/* {!isOnPartnerUrl && ( */
             <LinkContainer $isActive={String(editMode) === 'friends'}>
-              <div id="personalSettingsFriends">
+              <div>
                 <Link
-                  to="/friends"
                   className="SettingsItem__summary__item"
+                  id="personalSettingsFriends"
                   onClick={() => this.fireSettingsGTMEvent({
                     buttonId: 'personalSettingsFriends',
                     destinationPath: '/friends',
                   })}
+                  to="/friends"
                 >
                   <FriendsIcon $isActive={String(editMode) === 'friends'} />
                   <LinkSpan $isActive={String(editMode) === 'friends'}>
@@ -259,14 +260,15 @@ export default class SettingsPersonalSideBar extends Component {
 
           {(isSignedIn && alwaysTrue/* && !isOnPartnerUrl */) && (
             <LinkContainer $isActive={String(editMode) === 'discuss'}>
-              <div id="personalSettingsDiscuss">
+              <div>
                 <Link
-                  to="/news"
                   className="SettingsItem__summary__item"
+                  id="personalSettingsDiscuss"
                   onClick={() => this.fireSettingsGTMEvent({
                     buttonId: 'personalSettingsDiscuss',
                     destinationPath: '/news',
                   })}
+                  to="/news"
                 >
                   <DiscussIcon $isActive={String(editMode) === 'discuss'} />
                   <LinkSpan $isActive={String(editMode) === 'discuss'}>
@@ -441,7 +443,7 @@ export default class SettingsPersonalSideBar extends Component {
 
           {isSignedIn && (
             <LinkContainer $isActive={String(editMode) === 'text'}>
-              <BorderTopContainer onClick={this.voterSignOut}>
+              <BorderTopContainer id="signOutPersonalSidebar" onClick={this.voterSignOut}>
                 <Link to="/ready" className="SettingsItem__summary__item" id="site text">
                   <SignOutIcon />
                   <LinkSpan
