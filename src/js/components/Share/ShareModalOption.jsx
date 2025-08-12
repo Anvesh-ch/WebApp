@@ -9,6 +9,8 @@ import VoterStore from '../../stores/VoterStore';
 import { renderLog } from '../../common/utils/logging';
 import AppObservableStore, { messageService } from '../../common/stores/AppObservableStore';
 import { openSnackbar } from '../../common/components/Widgets/SnackNotifier';
+import lookupPageNameAndPageTypeDict from '../../utils/lookupPageNameAndPageTypeDict';
+import stringContains from '../../common/utils/stringContains';
 
 const OpenExternalWebSite = React.lazy(() => import(/* webpackChunkName: 'OpenExternalWebSite' */ '../../common/components/Widgets/OpenExternalWebSite'));
 
@@ -36,22 +38,50 @@ class ShareModalOption extends Component {
     const { whatAndHowMuchToShare } = this.state;
     const newWhatAndHowMuchToShare = AppObservableStore.getWhatAndHowMuchToShare();
     if (newWhatAndHowMuchToShare !== whatAndHowMuchToShare) {
-      // If we change modes, reset the copy link state
-      this.setState({
-        copyLinkCopied: false,
-      });
+      this.setState({ copyLinkCopied: false });
     }
-    this.setState({
-      whatAndHowMuchToShare: newWhatAndHowMuchToShare,
-    });
+    this.setState({ whatAndHowMuchToShare: newWhatAndHowMuchToShare });
   }
 
   onClick = () => {
     // console.log('ShareModalOption onClick function');
+    const { uniqueExternalId } = this.props;
+
     if (this.props.onClickFunction) {
       this.props.onClickFunction();
     }
-  }
+
+    if ((uniqueExternalId || '').toLowerCase().includes('friends')) {
+      const { location: { pathname: currentPathname } } = window;
+      const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+
+      // Derive sharing mode from the current step string
+      const whatAndHowMuchToShareNow = AppObservableStore.getWhatAndHowMuchToShare() || this.state.whatAndHowMuchToShare || '';
+      const ballotSharingMode = stringContains('AllOpinions', whatAndHowMuchToShareNow)
+        ? 'ballot_with_my_choices'
+        : 'ballot_only';
+
+      const dataLayerObject = {
+        event: 'share',
+        actionDetails: {
+          actionType: 'share',
+          buttonId: uniqueExternalId,
+        },
+        pageDetails: {
+          pageName: currentPage.pageName,
+          pageType: currentPage.pageType,
+          pathname: currentPathname,
+        },
+        shareDetails: {
+          shareMethod: 'wevote_friends',
+          ballotSharingMode,
+        },
+        userDetails: VoterStore.getAnalyticsUserDetails(),
+      };
+
+      TagManager.dataLayer({ dataLayer: dataLayerObject });
+    }
+  };
 
   // onCopyToClipboardClick = () => {
   //   openSnackbar({ message: 'Copied!' });
@@ -134,7 +164,7 @@ class ShareModalOption extends Component {
                         url={urlToBeShared}
                         target="_blank"
                         body={(
-                          <div id={`shareModalOption-${uniqueExternalId}`} onClick={() => this.onClick}>
+                          <div id={`shareModalOption-${uniqueExternalId}`} onClick={this.onClick}>
                             <Icon backgroundColor={backgroundColor}>
                               {icon}
                             </Icon>
