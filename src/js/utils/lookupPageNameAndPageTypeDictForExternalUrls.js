@@ -58,6 +58,14 @@ const pageNameAndTypeSimpleDictForExternalUrls = {
     pageName: 'WeVoteUSA',
     pageType: 'organization',
   },
+  'https://wevote.us/more/about': {
+    pageName: 'About',
+    pageType: 'about',
+  },
+  'https://wevote.us/more/credits': {
+    pageName: 'Credits',
+    pageType: 'credits',
+  },
 };
 
 /**

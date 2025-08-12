@@ -22,8 +22,8 @@ const pageNameAndTypeSimpleDict = {
     pageType: !isWeVoteMarketingSite() || window.isCordovaGlobal ? 'homepage' : 'donate',
   },
   '/more/about': {
-    pageName: 'Team',
-    pageType: 'team',
+    pageName: 'About',
+    pageType: 'about',
   },
   '/more/attributions': {
     pageName: 'Attributions',
