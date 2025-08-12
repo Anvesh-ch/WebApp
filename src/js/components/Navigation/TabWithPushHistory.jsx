@@ -21,7 +21,7 @@ function pushDataLayer (destinationPath, buttonId = '') {
       actionType: 'navigate',
       buttonId,
     },
-    event: 'click',
+    event: 'action',
     pageDetails: getPageDetails(),
     destinationDetails: {
       destinationPageName: destinationPage.pageName,
