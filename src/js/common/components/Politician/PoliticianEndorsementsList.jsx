@@ -7,7 +7,7 @@ import { renderLog } from '../../utils/logging';
 import CandidateStore from '../../../stores/CandidateStore';
 import VoterStore from '../../../stores/VoterStore';
 import PoliticianStore from '../../stores/PoliticianStore';
-import lookupPageNameAndPageTypeDict from '../../../utils/lookupPageNameAndPageTypeDict';
+import { getPageDetails } from '../../../utils/lookupPageNameAndPageTypeDict';
 import {
   limitToShowSupport,
   orderPositionByUltimateDate,
@@ -101,20 +101,19 @@ class PoliticianEndorsementsList extends Component {
       numberOfPositionsToDisplay,
     });
 
-    const { location: { pathname: currentPathname } } = window;
-    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+    const { politicianWeVoteId } = this.props;
     const dataLayerObject = {
       event: 'action',
       actionDetails: {
         actionType: 'showMore',
         buttonId: 'LoadMoreItems-PoliticianEndorsementsList',
+        numberOfPositionsToDisplay,
       },
       userDetails: VoterStore.getAnalyticsUserDetails(),
-      pageDetails: currentPage,
-      numberOfPositionsToDisplay,
+      pageDetails: getPageDetails(),
     };
-    if (this.props.politicianWeVoteId) {
-      dataLayerObject.politicianDetails = PoliticianStore.getAnalyticsPoliticianDetails(this.props.politicianWeVoteId);
+    if (politicianWeVoteId) {
+      dataLayerObject.politicianDetails = PoliticianStore.getAnalyticsPoliticianDetails(politicianWeVoteId);
     }
     TagManager.dataLayer({ dataLayer: dataLayerObject });
   }

@@ -398,6 +398,7 @@ export function SharePreviewFriends (props) {
         linkIdAttribute="previewWhatFriendsWillSee"
         url={linkToBeShared}
         target="_blank"
+        trackingOn
         // title={this.props.title}
         className="u-no-underline"
         body={(
