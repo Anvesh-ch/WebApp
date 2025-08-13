@@ -44,18 +44,19 @@ class FooterMainWeVote extends Component {
     AppObservableStore.setShowHowItWorksModal(true);
 
     const { location: { pathname: currentPathname } } = window;
-    const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
+    const currentPageDetails = getPageDetails();
+
     const dataLayerObject = {
       actionDetails: {
         actionType: 'openModal',
         buttonId: 'footerLinkHowItWorks',
       },
       event: 'action',
-      pageDetails: getPageDetails(),
+      pageDetails: currentPageDetails,
       destinationDetails: {
         destinationPageName: 'HowItWorksModal',
-        destinationPageType: currentPage.pageType,
-        destinationPathname: currentPathname,
+        destinationPageType: currentPageDetails.pageType, // Use current page's pageType for modals
+        destinationPathname: currentPathname, // Use current pathname since modal doesn't navigate
       },
       userDetails: VoterStore.getAnalyticsUserDetails(),
     };
@@ -63,7 +64,12 @@ class FooterMainWeVote extends Component {
   }
 
   pushDataLayer (destinationPath, buttonId = '') {
+    // For internal links only - external links are handled by OpenExternalWebSite
     const destinationPage = lookupPageNameAndPageTypeDict(destinationPath);
+    const destinationPageName = destinationPage.pageName || 'notSet';
+    const destinationPageType = destinationPage.pageType || 'notSet';
+    const destinationPathname = destinationPath;
+
     const dataLayerObject = {
       actionDetails: {
         actionType: 'navigate',
@@ -72,9 +78,9 @@ class FooterMainWeVote extends Component {
       event: 'action',
       pageDetails: getPageDetails(),
       destinationDetails: {
-        destinationPageName: destinationPage.pageName,
-        destinationPageType: destinationPage.pageType,
-        destinationPathname: destinationPath,
+        destinationPageName,
+        destinationPageType,
+        destinationPathname,
       },
       userDetails: VoterStore.getAnalyticsUserDetails(),
     };
@@ -84,7 +90,7 @@ class FooterMainWeVote extends Component {
   render () {
     const { classes } = this.props;
     const { voterContactEmailListCount } = this.state;
-    // const helpDestinationPage = lookupPageNameAndPageTypeDict("https://help.wevote.us/hc/en-us");
+
     return (
       <Wrapper>
         {isWebApp() && (
@@ -139,23 +145,41 @@ class FooterMainWeVote extends Component {
                 url="https://help.wevote.us/hc/en-us"
                 target="_blank"
                 className={classes.link}
-                // destinationPageName={helpDestinationPage.pageName}
-                // destinationPageType={helpDestinationPage.pageType}
                 trackingOn
                 body={(<span>Help</span>)}
               />
               <RowSpacer />
-              <Link id="footerLinkPrivacy" className={classes.link} to="/privacy" onClick={() => this.pushDataLayer('/privacy')}>Privacy</Link>
+              <Link
+                id="footerLinkPrivacy"
+                className={classes.link}
+                to="/privacy"
+                onClick={() => this.pushDataLayer('/privacy', 'footerLinkPrivacy')}
+              >
+                Privacy
+              </Link>
               <RowSpacer />
-              <Link id="footerLinkTermsOfUse" className={classes.link} to="/more/terms" onClick={() => this.pushDataLayer('/more/terms')}>Terms</Link>
+              <Link
+                id="footerLinkTermsOfUse"
+                className={classes.link}
+                to="/more/terms"
+                onClick={() => this.pushDataLayer('/more/terms', 'footerLinkTermsOfUse')}
+              >
+                Terms
+              </Link>
             </OneRow>
             <OneRow>
               {isWebApp() ? (
                 <>
-                  <Link id="footerLinkAboutFAQ" to="/more/faq" className={classes.link} onClick={() => this.pushDataLayer('/more/faq')}>
+                  <Link
+                    id="footerLinkAboutFAQ"
+                    to="/more/faq"
+                    className={classes.link}
+                    onClick={() => this.pushDataLayer('/more/faq', 'footerLinkAboutFAQ')}
+                  >
                     About &amp; FAQ
                   </Link>
                   <RowSpacer />
+                  {/* Note: Team/Credits links will show 'notSet' in local dev but work correctly in production */}
                   <OpenExternalWebSite
                     linkIdAttribute="footerLinkTeam"
                     url={`${webAppConfig.WE_VOTE_URL_PROTOCOL + webAppConfig.WE_VOTE_HOSTNAME}/more/about`}
@@ -176,9 +200,23 @@ class FooterMainWeVote extends Component {
                 </>
               ) : (
                 <>
-                  <Link to="/more/faq" className={classes.link} onClick={() => this.pushDataLayer('/more/faq')}>Frequently Asked Questions</Link>
+                  <Link
+                    id="footerLinkFAQ"
+                    to="/more/faq"
+                    className={classes.link}
+                    onClick={() => this.pushDataLayer('/more/faq', 'footerLinkFAQ')}
+                  >
+                    Frequently Asked Questions
+                  </Link>
                   <RowSpacer />
-                  <Link to="/more/attributions" className={classes.link} onClick={() => this.pushDataLayer('/more/attributions')}>Attributions</Link>
+                  <Link
+                    id="footerLinkAttributions"
+                    to="/more/attributions"
+                    className={classes.link}
+                    onClick={() => this.pushDataLayer('/more/attributions', 'footerLinkAttributions')}
+                  >
+                    Attributions
+                  </Link>
                 </>
               )}
             </OneRow>
@@ -206,7 +244,7 @@ class FooterMainWeVote extends Component {
                   className={classes.link}
                   id="footerMainLinkDonate"
                   to="/donate"
-                  onClick={() => this.pushDataLayer('/donate')}
+                  onClick={() => this.pushDataLayer('/donate', 'footerMainLinkDonate')}
                 >
                   Donate
                 </Link>
@@ -238,6 +276,7 @@ class FooterMainWeVote extends Component {
     );
   }
 }
+
 FooterMainWeVote.propTypes = {
   classes: PropTypes.object,
 };
