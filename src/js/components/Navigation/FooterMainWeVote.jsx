@@ -172,30 +172,6 @@ class FooterMainWeVote extends Component {
                     trackingOn
                     body={(<span>Credits &amp; Thanks</span>)}
                     className={classes.link}
-                    onClickFunction={() => {
-                      const destinationPathname = '/more/credits';
-                      const destinationPage = lookupPageNameAndPageTypeDict(destinationPathname);
-                      const currentPathname = window.location.pathname;
-                      const currentPage = lookupPageNameAndPageTypeDict(currentPathname);
-                      const dataLayerObject = {
-                        actionDetails: {
-                          buttonId: 'footerLinkCredits',
-                        },
-                        event: 'click',
-                        destinationDetails: {
-                          destinationPageName: destinationPage.pageName,
-                          destinationPageType: destinationPage.pageType,
-                          destinationPathname,
-                        },
-                        pageDetails: {
-                          pageName: currentPage.pageName,
-                          pageType: currentPage.pageType,
-                          pathname: currentPathname,
-                        },
-                        userDetails: VoterStore.getAnalyticsUserDetails(),
-                      };
-                      TagManager.dataLayer({ dataLayer: dataLayerObject });
-                    }}
                   />
                 </>
               ) : (
