@@ -27,6 +27,7 @@ import MessageCard from '../Widgets/MessageCard';
 import { CopyLink, getKindOfShareFromURL, saveActionShareAnalytics, ShareFacebook, SharePreviewFriends, shareStyles, ShareTwitter, ShareWeVoteFriends } from './shareButtonCommon'; // cordovaSocialSharingByEmail
 import { generateShareLinks } from './ShareModalText';
 import ShareModalTitleArea from './ShareModalTitleArea';
+import BallotStore from "../../stores/BallotStore";
 
 const ShareWithFriendsModalBodyWithController = React.lazy(() => import(/* webpackChunkName: 'ShareWithFriendsModalBodyWithController' */ '../Friends/ShareWithFriendsModalBodyWithController'));
 const ShareWithFriendsModalTitleWithController = React.lazy(() => import(/* webpackChunkName: 'ShareWithFriendsModalTitleWithController' */ '../Friends/ShareWithFriendsModalTitleWithController'));
@@ -201,6 +202,10 @@ class ShareModal extends Component {
     };
     TagManager.dataLayer({ dataLayer: dataLayerObject });
 
+    const electionDetails = BallotStore.getAnalyticsElectionDetails();
+    if (electionDetails) {
+      dataLayerObject.electionDetails = electionDetails;
+    }
     this.props.closeShareModal(currentPathname);
   }
 
