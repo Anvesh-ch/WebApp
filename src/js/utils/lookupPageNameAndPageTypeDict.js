@@ -83,8 +83,8 @@ const pageNameAndTypeSimpleDict = {
     pageType: 'termsOfService',
   },
   '/more/credits': {
-    pageName: 'CreditsAndThanks', // Added
-    pageType: 'about',
+    pageName: 'Credits',
+    pageType: 'credits',
   },
 };
 
