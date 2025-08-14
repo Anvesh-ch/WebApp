@@ -30,23 +30,28 @@ function DonateFaq () {
           We are over 100 people who have donated 12,000+ volunteer hours, including
           90+ contributors on GitHub. We also have a small team of core staff and
           volunteer board members. See:
+        </p>
+        <p>
+          See:
           {' '}
           <a
-            href="https://quality.wevote.us/more/faq"
-            target="_blank"
-            rel="noopener noreferrer"
+              href="/more/faq"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: DesignTokenColors.primary600 }}
           >
-            https://quality.wevote.us/more/faq
+            FAQ
           </a>
           {' '}
           and
           {' '}
           <a
-            href="https://help.wevote.us/hc/en-us"
-            target="_blank"
-            rel="noopener noreferrer"
+              href="/hc/en-us"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: DesignTokenColors.primary600 }}
           >
-            https://help.wevote.us/hc/en-us
+            Help Center
           </a>
         </p>
 
@@ -55,9 +60,9 @@ function DonateFaq () {
           Yes. WeVote is a collaboration between two nonprofits
           {' '}
           <a
-            href="https://www.wevoteeducation.org"
-            target="_blank"
-            rel="noopener noreferrer"
+              href="https://www.wevoteeducation.org"
+              target="_blank"
+              rel="noopener noreferrer"
           >
             www.WeVoteEducation.org
           </a>
@@ -65,9 +70,9 @@ function DonateFaq () {
           - 501(c)(3) FEIN 47-2691544 and
           {' '}
           <a
-            href="https://wevoteusa.org"
-            target="_blank"
-            rel="noopener noreferrer"
+              href="https://wevoteusa.org"
+              target="_blank"
+              rel="noopener noreferrer"
           >
             WeVoteUSA.org
           </a>
@@ -121,9 +126,9 @@ function DonateFaq () {
           free and open source:
           {' '}
           <a
-            href="https://github.com/WeVote"
-            target="_blank"
-            rel="noopener noreferrer"
+              href="https://github.com/WeVote"
+              target="_blank"
+              rel="noopener noreferrer"
           >
             https://github.com/WeVote
           </a>
@@ -172,10 +177,10 @@ function DonateFaq () {
             Online: Visit
             {' '}
             <a
-              href="https://wevote.us/donate"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: DesignTokenColors.primary600 }}
+                href="https://wevote.us/donate"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: DesignTokenColors.primary600 }}
             >
               wevote.us/donate
             </a>
@@ -294,9 +299,9 @@ function DonateFaq () {
         <p>
           🟢 Donations to WeVote&apos;s 501(c)(3) fund (
           <a
-            href="https://www.wevoteeducation.org"
-            target="_blank"
-            rel="noopener noreferrer"
+              href="https://www.wevoteeducation.org"
+              target="_blank"
+              rel="noopener noreferrer"
           >
             www.WeVoteEducation.org
           </a>
@@ -308,9 +313,9 @@ function DonateFaq () {
         <p>
           🔵 Donations to WeVote&apos;s 501(c)(4) fund (
           <a
-            href="https://www.wevoteusa.org"
-            target="_blank"
-            rel="noopener noreferrer"
+              href="https://www.wevoteusa.org"
+              target="_blank"
+              rel="noopener noreferrer"
           >
             WeVoteUSA.org
           </a>
@@ -348,9 +353,9 @@ function DonateFaq () {
           directly using this
           {' '}
           <a
-            href="https://www.charitynavigator.org/donor-basics/giving-101/employee-match-programs/"
-            target="_blank"
-            rel="noopener noreferrer"
+              href="https://www.charitynavigator.org/donor-basics/giving-101/employee-match-programs/"
+              target="_blank"
+              rel="noopener noreferrer"
           >
             Employee Match Program Lookup Tool from Charity Navigator
           </a>
