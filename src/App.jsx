@@ -63,6 +63,7 @@ const ClaimYourPage = React.lazy(() => import(/* webpackChunkName: 'ClaimYourPag
 const CompleteYourProfileMobile = React.lazy(() => import(/* webpackChunkName: 'CompleteYourProfileMobile' */ './js/common/pages/Settings/CompleteYourProfileMobile'));
 const Credits = React.lazy(() => import(/* webpackChunkName: 'Credits' */ './js/pages/More/Credits'));
 const Donate = React.lazy(() => import(/* webpackChunkName: 'Donate' */ './js/pages/More/Donate'));
+const DonateFaq = React.lazy(() => import(/* webpackChunkName: 'DonateFaq' */ './js/pages/More/DonateFaq'));
 const ElectionReminder = React.lazy(() => import(/* webpackChunkName: 'ElectionReminder' */ './js/pages/More/ElectionReminder'));
 const Elections = React.lazy(() => import(/* webpackChunkName: 'Elections' */ './js/pages/More/Elections'));
 const ExtensionSignIn = React.lazy(() => import(/* webpackChunkName: 'ExtensionSignIn' */ './js/pages/More/ExtensionSignIn'));
@@ -520,6 +521,7 @@ class App extends Component {
                   <Route path="/candidate/:candidate_we_vote_id" exact component={Candidate} />
                   <Route path="/challenges/" exact component={ChallengesHomeLoader} />
                   <Route path="/donate" component={(isNotWeVoteMarketingSite || this.localIsAndroid()) ? ReadyRedirect : Donate} />
+                  <Route path="/donatefaq" component={(isNotWeVoteMarketingSite || this.localIsAndroid()) ? ReadyRedirect : DonateFaq} />
                   <Route path="/facebook_invitable_friends" component={FacebookInvitableFriends} />
                   <Route path="/findfriends/:set_up_page" exact component={FindFriendsRoot} />
                   <Route path="/findfriends" exact><FindFriendsRoot /></Route>
@@ -560,6 +562,7 @@ class App extends Component {
                   <Route path="/more/attributions" component={Attributions} />
                   <Route path="/more/credits" component={Credits} />
                   <Route path="/more/donate" component={(isNotWeVoteMarketingSite || this.localIsAndroid()) ? ReadyRedirect : Donate} />
+                  <Route path="/more/donatefaq" component={(isNotWeVoteMarketingSite || this.localIsAndroid()) ? ReadyRedirect : DonateFaq} />
                   <Route path="/more/elections" component={Elections} />
                   <Route path="/more/extensionsignin" component={ExtensionSignIn} />
                   <Route path="/more/facebooklandingprocess" component={FacebookLandingProcess} />

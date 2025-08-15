@@ -1,4 +1,5 @@
 import { Launch } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 import { Button, FormControl, FormControlLabel, InputAdornment, Radio, RadioGroup, TextField } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import PropTypes from 'prop-types';
@@ -309,24 +310,21 @@ class Donate extends Component {
       </DonationDescription>
       {readMore && (
         <OpenExternalWebSiteWrapper>
-          <OpenExternalWebSite
-            linkIdAttribute="annualBudget"
-            url={isC4Donation ? 'https://projects.propublica.org/nonprofits/organizations/811052585' : 'https://projects.propublica.org/nonprofits/organizations/472691544'}
+          <StyledLink
+            to="/donatefaq"
             target="_blank"
-            body={(
-              <span id="budgets_small">
-                Questions about donating?
-                <Launch
-                  style={{
-                    height: 14,
-                    marginLeft: 2,
-                    marginTop: '-3px',
-                    width: 14,
-                  }}
-                />
-              </span>
-            )}
-          />
+            rel="noopener noreferrer"
+          >
+            Questions about donating?
+            <Launch
+              style={{
+                height: 14,
+                marginLeft: 2,
+                marginTop: '-3px',
+                width: 14,
+              }}
+            />
+          </StyledLink>
         </OpenExternalWebSiteWrapper>
       )}
     </DonationDescriptionContainer>
@@ -883,6 +881,16 @@ const AddShadowToHeader = createGlobalStyle`
   .HeaderBarWrapper {
     box-shadow: ${standardBoxShadow('wide')};
     border-bottom: 1px solid rgb(170, 170, 170);
+  }
+`;
+
+const StyledLink = styled(Link)`
+  color: ${DesignTokenColors.primary600};
+  text-decoration: none;
+
+  &:hover {
+    color: ${DesignTokenColors.primary700};
+    text-decoration: underline;
   }
 `;
 
