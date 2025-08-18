@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
 import ModalDisplayTemplateB from '../../../../components/Widgets/ModalDisplayTemplateB';
-import { SubmitButton } from "./VerifyOtherWaysModal";
+import { SubmitButton } from './VerifyOtherWaysModal';
 
-const PasskeyVerifiedModal = ({ politicianName, passkeyVerified, setPasskeyVerified}) => {
-  const usersEditingPermissions = ["Add profile content", "Invite supporters", "Grow awareness"];
-  const otherEditors = [`john@${politicianName.toLowerCase().replaceAll( /[. ]/g, '')}.com`, `jane@${politicianName.toLowerCase().replaceAll( /[. ]/g, '')}.com`];
+const PasskeyVerifiedModal = ({ politicianName, passkeyVerified, setPasskeyVerified }) => {
+  const usersEditingPermissions = ['Add profile content', 'Invite supporters', 'Grow awareness'];
+  const otherEditors = [`john@${politicianName.toLowerCase().replaceAll(/[. ]/g, '')}.com`, `jane@${politicianName.toLowerCase().replaceAll(/[. ]/g, '')}.com`];
   const dialogTitleJSX = (
     <>
       <PasskeyVerifiedHeader>
@@ -25,11 +25,9 @@ const PasskeyVerifiedModal = ({ politicianName, passkeyVerified, setPasskeyVerif
     <>
       <ul>
         {
-          usersEditingPermissions.map((permission) => {
-            return (
-              <li>{permission}</li>
-            );
-          })
+          usersEditingPermissions.map((permission) => (
+            <li key={permission}>{permission}</li>
+          ))
         }
       </ul>
       {otherEditors.length > 0 && (
@@ -39,11 +37,9 @@ const PasskeyVerifiedModal = ({ politicianName, passkeyVerified, setPasskeyVerif
           </OtherEditorsHeader>
           <ul>
             {
-              otherEditors.map((editor) => {
-                return (
-                  <li>{editor}</li>
-                );
-              })
+              otherEditors.map((editor) => (
+                <li key={editor}>{editor}</li>
+              ))
             }
           </ul>
         </>

@@ -1051,7 +1051,7 @@ class PoliticianDetailsPage extends Component {
                       </SectionTitleSimple>
                       <div>
                         <Suspense fallback={<span>&nbsp;</span>}>
-                          <UpdatePoliticianInformation politicianName={politicianName} />
+                          <UpdatePoliticianInformation politicianName={politicianName} politicianWeVoteId={politicianWeVoteIdForDisplay} />
                         </Suspense>
                       </div>
                     </AboutAndEditFlex>
@@ -1230,7 +1230,7 @@ class PoliticianDetailsPage extends Component {
                           </SectionTitleSimple>
                           <div>
                             <Suspense fallback={<span>&nbsp;</span>}>
-                              <UpdatePoliticianInformation politicianName={politicianName} />
+                              <UpdatePoliticianInformation politicianName={politicianName} politicianWeVoteId={politicianWeVoteIdForDisplay} />
                             </Suspense>
                           </div>
                         </AboutAndEditFlex>

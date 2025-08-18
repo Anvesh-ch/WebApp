@@ -164,6 +164,20 @@ class CampaignStore extends ReduceStore {
     return Object.values(allCachedCampaignXDicts);
   }
 
+  getAllStaffEmails (campaignXWeVoteId) {
+    const campaignX = this.getCampaignXByWeVoteId(campaignXWeVoteId);
+    // console.log('getAllStaffEmails campaignX:', campaignX, ', campaignXWeVoteId:', campaignXWeVoteId);
+    if (campaignX && campaignX.campaignx_owner_list) {
+      return campaignX.campaignx_owner_list.reduce((emails, owner) => {
+        if (owner.verification_emails) {
+          return [...emails, ...owner.verification_emails];
+        }
+        return emails;
+      }, []);
+    }
+    return [];
+  }
+
   getCampaignXBySEOFriendlyPath (campaignSEOFriendlyPath) {
     const campaignXWeVoteId = this.getState().allCachedCampaignXWeVoteIdsBySEOFriendlyPath[campaignSEOFriendlyPath] || '';
     const campaignX = this.getState().allCachedCampaignXDicts[campaignXWeVoteId];

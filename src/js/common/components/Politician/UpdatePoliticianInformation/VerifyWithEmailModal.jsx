@@ -1,17 +1,21 @@
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import DesignTokenColors from '../../Style/DesignTokenColors';
 import ModalDisplayTemplateA from '../../../../components/Widgets/ModalDisplayTemplateA';
 import standardBoxShadow from '../../Style/standardBoxShadow';
 import PasskeyVerifiedModal from './PasskeyVerifiedModal';
 import AppObservableStore from '../../../stores/AppObservableStore';
+import PoliticianStore from '../../../stores/PoliticianStore';
+import CampaignStore from '../../../stores/CampaignStore';
 
-const VerifyWithEmailModal = ({ politicianName }) => {
+const VerifyWithEmailModal = ({ politicianName, politicianWeVoteId }) => {
+  const campaignXWeVoteIdRef = useRef('');
   const [emailOption, setEmailOption] = useState(null);
   const [passkey, setPasskey] = useState('');
   const [passkeyVerified, setPasskeyVerified] = useState(false); // switch to toggle PasskeyVerifiedModal
-  const publicEmails = [`info@${politicianName.toLowerCase().replaceAll( /[. ]/g, '')}.com`, 'john.dough@lacounty.gov'];
+  const politicianWeVoteIdRef = useRef(politicianWeVoteId);
+  const [verificationEmails, setVerificationEmails] = useState([]);
 
   const handleCloseVerifyWithEmailModal = () => {
     AppObservableStore.setShowClaimProfileWithEmailModal(false);
@@ -30,6 +34,68 @@ const VerifyWithEmailModal = ({ politicianName }) => {
     AppObservableStore.setShowClaimProfileWithOtherWaysModal(true);
   };
 
+  const extractEmailsForVerification = () => {
+    // Pull from the politician's direct emails
+    const currentPoliticianWeVoteId = politicianWeVoteIdRef.current;
+    const publicEmailsFromPolitician = PoliticianStore.getPoliticianAllEmails(currentPoliticianWeVoteId);
+    // console.log('extractEmailsForVerification, publicEmailsFromPolitician: ', publicEmailsFromPolitician);
+    // Pull from the staff who have been given campaign ownership rights
+    const currentCampaignXWeVoteId = campaignXWeVoteIdRef.current;
+    // const staffEmailsFromCampaign = ['dalemcgrew@yahoo.com', 'tea@politician.com', 'test@politician.com'];
+    const staffEmailsFromCampaign = CampaignStore.getAllStaffEmails(currentCampaignXWeVoteId);
+    // We protect hidden emails on the API server now instead of here in WebApp
+    // const staffEmailsFromCampaignForDisplay = protectEmailsInList(staffEmailsFromCampaign);
+    const newPublicEmails = [...new Set([...publicEmailsFromPolitician, ...staffEmailsFromCampaign])];
+    setVerificationEmails(newPublicEmails);
+  };
+
+  const onCampaignXStoreChange = useCallback(() => {
+    const currentCampaignXWeVoteId = campaignXWeVoteIdRef.current;
+    if (currentCampaignXWeVoteId) {
+      extractEmailsForVerification();
+    }
+  }, []);
+
+  const onPoliticianStoreChange = useCallback(() => {
+    const currentPoliticianWeVoteId = politicianWeVoteIdRef.current;
+    if (currentPoliticianWeVoteId) {
+      const politician = PoliticianStore.getPoliticianByWeVoteId(currentPoliticianWeVoteId);
+      if (politician.linked_campaignx_we_vote_id) {
+        campaignXWeVoteIdRef.current = politician.linked_campaignx_we_vote_id;
+        // console.log('onPoliticianStoreChange, politician linked_campaignx_we_vote_id: ', politician.linked_campaignx_we_vote_id);
+      }
+      extractEmailsForVerification();
+    }
+  }, []);
+
+  const onChangeRadio = () => {
+    //
+  };
+
+  useEffect(() => {
+    // console.log('VoterPositionEntryAndDisplay useEffect, politicianWeVoteId: ', politicianWeVoteId);
+    politicianWeVoteIdRef.current = politicianWeVoteId;
+    if (politicianWeVoteId) {
+      onPoliticianStoreChange();
+    }
+  }, [onPoliticianStoreChange, politicianWeVoteId]);
+
+  useEffect(() => {
+    const campaignXStoreListener = CampaignStore.addListener(onCampaignXStoreChange);
+    onCampaignXStoreChange();
+    return () => {
+      campaignXStoreListener.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    const politicianStoreListener = PoliticianStore.addListener(onPoliticianStoreChange);
+    onPoliticianStoreChange();
+    return () => {
+      politicianStoreListener.remove();
+    };
+  }, []);
+
   const dialogTitleJsx = (
     <VerifyWithEmailModalHeader>
       To edit this profile, verify as a candidate
@@ -38,37 +104,31 @@ const VerifyWithEmailModal = ({ politicianName }) => {
 
   const textFieldJsx = (
     <VerifyWithEmailModalContainer>
-      {publicEmails.length > 0 && (
+      {verificationEmails.length > 0 && (
         <>
-          <VerifyWithEmailModalSubtitle>
-            We found publicly available emails associated with
-            {' '}
-            {politicianName}
-            .
-          </VerifyWithEmailModalSubtitle>
-          <VerifyWithEmailModalSubtitle>
-            Select the one you have access, enter your passkey or
-            {' '}
-            <OtherWaysVerifyButtonAnchor
-              onClick={handleOpenVerifyOtherWaysModal}
-            >
-              see other ways to verify
-            </OtherWaysVerifyButtonAnchor>
-            .
-          </VerifyWithEmailModalSubtitle>
           <VerifyWithEmailSubheader>
             Verify with email
           </VerifyWithEmailSubheader>
-          {publicEmails.map((email) => (
+          <VerifyWithEmailModalSubtitle>
+            We found these emails associated with
+            {' '}
+            {politicianName}
+            . Select one where you can receive a verification email.
+            {' '}
+            Some emails partially hidden for your safety.
+          </VerifyWithEmailModalSubtitle>
+          {verificationEmails.map((email) => (
             <EmailSelection
               htmlFor={`public-email-option-${email}`}
               key={email}
+              onChange={onChangeRadio}
               onClick={() => handleEmailOptionClick(email)}
             >
               <EmailRadioInput
                 id={`public-email-option-${email}`}
                 type="radio"
                 checked={emailOption === email}
+                onChange={onChangeRadio}
                 value={email}
               />
               {email}
@@ -118,6 +178,7 @@ const VerifyWithEmailModal = ({ politicianName }) => {
 
 VerifyWithEmailModal.propTypes = {
   politicianName: PropTypes.string,
+  politicianWeVoteId: PropTypes.string,
 };
 
 const VerifyWithEmailModalHeader = styled('h1')`
