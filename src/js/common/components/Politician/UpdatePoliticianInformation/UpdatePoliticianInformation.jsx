@@ -33,8 +33,7 @@ const CustomTooltip = muiStyled(({ className, ...props }) => (
   },
 }));
 
-const UpdatePoliticianInformation =  (props) => {
-  const { politicianName } = props;
+const UpdatePoliticianInformation =  ({ politicianName, politicianWeVoteId }) => {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const voterCanEditCandidate = false; // This should be determined by the actual application logic
   const voterCanEditCandidateHighlight = false;
@@ -88,9 +87,11 @@ const UpdatePoliticianInformation =  (props) => {
               )}
               <VerifyOtherWaysModal
                 politicianName={politicianName}
+                politicianWeVoteId={politicianWeVoteId}
               />
               <VerifyWithEmailModal
                 politicianName={politicianName}
+                politicianWeVoteId={politicianWeVoteId}
               />
             </>
           ) : (
@@ -126,6 +127,7 @@ const UpdatePoliticianInformation =  (props) => {
 
 UpdatePoliticianInformation.propTypes = {
   politicianName: PropTypes.string,
+  politicianWeVoteId: PropTypes.string,
 };
 
 const AddInfoLink = styled('div')`

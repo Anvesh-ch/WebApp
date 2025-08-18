@@ -85,7 +85,7 @@ class ShareModalOption extends Component {
   // }
   //  onClick={this.onCopyToClipboardClick}
 
-  copyLink = () => {
+  copyLink = (buttonId) => {
     // console.log('ShareModalOption copyLink');
     openSnackbar({ message: 'Copied!' });
     this.setState({
@@ -97,7 +97,7 @@ class ShareModalOption extends Component {
     const dataLayerObject = {
       actionDetails: {
         actionType: 'share',
-        buttonId: `shareModalOption-${this.props.uniqueExternalId}`,
+        buttonId,
       },
       event: 'ShareModalCopyLinkClick',
       shareDetails: {
@@ -125,7 +125,7 @@ class ShareModalOption extends Component {
     return (
       <Wrapper>
         {(copyLink && urlToBeShared) ? (
-          <CopyToClipboard text={urlToBeShared} onCopy={this.copyLink}>
+          <CopyToClipboard text={urlToBeShared} onCopy={() => this.copyLink(`shareModalOption-${uniqueExternalId}`)}>
             <div id={`shareModalOption-${uniqueExternalId}`}>
               <Icon
                 className={copyLinkCopied ? classes.copyLinkIconCopied : classes.copyLinkIcon}

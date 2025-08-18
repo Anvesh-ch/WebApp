@@ -90,7 +90,7 @@ class PoliticianStore extends ReduceStore {
   }
 
   getMostLikelyOfficeDictFromPoliticianWeVoteId (politicianWeVoteId) {
-    const politician = this.getState().allCachedPoliticians[politicianWeVoteId] || {};
+    const politician = this.getPoliticianByWeVoteId(politicianWeVoteId);
     // console.log('getMostLikelyOfficeDictFromPoliticianWeVoteId politician:', politician)
     if (politician && politician.contest_office_list && politician.contest_office_list[0]) {
       return mostLikelyOfficeDictFromList(politician.contest_office_list);
@@ -141,6 +141,15 @@ class PoliticianStore extends ReduceStore {
       return {};
     }
     return politician;
+  }
+
+  getPoliticianAllEmails (politicianWeVoteId) {
+    const politician = this.getPoliticianByWeVoteId(politicianWeVoteId);
+    // console.log('getPoliticianAllEmails politician:', politician, ', politicianWeVoteId:', politicianWeVoteId);
+    if (politician && (politician.politician_email || politician.politician_email2 || politician.politician_email3)) {
+      return [politician.politician_email, politician.politician_email2, politician.politician_email3].filter(Boolean);
+    }
+    return [];
   }
 
   getPositionAboutPoliticianFromOrganization (politicianWeVoteId, orgWeVoteId) {
