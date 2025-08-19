@@ -280,7 +280,7 @@ class ItemActionBar extends PureComponent {
       pageDetails: getPageDetails(),
       destinationDetails: {
         destinationPageName: isHelpWinOrHelpDefeat,
-        destinationPageType: "chipIn",
+        destinationPageType: 'chipIn',
         destinationPathname: currentPathname,
       },
     };

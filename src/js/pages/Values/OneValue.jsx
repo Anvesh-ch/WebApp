@@ -97,21 +97,6 @@ class OneValue extends Component {
     this.voterGuideStoreListener.remove();
   }
 
-  fireAnalyticsEvent = () => {
-    if (!this.state.isDataLayerFired && VoterStore.voterFirstRetrieveCompleted()) {
-      const dataLayerObject = {
-        actionDetails: {
-          actionType: 'landing',
-        },
-        event: 'landing',
-        pageDetails: getPageDetails(),
-        userDetails: VoterStore.getAnalyticsUserDetails(),
-      };
-      TagManager.dataLayer({ dataLayer: dataLayerObject });
-      this.setState({ isDataLayerFired: true });
-    }
-  }
-
   onIssueStoreChange () {
     const { match: { params: { value_slug: valueSlug } } } = this.props;
     const issue = IssueStore.getIssueBySlug(valueSlug);
@@ -160,6 +145,21 @@ class OneValue extends Component {
       voterGuidesForValueLength,
     });
   }
+
+fireAnalyticsEvent = () => {
+  if (!this.state.isDataLayerFired && VoterStore.voterFirstRetrieveCompleted()) {
+    const dataLayerObject = {
+      actionDetails: {
+        actionType: 'landing',
+      },
+      event: 'landing',
+      pageDetails: getPageDetails(),
+      userDetails: VoterStore.getAnalyticsUserDetails(),
+    };
+    TagManager.dataLayer({ dataLayer: dataLayerObject });
+    this.setState({ isDataLayerFired: true });
+  }
+}
 
   changeListModeShown = (buttonId) => {
     const { issue } = this.state;

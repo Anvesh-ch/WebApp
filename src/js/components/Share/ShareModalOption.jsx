@@ -52,12 +52,11 @@ class ShareModalOption extends Component {
     }
 
     if ((uniqueExternalId || '').toLowerCase().includes('friends')) {
-
       // Derive sharing mode from the current step string
       const whatAndHowMuchToShareNow = AppObservableStore.getWhatAndHowMuchToShare() || this.state.whatAndHowMuchToShare || '';
-      const ballotSharingMode = stringContains('AllOpinions', whatAndHowMuchToShareNow)
-        ? 'ballot_with_my_choices'
-        : 'ballot_only';
+      const ballotSharingMode = stringContains('AllOpinions', whatAndHowMuchToShareNow) ?
+        'ballot_with_my_choices' :
+        'ballot_only';
 
       const dataLayerObject = {
         event: 'share',

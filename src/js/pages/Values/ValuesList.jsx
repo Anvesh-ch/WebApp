@@ -25,7 +25,6 @@ export default class ValuesList extends Component {
       allIssues: [],
       searchQuery: '',
       currentIssue: {},
-      isDataLayerFired: false,
       voterDataRetrieved: false,
     };
 
