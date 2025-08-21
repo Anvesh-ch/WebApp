@@ -10,7 +10,8 @@ import AppObservableStore, { messageService } from '../../common/stores/AppObser
 import { renderLog } from '../../common/utils/logging';
 import VoterStore from '../../stores/VoterStore';
 import { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
-import stringContains from '../../common/utils/stringContains';
+import { generateShareLinks } from './ShareModalText';
+// eslint-disable-next-line import/no-cycle
 
 const OpenExternalWebSite = React.lazy(() => import(/* webpackChunkName: 'OpenExternalWebSite' */ '../../common/components/Widgets/OpenExternalWebSite'));
 
@@ -52,12 +53,12 @@ class ShareModalOption extends Component {
     }
 
     if ((uniqueExternalId || '').toLowerCase().includes('friends')) {
-
-      // Derive sharing mode from the current step string
-      const whatAndHowMuchToShareNow = AppObservableStore.getWhatAndHowMuchToShare() || this.state.whatAndHowMuchToShare || '';
-      const ballotSharingMode = stringContains('AllOpinions', whatAndHowMuchToShareNow)
-        ? 'ballot_with_my_choices'
-        : 'ballot_only';
+      // Prefer the URL provided by parent (already resolved); fall back to generator
+      let urlShared = this.props.urlToShare || '';
+      if (!urlShared) {
+        const { linkToBeShared } = generateShareLinks();
+        urlShared = linkToBeShared || '';
+      }
 
       const dataLayerObject = {
         event: 'share',
@@ -67,12 +68,12 @@ class ShareModalOption extends Component {
         },
         pageDetails: getPageDetails(),
         shareDetails: {
-          shareMethod: 'wevote_friends',
-          ballotSharingMode,
+          shareType: 'WeVote friends',
+          urlShared,
+          howMuchToShare: AppObservableStore.getWhatAndHowMuchToShare(),
         },
         userDetails: VoterStore.getAnalyticsUserDetails(),
       };
-
       TagManager.dataLayer({ dataLayer: dataLayerObject });
     }
   };
@@ -103,7 +104,7 @@ class ShareModalOption extends Component {
       shareDetails: {
         shareType: this.props.title || 'Copy link',
         urlShared: this.props.urlToShare || '',
-        contentToggle: AppObservableStore.getWhatAndHowMuchToShare(),
+        howMuchToShare: AppObservableStore.getWhatAndHowMuchToShare(),
       },
       pageDetails: getPageDetails(),
       userDetails: VoterStore.getAnalyticsUserDetails(),
