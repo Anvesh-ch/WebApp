@@ -280,7 +280,7 @@ class ItemActionBar extends PureComponent {
       pageDetails: getPageDetails(),
       destinationDetails: {
         destinationPageName: isHelpWinOrHelpDefeat,
-        destinationPageType: currentPage.pageType,
+        destinationPageType: 'chipIn',
         destinationPathname: currentPathname,
       },
     };
@@ -334,7 +334,7 @@ class ItemActionBar extends PureComponent {
           }}
           color="primary"
           id={`itemActionBarHelpThemWinButton-${externalUniqueId}-${localUniqueId}`}
-          onClick={() => this.openHelpWinOrDefeatModal('help_win', `itemActionBarHelpThemWinButton-${externalUniqueId}-${localUniqueId}`)}
+          onClick={() => this.openHelpWinOrDefeatModal('helpWinModal', `itemActionBarHelpThemWinButton-${externalUniqueId}-${localUniqueId}`)}
           variant="contained"
         >
           <HelpButtonLabel>
@@ -362,7 +362,7 @@ class ItemActionBar extends PureComponent {
           className={`${opposeHideInMobile ? 'd-none d-sm-block ' : ''}`}
           color="primary"
           id={`itemActionBarHelpDefeatButton-${externalUniqueId}-${localUniqueId}`}
-          onClick={() => this.openHelpWinOrDefeatModal('help_defeat', `itemActionBarHelpDefeatButton-${externalUniqueId}-${localUniqueId}`)}
+          onClick={() => this.openHelpWinOrDefeatModal('helpDefeatModal', `itemActionBarHelpDefeatButton-${externalUniqueId}-${localUniqueId}`)}
           variant="contained"
         >
           <HelpButtonLabel>

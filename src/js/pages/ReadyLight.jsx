@@ -143,6 +143,7 @@ class ReadyLight extends Component {
       }
     }
   }
+
   render () {
     renderLog('ReadyLight');  // Set LOG_RENDER_EVENTS to log all renders
     const {
