@@ -127,6 +127,20 @@ class VoterStore extends ReduceStore {
     return emailAddressList;
   }
 
+  getEmailAddressesVerifiedList () {
+    const { emailAddressList } = this.getState();
+    // console.log('getEmailAddressVerifiedList emailAddressList:', emailAddressList);
+    const emailList = [];
+    let oneEmail = {};
+    for (let i = 0; i < emailAddressList.length; ++i) {
+      oneEmail = emailAddressList[i];
+      if (oneEmail.normalized_email_address && oneEmail.email_ownership_is_verified === true) {
+        emailList.push(oneEmail.normalized_email_address);
+      }
+    }
+    return emailList;
+  }
+
   getEmailAddressesVerifiedCount () {
     const { emailAddressList } = this.getState();
     let oneEmail = {};

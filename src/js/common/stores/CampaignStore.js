@@ -164,15 +164,35 @@ class CampaignStore extends ReduceStore {
     return Object.values(allCachedCampaignXDicts);
   }
 
-  getAllStaffEmails (campaignXWeVoteId) {
+  getAllStaffEmailDicts (campaignXWeVoteId) {
     const campaignX = this.getCampaignXByWeVoteId(campaignXWeVoteId);
-    // console.log('getAllStaffEmails campaignX:', campaignX, ', campaignXWeVoteId:', campaignXWeVoteId);
+    // console.log('getAllStaffEmailDicts campaignX:', campaignX, ', campaignXWeVoteId:', campaignXWeVoteId);
     if (campaignX && campaignX.campaignx_owner_list) {
-      return campaignX.campaignx_owner_list.reduce((emails, owner) => {
+      // console.log('getAllStaffEmailDicts campaignx_owner_list:', campaignX.campaignx_owner_list);
+      return campaignX.campaignx_owner_list.reduce((emailDicts, owner) => {
         if (owner.verification_emails) {
-          return [...emails, ...owner.verification_emails];
+          const ownerEmailDicts = owner.verification_emails.map((emailDict) => {
+            const [key, value] = Object.entries(emailDict)[0];
+            return { [key]: value };
+          });
+          return [...emailDicts, ...ownerEmailDicts];
         }
-        return emails;
+        return emailDicts;
+      }, []);
+    }
+    return [];
+  }
+
+  getAllStaffOrganizationWeVoteIds (campaignXWeVoteId) {
+    const campaignX = this.getCampaignXByWeVoteId(campaignXWeVoteId);
+    // console.log('getAllStaffEmailDicts campaignX:', campaignX, ', campaignXWeVoteId:', campaignXWeVoteId);
+    if (campaignX && campaignX.campaignx_owner_list) {
+      // console.log('getAllStaffEmailDicts campaignx_owner_list:', campaignX.campaignx_owner_list);
+      return campaignX.campaignx_owner_list.reduce((organizationWeVoteIdList, owner) => {
+        if (owner.organization_we_vote_id) {
+          return [...organizationWeVoteIdList, [owner.organization_we_vote_id]];
+        }
+        return organizationWeVoteIdList;
       }, []);
     }
     return [];

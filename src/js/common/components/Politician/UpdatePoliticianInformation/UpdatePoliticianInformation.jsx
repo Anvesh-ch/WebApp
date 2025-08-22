@@ -10,6 +10,7 @@ import VerifyOtherWaysModal from './VerifyOtherWaysModal';
 import VerifyWithEmailModal from './VerifyWithEmailModal';
 import AppObservableStore from '../../../stores/AppObservableStore';
 import webAppConfig from '../../../../config';
+import useVoterCanEditPolitician from '../../../../hooks/useVoterCanEditPolitician';
 
 const nextReleaseFeaturesEnabled = webAppConfig.ENABLE_NEXT_RELEASE_FEATURES === undefined ? false : webAppConfig.ENABLE_NEXT_RELEASE_FEATURES;
 
@@ -34,9 +35,13 @@ const CustomTooltip = muiStyled(({ className, ...props }) => (
 }));
 
 const UpdatePoliticianInformation =  ({ politicianName, politicianWeVoteId }) => {
+  const voterCanEditPoliticianProfile = useVoterCanEditPolitician();
+  // console.log('updatePoliticianInformation politicianName: ', politicianName, ', voterCanEditPoliticianProfile: ', voterCanEditPoliticianProfile);
   const [tooltipOpen, setTooltipOpen] = useState(false);
-  const voterCanEditCandidate = false; // This should be determined by the actual application logic
-  const voterCanEditCandidateHighlight = false;
+
+  const handleEditProfile = () => {
+    alert('Edit politician information');
+  };
 
   const handleOpenVerifyWithEmailModal = () => {
     AppObservableStore.setShowClaimProfileWithEmailModal(true);
@@ -48,7 +53,7 @@ const UpdatePoliticianInformation =  ({ politicianName, politicianWeVoteId }) =>
         <>
           {nextReleaseFeaturesEnabled ? (
             <>
-              {voterCanEditCandidate ? (
+              {voterCanEditPoliticianProfile ? (
                 <CustomTooltip
                   interactive
                   arrow
@@ -70,8 +75,7 @@ const UpdatePoliticianInformation =  ({ politicianName, politicianWeVoteId }) =>
                 >
                   <EditProfileWrapper
                     onMouseEnter={() => setTooltipOpen(true)}
-                    highlight={voterCanEditCandidateHighlight}
-                    onClick={handleOpenVerifyWithEmailModal}
+                    onClick={handleEditProfile}
                   >
                     <EditOutlined fontSize="small" style={{ marginRight: 4 }} />
                     Edit profile

@@ -8,21 +8,27 @@ import PasskeyVerifiedModal from './PasskeyVerifiedModal';
 import AppObservableStore from '../../../stores/AppObservableStore';
 import PoliticianStore from '../../../stores/PoliticianStore';
 import CampaignStore from '../../../stores/CampaignStore';
+import VoterActions from '../../../../actions/VoterActions';
+import VoterStore from '../../../../stores/VoterStore';
+import SettingsVerifySecretCode from '../../Settings/SettingsVerifySecretCode';
 
 const VerifyWithEmailModal = ({ politicianName, politicianWeVoteId }) => {
   const campaignXWeVoteIdRef = useRef('');
-  const [emailOption, setEmailOption] = useState(null);
+  const [emailDisplayed, setEmailDisplayed] = useState('');
+  const [emailOptionSelectedValue, setEmailOptionSelectedValue] = useState(null);
   const [passkey, setPasskey] = useState('');
   const [passkeyVerified, setPasskeyVerified] = useState(false); // switch to toggle PasskeyVerifiedModal
   const politicianWeVoteIdRef = useRef(politicianWeVoteId);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [verificationEmails, setVerificationEmails] = useState([]);
 
   const handleCloseVerifyWithEmailModal = () => {
     AppObservableStore.setShowClaimProfileWithEmailModal(false);
   };
 
-  const handleEmailOptionClick = (value) => {
-    setEmailOption((prev) => (prev === value ? null : value));
+  const handleEmailOptionClick = (value, displayEmail) => {
+    setEmailDisplayed(displayEmail);
+    setEmailOptionSelectedValue((prev) => (prev === value ? null : value));
   };
 
   const handlePasskeyChange = (e) => {
@@ -38,18 +44,20 @@ const VerifyWithEmailModal = ({ politicianName, politicianWeVoteId }) => {
     // Pull from the politician's direct emails
     const currentPoliticianWeVoteId = politicianWeVoteIdRef.current;
     const publicEmailsFromPolitician = PoliticianStore.getPoliticianAllEmails(currentPoliticianWeVoteId);
-    // console.log('extractEmailsForVerification, publicEmailsFromPolitician: ', publicEmailsFromPolitician);
+    const publicEmailDicts = publicEmailsFromPolitician.map((email) => ({ [email]: email }));
+    // console.log('extractEmailsForVerification, publicEmailDicts: ', publicEmailDicts);
     // Pull from the staff who have been given campaign ownership rights
     const currentCampaignXWeVoteId = campaignXWeVoteIdRef.current;
-    // const staffEmailsFromCampaign = ['dalemcgrew@yahoo.com', 'tea@politician.com', 'test@politician.com'];
-    const staffEmailsFromCampaign = CampaignStore.getAllStaffEmails(currentCampaignXWeVoteId);
+    const staffEmailsFromCampaign = CampaignStore.getAllStaffEmailDicts(currentCampaignXWeVoteId);
+    // console.log('extractEmailsForVerification, staffEmailsFromCampaign: ', staffEmailsFromCampaign);
     // We protect hidden emails on the API server now instead of here in WebApp
     // const staffEmailsFromCampaignForDisplay = protectEmailsInList(staffEmailsFromCampaign);
-    const newPublicEmails = [...new Set([...publicEmailsFromPolitician, ...staffEmailsFromCampaign])];
-    setVerificationEmails(newPublicEmails);
+    const newPublicEmailsDictionary = [...new Set([...publicEmailDicts, ...staffEmailsFromCampaign])];
+    // console.log('extractEmailsForVerification, newPublicEmailsDictionary: ', newPublicEmailsDictionary);
+    setVerificationEmails(newPublicEmailsDictionary);
   };
 
-  const onCampaignXStoreChange = useCallback(() => {
+  const onCampaignStoreChange = useCallback(() => {
     const currentCampaignXWeVoteId = campaignXWeVoteIdRef.current;
     if (currentCampaignXWeVoteId) {
       extractEmailsForVerification();
@@ -68,8 +76,70 @@ const VerifyWithEmailModal = ({ politicianName, politicianWeVoteId }) => {
     }
   }, []);
 
+  const onVoterStoreChange = useCallback(() => {
+    const emailAddressStatus = VoterStore.getEmailAddressStatus();
+    if (emailAddressStatus.sign_in_code_email_sent) {
+      // Object.assign(newState, {
+      //   displayEmailVerificationButton: false,
+      //   emailAddressStatus: {
+      //     sign_in_code_email_sent: false,
+      //   },
+      //   showVerifyModal: true,
+      // });
+      setShowVerifyModal(true);
+    }
+  }, []);
+
   const onChangeRadio = () => {
     //
+  };
+
+  const submitEmailForVerification = () => {
+    // if setShowVerifyModal is an email address, send it
+    if (emailOptionSelectedValue.includes('@')) { // Is valid email address
+      VoterActions.sendSignInCodeEmail(emailOptionSelectedValue);
+    } else if (emailOptionSelectedValue.includes('email')) { // Is EmailWeVoteId
+      VoterActions.sendSignInCodeEmail('', emailOptionSelectedValue);
+    }
+    // verificationKey is an emailWeVoteId, make different call
+    setShowVerifyModal(true);
+  };
+
+  const closeSignInModalLocal = () => {
+    // console.log('VoterEmailAddressEntry closeSignInModalLocal');
+    // if (this.props.closeSignInModal) {
+    //   this.props.closeSignInModal();
+    // }
+    setShowVerifyModal(false);
+  };
+
+  const closeSignInModalFromVerifySecretCode = () => {
+    // console.log('VoterEmailAddressEntry closeSignInModalFromVerifySecretCode');
+    setTimeout(() => {
+      VoterActions.clearSecretCodeVerificationStatusAndEmail();
+    }, 1000);
+    closeSignInModalLocal();
+  };
+
+  const closeVerifyModalFromVerifySecretCode = () => {
+    // console.log('VoterEmailAddressEntry closeVerifyModalFromVerifySecretCode');
+    // this.setState({
+    //   displayEmailVerificationButton: false,
+    //   emailAddressStatus: {
+    //     sign_in_code_email_sent: false,
+    //   },
+    //   showVerifyModal: false,
+    //   signInCodeEmailSentAndWaitingForResponse: false,
+    // });
+    setTimeout(() => {
+      // A timer hack to prevent a "React state update on an unmounted component"
+      VoterActions.clearSecretCodeVerificationStatusAndEmail();
+      AppObservableStore.setShowClaimProfileWithEmailModal(false);
+    }, 1000);
+    // if (this.props.closeVerifyModal) {
+    //   this.props.closeVerifyModal();
+    // }
+    closeSignInModalLocal();
   };
 
   useEffect(() => {
@@ -81,10 +151,10 @@ const VerifyWithEmailModal = ({ politicianName, politicianWeVoteId }) => {
   }, [onPoliticianStoreChange, politicianWeVoteId]);
 
   useEffect(() => {
-    const campaignXStoreListener = CampaignStore.addListener(onCampaignXStoreChange);
-    onCampaignXStoreChange();
+    const campaignStoreListener = CampaignStore.addListener(onCampaignStoreChange);
+    onCampaignStoreChange();
     return () => {
-      campaignXStoreListener.remove();
+      campaignStoreListener.remove();
     };
   }, []);
 
@@ -93,6 +163,14 @@ const VerifyWithEmailModal = ({ politicianName, politicianWeVoteId }) => {
     onPoliticianStoreChange();
     return () => {
       politicianStoreListener.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    const voterStoreListener = VoterStore.addListener(onVoterStoreChange);
+    onVoterStoreChange();
+    return () => {
+      voterStoreListener.remove();
     };
   }, []);
 
@@ -117,25 +195,30 @@ const VerifyWithEmailModal = ({ politicianName, politicianWeVoteId }) => {
             {' '}
             Some emails partially hidden for your safety.
           </VerifyWithEmailModalSubtitle>
-          {verificationEmails.map((email) => (
-            <EmailSelection
-              htmlFor={`public-email-option-${email}`}
-              key={email}
-              onChange={onChangeRadio}
-              onClick={() => handleEmailOptionClick(email)}
-            >
-              <EmailRadioInput
-                id={`public-email-option-${email}`}
-                type="radio"
-                checked={emailOption === email}
+          {verificationEmails.map((emailDict) => {
+            // console.log('verificationEmails.map emailDict: ', emailDict);
+            const [submitValue, displayEmail] = Object.entries(emailDict)[0];
+            return (
+              <EmailSelection
+                htmlFor={`public-email-option-${submitValue}`}
+                key={submitValue}
                 onChange={onChangeRadio}
-                value={email}
-              />
-              {email}
-            </EmailSelection>
-          ))}
+                onClick={() => handleEmailOptionClick(submitValue, displayEmail)}
+              >
+                <EmailRadioInput
+                  id={`public-email-option-${submitValue}`}
+                  type="radio"
+                  checked={emailOptionSelectedValue === submitValue}
+                  onChange={onChangeRadio}
+                  value={submitValue}
+                />
+                {displayEmail}
+              </EmailSelection>
+            );
+          })}
           <VerificationButton
-            disabled={emailOption === null}
+            disabled={emailOptionSelectedValue === null}
+            onClick={submitEmailForVerification}
           >
             Send verification code
           </VerificationButton>
@@ -162,6 +245,14 @@ const VerifyWithEmailModal = ({ politicianName, politicianWeVoteId }) => {
         setPasskeyVerified={setPasskeyVerified}
         politicianName={politicianName}
       />
+      {showVerifyModal && (
+        <SettingsVerifySecretCode
+          show={showVerifyModal}
+          closeSignInModal={closeSignInModalFromVerifySecretCode}
+          closeVerifyModal={closeVerifyModalFromVerifySecretCode}
+          voterEmailAddress={emailDisplayed}
+        />
+      )}
     </VerifyWithEmailModalContainer>
   );
 
@@ -177,6 +268,7 @@ const VerifyWithEmailModal = ({ politicianName, politicianWeVoteId }) => {
 };
 
 VerifyWithEmailModal.propTypes = {
+  closeVerifyWithEmailModal: PropTypes.func,
   politicianName: PropTypes.string,
   politicianWeVoteId: PropTypes.string,
 };

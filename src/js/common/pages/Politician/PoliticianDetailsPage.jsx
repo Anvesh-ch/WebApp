@@ -171,7 +171,9 @@ class PoliticianDetailsPage extends Component {
           politicianSEOFriendlyPathForDisplay: politicianSEOFriendlyPathFromUrl,
           politicianWeVoteId: politician.politician_we_vote_id,
           politicianWeVoteIdForDisplay: politician.politician_we_vote_id,
-        }, () => this.onfirstRetrievalOfPoliticianWeVoteId());
+        }, () => this.onFirstRetrievalOfPoliticianWeVoteId());
+        AppObservableStore.setCampaignXWeVoteIdBeingViewed(politician.linked_campaignx_we_vote_id);
+        AppObservableStore.setPoliticianWeVoteIdBeingViewed(politician.politician_we_vote_id);
       } else {
         this.setState({
           politicianSEOFriendlyPath: politicianSEOFriendlyPathFromUrl,
@@ -182,7 +184,7 @@ class PoliticianDetailsPage extends Component {
       this.setState({
         politicianWeVoteId,
         politicianWeVoteIdForDisplay: politicianWeVoteId,
-      }, () => this.onfirstRetrievalOfPoliticianWeVoteId());
+      }, () => this.onFirstRetrievalOfPoliticianWeVoteId());
     }
     // Take the "calculated" identifiers and retrieve if missing
     retrievePoliticianFromIdentifiersIfNeeded(politicianSEOFriendlyPathFromUrl, politicianWeVoteId);
@@ -255,12 +257,14 @@ class PoliticianDetailsPage extends Component {
             politicianSEOFriendlyPathForDisplay: politicianSEOFriendlyPathFromUrl,
             politicianWeVoteId: politician.politician_we_vote_id,
             politicianWeVoteIdForDisplay: politician.politician_we_vote_id,
-          });  // , () => this.onfirstRetrievalOfPoliticianWeVoteId());
+          });  // , () => this.onFirstRetrievalOfPoliticianWeVoteId());
+          AppObservableStore.setCampaignXWeVoteIdBeingViewed(politician.linked_campaignx_we_vote_id);
+          AppObservableStore.setPoliticianWeVoteIdBeingViewed(politician.politician_we_vote_id);
         } else {
           this.setState({
             politicianSEOFriendlyPath: politicianSEOFriendlyPathFromUrl,
             politicianSEOFriendlyPathForDisplay: politicianSEOFriendlyPathFromUrl,
-          });  // , () => this.onfirstRetrievalOfPoliticianWeVoteId());
+          });  // , () => this.onFirstRetrievalOfPoliticianWeVoteId());
         }
         triggerFreshRetrieve = true;
         triggerSEOPathRedirect = true;
@@ -283,12 +287,14 @@ class PoliticianDetailsPage extends Component {
           politicianSEOFriendlyPathForDisplay: politician.seo_friendly_path,
           politicianWeVoteId,
           politicianWeVoteIdForDisplay: politicianWeVoteId,
-        }); // , () => this.onfirstRetrievalOfPoliticianWeVoteId());
+        }); // , () => this.onFirstRetrievalOfPoliticianWeVoteId());
+        AppObservableStore.setCampaignXWeVoteIdBeingViewed(politician.linked_campaignx_we_vote_id);
+        AppObservableStore.setPoliticianWeVoteIdBeingViewed(politician.politician_we_vote_id);
       } else {
         this.setState({
           politicianWeVoteId,
           politicianWeVoteIdForDisplay: politicianWeVoteId,
-        }); // , () => this.onfirstRetrievalOfPoliticianWeVoteId());
+        }); // , () => this.onFirstRetrievalOfPoliticianWeVoteId());
       }
       triggerFreshRetrieve = true;
       triggerSEOPathRedirect = true;
@@ -359,9 +365,11 @@ class PoliticianDetailsPage extends Component {
     this.politicianStoreListener.remove();
     this.representativeStoreListener.remove();
     // window.removeEventListener('scroll', this.onScroll);
+    AppObservableStore.setCampaignXWeVoteIdBeingViewed('');
+    AppObservableStore.setPoliticianWeVoteIdBeingViewed('');
   }
 
-  onfirstRetrievalOfPoliticianWeVoteId () {
+  onFirstRetrievalOfPoliticianWeVoteId () {
     this.onCampaignSupporterStoreChange();
     this.onCandidateStoreChange();
     this.onOfficeHeldStoreChange();
@@ -476,7 +484,8 @@ class PoliticianDetailsPage extends Component {
         politicianWeVoteIdForDisplay: politicianWeVoteId,
         voterCanEditThisPolitician,
         voterSupportsThisPolitician,
-      }, () => this.onfirstRetrievalOfPoliticianWeVoteId());
+      }, () => this.onFirstRetrievalOfPoliticianWeVoteId());
+      AppObservableStore.setPoliticianWeVoteIdBeingViewed(politicianWeVoteId);
     }
     const politicianDescriptionLimited = returnFirstXWords(politicianDescription, 200);
     const filteredCandidateCampaignList = candidateCampaignList.sort(this.orderCandidatesByUltimateDate);
@@ -513,6 +522,7 @@ class PoliticianDetailsPage extends Component {
       wikipediaUrl,
       youtubeUrl,
     });
+    AppObservableStore.setCampaignXWeVoteIdBeingViewed(linkedCampaignXWeVoteId);
   }
 
   onRepresentativeStoreChange () {
@@ -580,6 +590,8 @@ class PoliticianDetailsPage extends Component {
       wikipediaUrl: '',
       youtubeUrl: '',
     });
+    AppObservableStore.setCampaignXWeVoteIdBeingViewed('');
+    AppObservableStore.setPoliticianWeVoteIdBeingViewed('');
   }
 
   showMoreOpponentCandidates = () => {
