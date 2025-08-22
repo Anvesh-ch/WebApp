@@ -23,6 +23,7 @@ const nonFluxState = {
   activityTidbitWeVoteIdForDrawer: '',
   blockCampaignXRedirectOnSignIn: false, // When signing in from the header, don't mark a campaign as supported
   blockChallengeRedirectOnSignIn: false, // When signing in from the header, don't mark a challenge as supported
+  campaignXWeVoteIdBeingViewed: '',
   challengeParticipantNameWithHighestRankByChallengeWeVoteId: {}, // Key is challengeWeVoteId, value is name for voter with the highest rank for that challenge
   challengeParticipantRankOfVoterByChallengeWeVoteId: {}, // Key is challengeWeVoteId, value is rank of voter for that challenge
   chosenDomainTypeIsCampaign: false,
@@ -50,6 +51,7 @@ const nonFluxState = {
   openReplayVoterWeVoteId: '',
   pendingSnackMessage: '',
   pendingSnackSeverity: '',
+  politicianWeVoteIdBeingViewed: '',
   recommendedCampaignListFirstRetrieveInitiated: false,
   scrolledDown: false,
   scrolledDownDrawer: false,
@@ -105,6 +107,10 @@ export default {
     return nonFluxState.activityTidbitWeVoteIdForDrawer;
   },
 
+  getCampaignXWeVoteIdBeingViewed () {
+    return nonFluxState.campaignXWeVoteIdBeingViewed;
+  },
+
   getChallengeParticipantNameWithHighestRankByChallengeWeVoteId (challengeWeVoteId) {
     if (challengeWeVoteId && challengeWeVoteId in nonFluxState.challengeParticipantNameWithHighestRankByChallengeWeVoteId) {
       return nonFluxState.challengeParticipantNameWithHighestRankByChallengeWeVoteId[challengeWeVoteId];
@@ -155,6 +161,10 @@ export default {
 
   getChosenWebsiteName () {
     return nonFluxState.chosenWebsiteName || 'WeVote.US'; // Used to be campaigns.WeVote.US on campaigns site
+  },
+
+  getPoliticianWeVoteIdBeingViewed () {
+    return nonFluxState.politicianWeVoteIdBeingViewed;
   },
 
   getShowClaimProfileWithEmailModal () {
@@ -412,6 +422,11 @@ export default {
     messageService.sendMessage('state updated blockChallengeRedirectOnSignIn');
   },
 
+  setCampaignXWeVoteIdBeingViewed (campaignXWeVoteId) {
+    nonFluxState.campaignXWeVoteIdBeingViewed = campaignXWeVoteId;
+    messageService.sendMessage('state updated campaignXWeVoteIdBeingViewed');
+  },
+
   setChallengeParticipantRankOfVoter (challengeWeVoteId, rank) {
     // console.log('setChallengeParticipantRankOfVoter: ', challengeWeVoteId, ', rank: ', rank);
     nonFluxState.challengeParticipantRankOfVoterByChallengeWeVoteId[challengeWeVoteId] = rank;
@@ -422,6 +437,11 @@ export default {
     // console.log('setChallengeParticipantNameWithHighestRank: ', challengeWeVoteId, ', voterName: ', voterName);
     nonFluxState.challengeParticipantNameWithHighestRankByChallengeWeVoteId[challengeWeVoteId] = voterName;
     messageService.sendMessage('state updated challengeParticipantNameWithHighestRankByChallengeWeVoteId');
+  },
+
+  setPoliticianWeVoteIdBeingViewed (politicianWeVoteId) {
+    nonFluxState.politicianWeVoteIdBeingViewed = politicianWeVoteId;
+    messageService.sendMessage('state updated politicianWeVoteIdBeingViewed');
   },
 
   setShowClaimProfileWithEmailModal (show) {
