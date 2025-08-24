@@ -68,7 +68,8 @@ class ShareModalOption extends Component {
         },
         pageDetails: getPageDetails(),
         shareDetails: {
-          shareType: 'WeVote friends',
+          shareType: 'ballot',
+          shareDestination: 'weVoteFriends',
           urlShared,
           howMuchToShare: AppObservableStore.getWhatAndHowMuchToShare(),
         },
@@ -102,7 +103,8 @@ class ShareModalOption extends Component {
       },
       event: 'ShareModalCopyLinkClick',
       shareDetails: {
-        shareType: this.props.title || 'Copy link',
+        shareType: 'ballot',
+        shareDestination: this.props.title || 'copyLink',
         urlShared: this.props.urlToShare || '',
         howMuchToShare: AppObservableStore.getWhatAndHowMuchToShare(),
       },
