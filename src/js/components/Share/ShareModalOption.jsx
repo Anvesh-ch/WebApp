@@ -11,7 +11,6 @@ import { renderLog } from '../../common/utils/logging';
 import VoterStore from '../../stores/VoterStore';
 import { getPageDetails } from '../../utils/lookupPageNameAndPageTypeDict';
 import { generateShareLinks } from './ShareModalText';
-// eslint-disable-next-line import/no-cycle
 
 const OpenExternalWebSite = React.lazy(() => import(/* webpackChunkName: 'OpenExternalWebSite' */ '../../common/components/Widgets/OpenExternalWebSite'));
 
